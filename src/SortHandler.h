@@ -17,6 +17,7 @@ protected:
     int _cycles;
     int _max;
     bool _running = false;
+    bool _ordered = true;
     semaphore _sem1;
     semaphore _sem2;
     
@@ -37,7 +38,7 @@ public:
     void animate();
     void reset(bool force = false);
     bool complete(){return _sort -> finished();};
-    void reset(visual_sort* sort, int items, int max, bool force = false);
+    void reset(visual_sort* sort, int items, int max, bool ordered = true, bool force = false);
     void draw(int width, int height, int x=0, int y=0);
     void add_cycle(){_cycles++;};
 };

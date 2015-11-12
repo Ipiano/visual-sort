@@ -14,7 +14,7 @@ public:
 
     void notify()
     {
-        //std::unique_lock<std::mutex> lock(_mut);
+        std::unique_lock<std::mutex> lock(_mut);
         _count = (_count != _max ? _count+1:_count);
         _cv.notify_one();
     }
