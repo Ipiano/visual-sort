@@ -19,11 +19,11 @@ sort_handle::~sort_handle()
 void sort_handle::animate()
 {
 
-    if(!_running && _sortt == nullptr)
+    if(!_running)
     {
         _running = true;
-        _sortt = new thread(&visual_sort::run_sort, _sort, (void*)this);
-        _sortt->detach();
+        thread sortt (&visual_sort::run_sort, _sort, (void*)this);
+        sortt.detach();
     }
 }
 
@@ -35,8 +35,6 @@ void sort_handle::reset(bool force)
         {
             handle_lock(this);
             _sort->stop();
-            delete _sortt;
-            _sortt = nullptr;
             handle_unlock(this);
         }
         semfunction lockfun = bind(sort_handle::sort_lock, (void*)this);
@@ -46,7 +44,7 @@ void sort_handle::reset(bool force)
         _cycles = 0;
         delete[] _list;
         _list = nullptr;
-        _list = new int[_size];
+        _list = new Observable<int>[_size];
 
         for(int i=0; i<_size; i++)
         {
@@ -68,30 +66,19 @@ void sort_handle::reset(visual_sort* sort, int items, int max, bool force)
 
 void sort_handle::draw(int width, int height, int x, int y)
 {
+float rgb[3];
 if(_running)
     handle_lock(this);
 
     for(int i=0; i<_size; i++)
     {
-        glColor3fv( FREE );
-        for(unsigned int j=0; j<_held.size(); j++)
-        {
-            if(i == _held[j])
-            {
-                glColor3fv( HOLD );
-            }
-        }
-        for(unsigned int j=0; j<_touched.size(); j++)
-        {
-            if(i == _touched[j])
-            {
-                glColor3fv( ACCESS );
-            }
-        }
+        _list[i].getRGB(rgb[0], rgb[1], rgb[2]);
+        glColor3fv(rgb);
+        
         glBegin( GL_POLYGON );
             glVertex2f( i*((double)width/_size) + x, y );
-            glVertex2f( i*((double)width/_size) + x, height * (_list[i]/(double)_max) + y);
-            glVertex2f( (i+1)*((double)width/_size) + x, height * (_list[i]/(double)_max) + y);
+            glVertex2f( i*((double)width/_size) + x, height * (_list[i].rawVal()/(double)_max) + y);
+            glVertex2f((i + 1)*((double)width / _size) + x, height * (_list[i].rawVal() / (double)_max) + y);
             glVertex2f( (i+1)*((double)width/_size) + x, y );
         glEnd();
     
@@ -104,7 +91,6 @@ if(_running)
     for(unsigned int i=0; i<text.size(); i++)
         glutBitmapCharacter( GLUT_BITMAP_8_BY_13, text[i] );
 
-    _touched.clear();
     
 if(_running)
     handle_unlock(this);
@@ -112,12 +98,12 @@ if(_running)
 
 void sort_handle::handle_lock(sort_handle* ths)
 {
-    ((sort_handle*)ths)->_sem1.notify();
+    (ths)->_sem1.notify();
 }
 
 void sort_handle::handle_unlock(sort_handle* ths)
 {
-    ((sort_handle*)ths)->_sem2.wait();
+    (ths)->_sem2.wait();
 }
 
 void sort_handle::sort_lock(void* ths)

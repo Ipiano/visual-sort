@@ -5,11 +5,12 @@
 #include <mutex>
 #include <functional>
 #include "Constants.h"
+#include "Observable.h"
 
 class visual_sort
 {
 protected:
-    int* _list;
+    Observable<int>* _list;
     int _size;
     bool _done = false;
     bool _started = false;
@@ -25,7 +26,7 @@ protected:
 public:
     visual_sort();
     virtual ~visual_sort();
-    virtual void setup(int* list, int size, semfunction lockfun, semfunction unlockfun);
+    virtual void setup(Observable<int>* list, int size, semfunction lockfun, semfunction unlockfun);
     bool finished(){return _done;};
     void run_sort(void* par);
     bool started(){return _started;};
