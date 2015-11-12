@@ -22,7 +22,7 @@ protected:
     void _exit();
     void lock();
     void unlock();
-    bool cond(bool orig){return orig && !_quit;};
+
 public:
     visual_sort();
     virtual ~visual_sort();

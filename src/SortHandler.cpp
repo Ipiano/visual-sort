@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <algorithm>
 #include <functional>
 
 using namespace std;
@@ -35,7 +36,7 @@ void sort_handle::reset(bool force)
         {
             handle_lock(this);
             _sort->stop();
-            handle_unlock(this);
+            //handle_unlock(this);
         }
         semfunction lockfun = bind(sort_handle::sort_lock, (void*)this);
         semfunction unlockfun = bind(sort_handle::sort_unlock, (void*)this);
@@ -46,43 +47,66 @@ void sort_handle::reset(bool force)
         _list = nullptr;
         _list = new Observable<int>[_size];
 
-        for(int i=0; i<_size; i++)
+        if (!_ordered)
         {
-            _list[i] = rand() % _max;
+            for (int i = 0; i < _size; i++)
+            {
+                _list[i] = rand() % _max;
+            }
         }
-
+        else
+        {
+            for (int i = 0; i < _size; i++)
+            {
+                _list[i] = i;
+            }
+            random_shuffle(_list, _list + _size);
+        }
         _sort -> setup(_list, _size, lockfun, unlockfun);
     }
 }
 
-void sort_handle::reset(visual_sort* sort, int items, int max, bool force)
+void sort_handle::reset(visual_sort* sort, int items, int max, bool ordered, bool force)
 {
+    _ordered = ordered;
     _sort = sort;
     _size = items;
     _max = max;
-
+    if (ordered)
+    {
+        _max = _size;
+    }
     reset();
 }
 
 void sort_handle::draw(int width, int height, int x, int y)
 {
-float rgb[3];
-if(_running)
-    handle_lock(this);
+handle_lock(this);
 
+float rgb[3];
+register double left=0, right;
+double top;
+register double bottom = y;
+register Observable<int>* curr = _list;
+register double wid = ((double)width / _size);
     for(int i=0; i<_size; i++)
     {
-        _list[i].getRGB(rgb[0], rgb[1], rgb[2]);
+        right = left + wid;
+        top = height * (curr->rawVal() / (double)_max) + y;
+
+        curr->getRGB(rgb[0], rgb[1], rgb[2]);
         glColor3fv(rgb);
         
         glBegin( GL_POLYGON );
-            glVertex2f( i*((double)width/_size) + x, y );
-            glVertex2f( i*((double)width/_size) + x, height * (_list[i].rawVal()/(double)_max) + y);
-            glVertex2f((i + 1)*((double)width / _size) + x, height * (_list[i].rawVal() / (double)_max) + y);
-            glVertex2f( (i+1)*((double)width/_size) + x, y );
+            glVertex2f( left , bottom );
+            glVertex2f( left, top);
+            glVertex2f( right, top);
+            glVertex2f( right, bottom );
         glEnd();
     
         glFlush();
+        left = right;
+        curr++;
     }
     string text = "Cycles: " + to_string(_cycles);
 
@@ -92,17 +116,19 @@ if(_running)
         glutBitmapCharacter( GLUT_BITMAP_8_BY_13, text[i] );
 
     
-if(_running)
-    handle_unlock(this);
+
+handle_unlock(this);
 }
 
 void sort_handle::handle_lock(sort_handle* ths)
 {
+    if (!ths->_sort->finished())
     (ths)->_sem1.notify();
 }
 
 void sort_handle::handle_unlock(sort_handle* ths)
 {
+    if (!ths->_sort->finished())
     (ths)->_sem2.wait();
 }
 

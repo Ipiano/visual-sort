@@ -9,6 +9,8 @@
 #include "Constants.h"
 
 using namespace std;
+#define while(a) while(a) if(_quit) break; else
+#define for(a) for(a) if (_quit) break; else
 
 visual_sort::visual_sort(){};
 visual_sort::~visual_sort(){};
@@ -49,8 +51,8 @@ void visual_sort::run_sort(void* par)
     sort_handle* parent = (sort_handle*)par;
     
     _run_sort(par);
-    
-    for(int i=1; cond(i<_size); i++)
+    int i;
+    for(i=1; i<_size; i++)
     {
     
 lock();
@@ -63,7 +65,7 @@ unlock();
 lock();
 _list[_size - 1].hold();
     _done = true;
-unlock();
+//unlock();
 
 }
 
@@ -77,15 +79,16 @@ void bubble_sort::_run_sort(void* par)
     Observable<int> tmp;
     int i;
 
-    for(i=_size-2; cond(i>=0 && !done); i--)
+    for(i=_size-2; i>=0 && !done; i--)
     {
 lock();
-_list[i + 1].unhold();
+_list[i + 3].unhold();
 _list[i + 2].hold();
 unlock();
 
         swapped = false;
-        for(int j=0; cond(j<=i); j++)
+        int j;
+        for(j=0; j<=i; j++)
         {
         
 lock();
@@ -113,12 +116,13 @@ void bogo_sort::_run_sort(void* par)
     bool done = false;
     int swaps, left, right;
     Observable<int>tmp;
-    while(cond(!done))
+    while(!done)
     {
         swaps = rand()%_size+_size;
         
         done = true;
-        for(int i=0; cond(i<_size-1 && done); i++)
+        int i;
+        for(i=0; i<_size-1 && done; i++)
         {
         
 lock();
@@ -129,7 +133,7 @@ lock();
 unlock();
 
         }
-        for(int i=0; cond(i<swaps); i++)
+        for(int i=0; i<swaps; i++)
         {
 lock();
             
@@ -178,7 +182,7 @@ unlock();
     int left = start;
     right = middle;
     
-    while(cond(left < middle && right < start+size))
+    while(left < middle && right < start+size)
     {
 lock();
         if(_list[left] > _list[right])
@@ -192,25 +196,28 @@ lock();
 unlock();
     }
     
-    while(cond(left < middle))
+    while(left < middle)
     {
 lock();
         merged[m++] = _list[left++];
 unlock();
      }
     
-    while(cond(right < start+size))
+    while(right < start+size)
     {
 lock();
         merged[m++] = _list[right++]; 
 unlock();
     }
     
-    for(int i=start, j=0; cond(j<size); i++, j++)
+    int j = 0;
+    int i;
+    for (i = start; j < size; i++)
     {
 lock();
         _list[i] = merged[j];
 unlock();
+        j++;
     }
     
 parent -> add_cycle();
