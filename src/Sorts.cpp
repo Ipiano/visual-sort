@@ -12,7 +12,7 @@ using namespace std;
 
 visual_sort::visual_sort(){};
 visual_sort::~visual_sort(){};
-void visual_sort::setup(int* list, int size, semfunction lockfun, semfunction unlockfun)
+void visual_sort::setup(Observable<int>* list, int size, semfunction lockfun, semfunction unlockfun)
 {
     _quit = false;
     _lock = lockfun;
@@ -50,17 +50,18 @@ void visual_sort::run_sort(void* par)
     
     _run_sort(par);
     
-    for(int i=0; cond(i<_size); i++)
+    for(int i=1; cond(i<_size); i++)
     {
     
 lock();
-parent -> hold(i);
-parent -> touch(i+1);
+_list[i-1].hold();
+_list[i].touch();
 unlock();
 
     }
     
 lock();
+_list[_size - 1].hold();
     _done = true;
 unlock();
 
@@ -73,29 +74,27 @@ void bubble_sort::_run_sort(void* par)
 {
     sort_handle* parent = (sort_handle*)par;
     bool swapped, done = false;
-    int tmp;
+    Observable<int> tmp;
     int i;
 
     for(i=_size-2; cond(i>=0 && !done); i--)
     {
+lock();
+_list[i + 1].unhold();
+_list[i + 2].hold();
+unlock();
+
         swapped = false;
         for(int j=0; cond(j<=i); j++)
         {
         
 lock();
-parent -> clear_held();
-parent -> hold(i+2);
-parent -> touch(j);
-
             if(_list[j] > _list[j+1])
             {
                 swapped = true;
                 tmp = move(_list[j]);
                 _list[j] = move(_list[j+1]);
                 _list[j+1] = move(tmp);
-
-parent -> touch(j+1);
-
             }
 
 unlock();
@@ -112,7 +111,8 @@ void bogo_sort::_run_sort(void* par)
 {
     sort_handle* parent = (sort_handle*)par;
     bool done = false;
-    int swaps, left, right, tmp;
+    int swaps, left, right;
+    Observable<int>tmp;
     while(cond(!done))
     {
         swaps = rand()%_size+_size;
@@ -126,8 +126,6 @@ lock();
             if(_list[i] > _list[i+1])
                 done = false;
                 
-parent -> touch(i);
-parent -> touch(i+1);
 unlock();
 
         }
@@ -141,10 +139,7 @@ lock();
             tmp = _list[left];
             _list[left] = _list[right];
             _list[right] = tmp;
-            
-parent -> touch(left);
-parent -> touch(right);
-            
+
 unlock();
         }
 parent -> add_cycle();
@@ -165,7 +160,7 @@ void merge_sort::_sort_section(int start, int size, void* par)
     {
         //scout << "Merging 1 item: " << start << endl;
 lock();
-parent -> hold(start);
+_list[start].tmpHold();
 parent -> add_cycle();
 unlock();
         return;   
@@ -178,11 +173,7 @@ unlock();
     _sort_section(start, middle-start, parent);
     _sort_section(middle, right-middle, parent);
     
-lock();
-parent -> clear_held();
-unlock();
-    
-    int* merged = new int[size];
+    Observable<int>* merged = new Observable<int>[size];
     int m = 0;
     int left = start;
     right = middle;
@@ -198,37 +189,26 @@ lock();
         {
             merged[m++] = _list[left++];
         }
-parent -> touch(left);
-parent -> touch(right);
 unlock();
     }
     
     while(cond(left < middle))
     {
 lock();
-parent -> touch(left);
-parent -> touch(right);
-        
         merged[m++] = _list[left++];
-        
 unlock();
      }
     
     while(cond(right < start+size))
     {
 lock();
-parent -> touch(left);
-parent -> touch(right);
-        
-        merged[m++] = _list[right++];
-        
+        merged[m++] = _list[right++]; 
 unlock();
     }
     
     for(int i=start, j=0; cond(j<size); i++, j++)
     {
 lock();
-parent -> touch(i);
         _list[i] = merged[j];
 unlock();
     }

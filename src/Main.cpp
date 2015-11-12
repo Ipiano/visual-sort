@@ -17,10 +17,17 @@ void initOpenGL();
 
 int main(int argc, char* argv[])
 {
-    if(argc < 2)
+    int sortNum = 500;
+    if (argc != 2)
     {
         cout << "Usage: visusort [num items]" << endl;
-        return 1;
+        if (argc > 2)
+            return 1;
+        cout << "No number given; defaulting to 1000";
+    }
+    else
+    {
+        sortNum = stoi(string(argv[1]));
     }
 
     srand(time(NULL));
@@ -31,7 +38,7 @@ int main(int argc, char* argv[])
     initOpenGL();
 
 
-    sorter -> reset(new merge_sort(), stoi(string(argv[1])), MAXVAL);
+    sorter -> reset(new merge_sort(), sortNum, MAXVAL);
 
     glutMainLoop();
 
