@@ -19,28 +19,31 @@ sort_handle::~sort_handle()
 
 void sort_handle::animate()
 {
-
+    semfunction forceunlock = bind(sort_handle::unlock_handle, (void*)this, true);
     if(!_running)
     {
         _running = true;
-        thread sortt (&visual_sort::run_sort, _sort, (void*)this);
+        thread sortt (&visual_sort::run_sort, _sort, (void*)this, forceunlock);
         sortt.detach();
     }
 }
 
 void sort_handle::reset(bool force)
 {   
-    if(force || !_running || (_running && _sort->finished()))
+    if(force || _sort->finished() || !_running)
     {
+        _sort_locked = false;
+        _currLoops = 0;
         if(force)
         {
-            handle_lock(this);
+            wait_for_sort(this, true);
             _sort->stop();
-            //handle_unlock(this);
+            unlock_sort(this, true);
+            wait_for_sort(this, true);
         }
-        semfunction lockfun = bind(sort_handle::sort_lock, (void*)this);
-        semfunction unlockfun = bind(sort_handle::sort_unlock, (void*)this);
-        
+        semfunction lockfun = bind(sort_handle::wait_for_handle, (void*)this);
+        semfunction unlockfun = bind(sort_handle::unlock_handle, (void*)this, false);
+
         _running = false;
         _cycles = 0;
         delete[] _list;
@@ -63,11 +66,13 @@ void sort_handle::reset(bool force)
             random_shuffle(_list, _list + _size);
         }
         _sort -> setup(_list, _size, lockfun, unlockfun);
+        _wait(100000000);
     }
 }
 
-void sort_handle::reset(visual_sort* sort, int items, int max, bool ordered, bool force)
+void sort_handle::reset(visual_sort* sort, int items, int max, int loops, bool ordered, bool force)
 {
+    _loops_per_draw = loops;
     _ordered = ordered;
     _sort = sort;
     _size = items;
@@ -81,7 +86,7 @@ void sort_handle::reset(visual_sort* sort, int items, int max, bool ordered, boo
 
 void sort_handle::draw(int width, int height, int x, int y)
 {
-handle_lock(this);
+wait_for_sort(this);
 
 float rgb[3];
 register double left=0, right;
@@ -116,28 +121,38 @@ register double wid = ((double)width / _size);
         glutBitmapCharacter( GLUT_BITMAP_8_BY_13, text[i] );
 
     
-
-handle_unlock(this);
+unlock_sort(this);
 }
 
-void sort_handle::handle_lock(sort_handle* ths)
+void sort_handle::unlock_sort(sort_handle* ths, bool forcelock)
 {
-    if (!ths->_sort->finished())
     (ths)->_sem1.notify();
 }
 
-void sort_handle::handle_unlock(sort_handle* ths)
+void sort_handle::wait_for_sort(sort_handle* ths, bool forcewait)
 {
-    if (!ths->_sort->finished())
+    if ((!ths->_sort->finished() && ths->_running) || forcewait)
     (ths)->_sem2.wait();
 }
 
-void sort_handle::sort_lock(void* ths)
+void sort_handle::wait_for_handle(void* ths)
 {
-    ((sort_handle*)ths)->_sem2.notify();
+    sort_handle* obj = ((sort_handle*)ths);
+    if (!obj->_sort_locked)
+        obj->_sem1.wait();
+    obj->_sort_locked = true;
+
 }
 
-void sort_handle::sort_unlock(void* ths)
+void sort_handle::unlock_handle(void* ths, bool force)
 {
-    ((sort_handle*)ths)->_sem1.wait();
+    sort_handle* obj = ((sort_handle*)ths);
+    if (obj->_currLoops == obj->_loops_per_draw || force)
+    {
+        obj->_sort_locked = false;
+        obj->_currLoops = 0;
+        obj->_sem2.notify();
+    }
+    else obj->_currLoops++;
+
 }

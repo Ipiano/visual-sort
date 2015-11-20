@@ -17,17 +17,28 @@ void initOpenGL();
 
 int main(int argc, char* argv[])
 {
-    int sortNum = 500;
-    if (argc != 2)
+    int sortNum = 2500;
+    int modNum = 50;
+    if (argc != 3 && argc != 2)
+        cout << "Usage: visusort [num items] <modifications per draw>" << endl;
+    if (argc > 3)
     {
-        cout << "Usage: visusort [num items]" << endl;
-        if (argc > 2)
-            return 1;
-        cout << "No number given; defaulting to 1000";
+        return 1;
+    }
+    else if (argc == 2)
+    {
+        cout << "No modification number given; defaulting to " << modNum << endl;
+        sortNum = stoi(string(argv[1]));
+    }
+    else if (argc == 1)
+    {
+        cout << "No number of items given; defaulting to " << sortNum << endl;
+        cout << "No modification number given; defaulting to " << modNum << endl;
     }
     else
     {
         sortNum = stoi(string(argv[1]));
+        modNum = stoi(string(argv[2]));
     }
 
     srand(time(NULL));
@@ -38,12 +49,14 @@ int main(int argc, char* argv[])
     initOpenGL();
 
 
-    sorter -> reset(new merge_sort(), sortNum, MAXVAL);
+    visual_sort* sort = new bogo_sort();
+    sorter -> reset(sort, sortNum, MAXVAL, modNum, false);
 
     glutMainLoop();
 
     denit_Program();
 
+    delete sort;
     return 0;
 }
 

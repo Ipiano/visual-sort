@@ -52,7 +52,8 @@ void keypress( unsigned char key, int x, int y )
 
 void idle()
 {
-    sorter -> animate();
-    sorter -> reset();
     glutPostRedisplay();
+
+    sorter -> reset();
+    sorter->animate();
 }
