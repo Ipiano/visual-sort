@@ -1,6 +1,7 @@
 #ifndef _OBSERVABLE_H_
 #define _OBSERVABLE_H_
 
+#include <string>
 template <class T>
 class Observable
 {
@@ -57,12 +58,14 @@ public:
     Observable(){ color = NNN; };
     ~Observable(){};
 
+    Observable(T obj){ color = NNN; _T = obj; };
+
     T rawVal(){ return _T; };
     Observable<T>& operator =(Observable<T>& right)
     {
         _T = right._T;
         _setColor(TCH);
-        right._setColor(TCH);
+        right._setColor(CMP);
         return *this;
     }
 
@@ -274,6 +277,96 @@ public:
         return _T >= right._T;
     }
 
+    //
+    bool operator &&(T& T_)
+    {
+        _setColor(CMP);
+        return _T && T_;
+    }
+    bool operator ||(T& T_)
+    {
+        _setColor(CMP);
+        return _T || T_;
+    }
+    bool operator ==(T& T_)
+    {
+        _setColor(CMP);
+        return _T == T_;
+    }
+    bool operator !=(T& T_)
+    {
+        _setColor(CMP);
+        return _T != T_;
+    }
+    bool operator <(T& T_)
+    {
+        _setColor(CMP);
+        return _T < T_;
+    }
+    bool operator >(T& T_)
+    {
+        _setColor(CMP);
+        return _T > T_;
+    }
+    bool operator <=(T& T_)
+    {
+        _setColor(CMP);
+        return _T <= T_;
+    }
+    bool operator >=(T& T_)
+    {
+        _setColor(CMP);
+        return _T >= T_;
+    }
+
+
+    //
+    friend bool operator &&(T& T_, Observable<T>& _T)
+    {
+        _T._setColor(CMP);
+        return _T._T && T_;
+    }
+    friend bool operator ||(T& T_, Observable<T>& _T)
+    {
+        _T._setColor(CMP);
+        return _T._T || T_;
+    }
+    friend bool operator ==(T& T_, Observable<T>& _T)
+    {
+        _T._setColor(CMP);
+        return _T._T == T_;
+    }
+    friend bool operator !=(T& T_, Observable<T>& _T)
+    {
+        _T._setColor(CMP);
+        return _T._T != T_;
+    }
+    friend bool operator <(T& T_, Observable<T>& _T)
+    {
+        _T._setColor(CMP);
+        return _T._T < T_;
+    }
+    friend bool operator >(T& T_, Observable<T>& _T)
+    {
+        _T._setColor(CMP);
+        return _T._T > T_;
+    }
+    friend bool operator <=(T& T_, Observable<T>& _T)
+    {
+        _T._setColor(CMP);
+        return _T._T <= T_;
+    }
+    friend bool operator >=(T& T_, Observable<T>& _T)
+    {
+        _T._setColor(CMP);
+        return _T._T >= T_;
+    }
+
     //Observable<T>& operator [](std::ptrdiff_t i);
+    friend std::string to_string(Observable<T> obs)
+    {
+        obs._setColor(TCH);
+        return to_string(obs._T);
+    }
 };
 #endif
