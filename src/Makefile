@@ -12,7 +12,7 @@
 LINK = g++
 
 # Turn on optimization and warnings, use c++11:
-CFLAGS = -std=c++11 -Wall -O
+CFLAGS = -std=c++11 -Wall -O -fpermissive
 CXXFLAGS = $(CFLAGS)
 
 # OpenGL/Mesa libraries for Linux

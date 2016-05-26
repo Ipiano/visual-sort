@@ -13,39 +13,51 @@ private:
     static const int TCH = 2;
     static const int NNN = 4;
     int color;
+    int _compares = 0;
+    int _changes = 0;
+    bool _changed = false;
 
     void _setColor(int col, bool overwrite = false)
     {
-        if (overwrite||col<color)
+        if (col == CMP) _compares++;
+        if (col == TCH) _changes++;
+        if (overwrite || col < color)
+        {
             color = col;
+            _changed = true;
+        }
     };
 public:
     void hold(){ _setColor(HLD); };
     void touch(){ _setColor(TCH); };
     void tmpHold(){ _setColor(THLD); };
     void unhold(){ _setColor(NNN, true); };
-    void getRGB(float& r, float& g, float& b)
+    int compares(){ return _compares; _compares = 0; };
+    int changes(){ return _changes; _changes = 0; };
+    bool getRGB(float& r, float& g, float& b)
     {
+        bool ret = _changed;
+        _changed = false;
         switch (color)
         {
         case CMP:
             r = 0.0;
             g = 0.0;
             b = 1.0;
-            color = NNN;
+            _setColor(NNN, true);
             break;
         case THLD:
         case HLD:
             r = 0.0;
             g = 1.0;
             b = 0.0;
-            if (color == THLD)color = NNN;
+            if (color == THLD)_setColor(NNN, true);
             break;
         case TCH:
             r = 1.0;
             g = 0.0;
             b = 0.0;
-            color = NNN;
+            _setColor(NNN, true);
             break;
         case NNN:
         default:
@@ -53,6 +65,7 @@ public:
             g = 1.0;
             b = 1.0;
         }
+        return ret;
     }
 
     Observable(){ color = NNN; };
@@ -61,7 +74,7 @@ public:
     Observable(T obj){ color = NNN; _T = obj; };
 
     T rawVal(){ return _T; };
-    Observable<T>& operator =(Observable<T>& right)
+    Observable<T>& operator =(const Observable<T>& right)
     {
         _T = right._T;
         _setColor(TCH);
@@ -367,6 +380,12 @@ public:
     {
         obs._setColor(TCH);
         return to_string(obs._T);
+    }
+
+    friend std::ostream& operator << (std::ostream& out, Observable<T>& obs)
+    {
+        obs._setColor(TCH);
+        return out << obs.rawVal();
     }
 };
 #endif

@@ -17,28 +17,45 @@ void initOpenGL();
 
 int main(int argc, char* argv[])
 {
-    int sortNum = 2500;
-    int modNum = 50;
-    if (argc != 3 && argc != 2)
-        cout << "Usage: visusort [num items] <modifications per draw>" << endl;
-    if (argc > 3)
+    int sortNum = 100;
+    int modNum = 5;
+    bool uniques = true;
+    visual_sort* sort;
+    if (argc > 4)
     {
+        cout << "Usage: visusort <num items> <modifications per draw> <sort identifier|-r/-b/-q/-m> <unique values|--t/--f>" << endl;
         return 1;
     }
-    else if (argc == 2)
+ 
+    for(int i=1, j=0; i<argc; i++)
     {
-        cout << "No modification number given; defaulting to " << modNum << endl;
-        sortNum = stoi(string(argv[1]));
-    }
-    else if (argc == 1)
-    {
-        cout << "No number of items given; defaulting to " << sortNum << endl;
-        cout << "No modification number given; defaulting to " << modNum << endl;
-    }
-    else
-    {
-        sortNum = stoi(string(argv[1]));
-        modNum = stoi(string(argv[2]));
+        if(argv[i][0] == '-')
+        {
+            if(argv[i][1]=='-')
+            {
+                uniques = (argv[i][2]=='t');
+            }
+            else
+            {
+                char ident = argv[i][1];
+                switch (ident)
+                {
+                    case 'r': sort = new radix_sort(); break;
+                    case 'b': sort = new bogo_sort(); break;
+                    case 'q': sort = new quick_sort(); break;
+                    case 'm': sort = new merge_sort(); break;
+                }
+            }
+        }
+        else
+        {
+            int n = stoi(argv[i]);
+            switch(j++)
+            {
+                case 0: sortNum=n;break;
+                case 1: modNum=n;break;
+            }
+        }
     }
 
     srand(time(NULL));
@@ -48,9 +65,7 @@ int main(int argc, char* argv[])
     glutInit( &argc, argv );
     initOpenGL();
 
-
-    visual_sort* sort = new bogo_sort();
-    sorter -> reset(sort, sortNum, MAXVAL, modNum, false);
+    sorter -> reset(sort, sortNum, MAXVAL, modNum, uniques);
 
     glutMainLoop();
 

@@ -88,6 +88,8 @@ void sort_handle::draw(int width, int height, int x, int y)
 {
 wait_for_sort(this);
 
+int changes = 0;
+int compares = 0;
 float rgb[3];
 register double left=0, right;
 double top;
@@ -99,7 +101,11 @@ register double wid = ((double)width / _size);
         right = left + wid;
         top = height * (curr->rawVal() / (double)_max) + y;
 
+        changes += curr->changes();
+        compares += curr->compares();
         curr->getRGB(rgb[0], rgb[1], rgb[2]);
+
+        
         glColor3fv(rgb);
         
         glBegin( GL_POLYGON );
@@ -114,11 +120,28 @@ register double wid = ((double)width / _size);
         curr++;
     }
     string text = "Cycles: " + to_string(_cycles);
-
     glColor3fv( TEXT );
     glRasterPos2i( x, y+height-13 );
     for(unsigned int i=0; i<text.size(); i++)
         glutBitmapCharacter( GLUT_BITMAP_8_BY_13, text[i] );
+
+    text = "Array Reads: " + to_string(compares);
+    glColor3fv(TEXT);
+    glRasterPos2i(x, y + height - 13*2);
+    for (unsigned int i = 0; i<text.size(); i++)
+        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, text[i]);
+
+    text = "Array Writes: " + to_string(changes);
+    glColor3fv(TEXT);
+    glRasterPos2i(x, y + height - 13*3);
+    for (unsigned int i = 0; i<text.size(); i++)
+        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, text[i]);
+
+    text = "Total Array Operations: " + to_string(changes+compares);
+    glColor3fv(TEXT);
+    glRasterPos2i(x, y + height - 13*4);
+    for (unsigned int i = 0; i<text.size(); i++)
+        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, text[i]);
 
     
 unlock_sort(this);
