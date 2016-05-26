@@ -90,7 +90,7 @@ class quick_sort : public visual_sort
 {
 private:
     void qsort(void* par, int left, int right);
-    void getPivot(int& pivot, int& pivleft, int& pivright, int left, int right);
+    void getPivot(int& mid, int& pivleft, int& pivright, int left, int right);
 
 protected:
     void _run_sort(void* par);

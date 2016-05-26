@@ -341,7 +341,7 @@ void quick_sort::_run_sort(void* par)
 }
 
 template <class T> 
-T median(T a, T b, T c)
+T median(T& a, T& b, T& c)
 {
     if ((a < b && a > c) || (a < c && a > b))
         return a;
@@ -351,45 +351,53 @@ T median(T a, T b, T c)
         return c;
 }
 
-void quick_sort::getPivot(int& pivot, int& pivleft, int& pivright, int left, int right)
+void quick_sort::getPivot(int& mid, int& pivleft, int& pivright, int left, int right)
 {
     if (pivleft == -1)
     {
-        int mid = (left + right) / 2;
-        pivot = median(_list[mid - 1].rawVal(), _list[mid].rawVal(), _list[mid + 1].rawVal());
-
-        if (_list[mid - 1] == pivot) pivleft = pivright = mid - 1;
-        else if (_list[mid + 1] == pivot) pivleft = pivright = mid + 1;
-        else pivleft = pivright = mid;
+        mid = (left + right) / 2;
+        int pivot;
+        if (right - left > 5)
+        {
+            pivot = median(_list[mid - 1], _list[mid], _list[mid + 1]).rawVal();
+            if (mid - 1 >= 0 && _list[mid - 1] == pivot) pivleft = pivright = mid = mid - 1;
+            else if (_list[mid + 1] == pivot) pivleft = pivright = mid = mid + 1;
+            else pivleft = pivright = mid;
+        }
+        else
+            pivleft = pivright = mid;
     }
     else
     {
-        int newmid = (left + right) / 2;
-        int sames = pivright - pivleft+1;
-        int newLeft = newmid - sames / 2;
+        mid = (left + right) / 2;
+        int sames = pivright - pivleft;
+        int newLeft, newRight = newLeft = mid - sames / 2;
         if (newLeft < 0) cout << "Error" << endl;
         int i;
         for (i = pivleft; i <= pivright; i++)
         {
-            swap(_list[i], _list[newLeft++]);
+            swap(_list[i], _list[newRight++]);
         }
-        pivleft = newmid - (sames-1);
-        pivright = newmid + (sames-1);
+        pivleft = newLeft;
+        pivright = newRight-1;
     }
+    while (pivleft > left && _list[pivleft - 1] == _list[pivleft])pivleft--;
+    while (pivright < right && _list[pivright + 1] == _list[pivright])pivright++;
 }
 
 void quick_sort::qsort(void* par, int left, int right)
 {
+    //cout << "Left: " << left << " : Right: " << right << endl;
     int pivot;
     int origleft = left, origright = right;
     int pivleft = -1, pivright = -1;
     int mid;
     Observable<int> low = _list[left], high = _list[right];
 
-    if (right - left < 3)
+    if (right - left < 2)
     {
         wait();
-        if (right - left == 2)
+        if (right - left == 1)
         {
             if (_list[right] < _list[left])
             {
@@ -400,14 +408,25 @@ void quick_sort::qsort(void* par, int left, int right)
         return;
     }
 
-    getPivot(pivot, pivleft, pivright, left, right);
+    /*
+    int templeft = left;
+    while (_list[templeft++] == _list[right] && templeft != right);
+    if (templeft == right)return;
+    */
 
-    mid = (pivleft + pivright) / 2;
+    getPivot(mid, pivleft, pivright, left, right);
+    if (right < pivright)right = pivright;
+    if (left > pivleft) left = pivleft;
+    pivot = _list[mid].rawVal();
+
+    //cout << pivleft << "-" << pivright << " -> " << pivot << endl;
+
     _list[mid].hold();
     while (left < pivleft && right > pivright)
     {
         while (_list[left] <= pivot && left <= pivleft)
         {
+            //cout << left << " -> " << _list[left] << " : " << pivleft << "-" << pivright << " -> " << pivot << " : " << right << " -> " << _list[right] << endl;
             wait();
             if (_list[left] > high)
                 high = _list[left];
@@ -417,14 +436,16 @@ void quick_sort::qsort(void* par, int left, int right)
             if (left == pivleft)
             {
                 _list[mid].unhold();
-                getPivot(pivot, pivleft, pivright, left, right);
-                mid = (pivleft + pivright) / 2;
+                getPivot(mid, pivleft, pivright, left, right);
+                pivot = _list[mid].rawVal();
                 _list[mid].hold();
+                if (left == pivleft)break;
+                left--;
             }
 
             if (_list[left] == pivot)
-                swap(_list[left], _list[pivleft--]);
-            
+                swap(_list[left], _list[--pivleft]);
+            else
                 left++;
 
             unlock();
@@ -432,6 +453,8 @@ void quick_sort::qsort(void* par, int left, int right)
 
         while (_list[right] >= pivot && right >= pivright)
         {
+            //cout << left << " -> " << _list[left] << " : " << pivleft << "-" << pivright << " -> " << pivot << " : " << right << " -> " << _list[right] << endl;
+
             wait();
             if (_list[right] > high)
                 high = _list[right];
@@ -441,24 +464,44 @@ void quick_sort::qsort(void* par, int left, int right)
             if (right == pivright)
             {
                 _list[mid].unhold();
-                getPivot(pivot, pivleft, pivright, left, right);
-                mid = (pivleft + pivright) / 2;
+                getPivot(mid, pivleft, pivright, left, right);
+                pivot = _list[mid].rawVal();
                 _list[mid].hold();
+
+                if (right == pivright)break;
+                right++;
             }
 
             if (_list[right] == pivot)
-                swap(_list[right], _list[pivright++]);
-            
-            right--;
+                swap(_list[right], _list[++pivright]);
+            else
+                right--;
 
             unlock();
         }
 
-        swap(_list[left], _list[right]);
+        if (_list[left] != _list[right])
+        {
+            //if(left == pivleft){pivleft++; pivright++;}
+            //if(right == pivright){pivleft--; pivright--;}
+            swap(_list[left], _list[right]);
+        }
+        else if (_list[left] > pivot)
+        {
+            swap(_list[left], _list[pivright--]);
+            pivleft--;
+        }
+        else if (_list[right] < pivot)
+        {
+            swap(_list[right], _list[pivleft++]);
+            pivright++;
+        }
     }
     _list[mid].unhold();
 
     if (high == low) return;
-    qsort(par, origleft, pivleft-1);
-    qsort(par, pivright+1, origright);
+    //cout << "L -> ";
+    qsort(par, origleft, pivleft);
+    //cout << "R -> ";
+    qsort(par, pivright, origright);
 }

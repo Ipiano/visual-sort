@@ -52,6 +52,7 @@ void keypress( unsigned char key, int x, int y )
 
 void idle()
 {
+    //cin.get();
     glutPostRedisplay();
 
     sorter -> reset();
