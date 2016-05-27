@@ -1,4 +1,5 @@
 #include <sstream>
+#include <string>
 #include <iostream>
 #include <random>
 #include <ctime>
@@ -17,13 +18,14 @@ void initOpenGL();
 
 int main(int argc, char* argv[])
 {
+    int max = 500;
     int sortNum = 100;
     int modNum = 5;
     bool uniques = true;
-    visual_sort* sort;
-    if (argc > 4)
+    visual_sort* sort = new merge_sort();
+    if (argc > 5)
     {
-        cout << "Usage: visusort <num items> <modifications per draw> <sort identifier|-r/-b/-q/-m> <unique values|--t/--f>" << endl;
+        cout << "Usage: visusort <num items> <modifications per draw> <range> <sort identifier|-r/-b/-bb/-q/-m> <unique values|--t/--f>" << endl;
         return 1;
     }
  
@@ -37,14 +39,13 @@ int main(int argc, char* argv[])
             }
             else
             {
-                char ident = argv[i][1];
-                switch (ident)
-                {
-                    case 'r': sort = new radix_sort(); break;
-                    case 'b': sort = new bogo_sort(); break;
-                    case 'q': sort = new quick_sort(); break;
-                    case 'm': sort = new merge_sort(); break;
-                }
+                string ident = string(argv[i]).substr(1);
+                if(ident == "r")sort = new radix_sort();
+                if(ident == "b")sort = new bubble_sort();
+                if(ident == "bb")sort = new bogo_sort();
+                if(ident == "q")sort = new quick_sort();
+                if(ident == "m")sort = new merge_sort();
+                
             }
         }
         else
@@ -54,6 +55,7 @@ int main(int argc, char* argv[])
             {
                 case 0: sortNum=n;break;
                 case 1: modNum=n;break;
+                case 2: max=n;break;
             }
         }
     }
@@ -65,7 +67,7 @@ int main(int argc, char* argv[])
     glutInit( &argc, argv );
     initOpenGL();
 
-    sorter -> reset(sort, sortNum, MAXVAL, modNum, uniques);
+    sorter -> reset(sort, sortNum, max, modNum, uniques);
 
     glutMainLoop();
 
