@@ -4,7 +4,6 @@
 
 const int ESCAPE = 27;
 const int ITEMS = 4;
-const int MAXVAL = 500;
 const float FREE[] = {1,1,1};
 const float ACCESS[] = {1,0,0};
 const float HOLD[] = {0,1,0};
