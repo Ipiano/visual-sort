@@ -16,26 +16,40 @@ void init_Program();
 void denit_Program();
 void initOpenGL();
 
+void usage()
+{
+    cout << "Usage: visusort <num items> <modifications per draw> <range> <sort identifier|-r/-b/-bb/-q/-m> <unique values|--t/--f>, <visualization|--v[n]>" << endl;
+}
+
 int main(int argc, char* argv[])
 {
     int max = 500;
     int sortNum = 100;
     int modNum = 5;
+    int visualization = 0;
     bool uniques = true;
     visual_sort* sort = new merge_sort();
-    if (argc > 5)
+    if (argc > 7)
     {
-        cout << "Usage: visusort <num items> <modifications per draw> <range> <sort identifier|-r/-b/-bb/-q/-m> <unique values|--t/--f>" << endl;
+        usage();
         return 1;
     }
  
     for(int i=1, j=0; i<argc; i++)
     {
+        if(string(argv[i]) == "help")
+        {
+            usage();
+            return 0;
+        }
         if(argv[i][0] == '-')
         {
             if(argv[i][1]=='-')
             {
-                uniques = (argv[i][2]=='t');
+                if(argv[i][2] == 'v')
+                    visualization = stoi(string(argv[i]).substr(3));
+                else
+                    uniques = (argv[i][2]=='t');
             }
             else
             {
@@ -67,7 +81,7 @@ int main(int argc, char* argv[])
     glutInit( &argc, argv );
     initOpenGL();
 
-    sorter -> reset(sort, sortNum, max, modNum, uniques);
+    sorter -> reset(sort, sortNum, max, modNum, uniques, false, visualization);
 
     glutMainLoop();
 

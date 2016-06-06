@@ -6,9 +6,11 @@
 #include <cmath>
 #include <functional>
 #include <algorithm>
+#include <GL/freeglut.h>
 #include "Sorts.h"
 #include "SortHandler.h"
 #include "Constants.h"
+#include "Globals.h"
 
 using namespace std;
 #define while(a) while(a) if(_quit){ kill(); break;} else
@@ -69,6 +71,58 @@ wait();
     _done = true;
 force();
 
+}
+
+void visual_sort::draw(int& changes, int& compares, int width, int height, int _max, int x, int y, int method)
+{
+    float rgb[3];
+    register double left=0, right;
+    double top;
+    register double bottom = y;
+    register Observable<int>* curr = _list;
+    register double wid = ((double)width / _size);
+    
+    for(int i=0; i<_size; i++)
+    {
+        right = left + wid;
+        top = height * (curr->rawVal() / (double)_max) + y;
+
+        changes += curr->changes();
+        compares += curr->compares();
+        curr->getRGB(rgb[0], rgb[1], rgb[2]);
+
+        
+        glColor3fv(rgb);
+        
+        glBegin( GL_POLYGON );
+        switch(method)
+        {
+            case 1:
+                glVertex2f( left , top-wid/2 );
+                glVertex2f( left, top+wid/2);
+                glVertex2f( right, top+wid/2);
+                glVertex2f( right, top-wid/2 );
+                break;
+            case 2:
+                glVertex2f( left , screen_Height/2-top/2 );
+                glVertex2f( left, screen_Height/2+top/2);
+                glVertex2f( right, screen_Height/2+top/2);
+                glVertex2f( right, screen_Height/2-top/2 );
+                break;
+            case 0:
+            default:
+                glVertex2f( left , bottom );
+                glVertex2f( left, top);
+                glVertex2f( right, top);
+                glVertex2f( right, bottom );
+                break;
+        }
+        glEnd();
+    
+        left = right;
+        curr++;
+    }
+    glFlush();
 }
 
 bubble_sort::bubble_sort(){};

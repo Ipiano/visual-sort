@@ -23,6 +23,8 @@ protected:
     bool _ordered = true;
     int _loops_per_draw = 1;
     int _currLoops = 0;
+    int _visual = 0;
+    bool _randomvis = false;
 
     bool _sort_locked;
     semaphore _sem1;
@@ -45,7 +47,7 @@ public:
     void animate();
     void reset(bool force = false);
     bool complete(){return _sort -> finished();};
-    void reset(visual_sort* sort, int items, int max, int loops = 1, bool ordered = true, bool force = false);
+    void reset(visual_sort* sort, int items, int max, int loops = 1, bool ordered = true, bool force = false, int visual = 0);
     void draw(int width, int height, int x=0, int y=0);
     void add_cycle(){_cycles++;};
 };
