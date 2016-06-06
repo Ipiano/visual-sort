@@ -65,18 +65,25 @@ void sort_handle::reset(bool force)
             }
             random_shuffle(_list, _list + _size);
         }
+        
+        if(!force)
+            if(_visual < 0) _randomvis = true;
+            
+        if(_randomvis) _visual = rand()%_sort->visual_count();
+        
         _sort -> setup(_list, _size, lockfun, unlockfun);
         _wait(100000000);
     }
 }
 
-void sort_handle::reset(visual_sort* sort, int items, int max, int loops, bool ordered, bool force)
+void sort_handle::reset(visual_sort* sort, int items, int max, int loops, bool ordered, bool force, int visual)
 {
     _loops_per_draw = loops;
     _ordered = ordered;
     _sort = sort;
     _size = items;
     _max = max;
+    _visual = visual;
     if (ordered)
     {
         _max = _size;
@@ -86,39 +93,13 @@ void sort_handle::reset(visual_sort* sort, int items, int max, int loops, bool o
 
 void sort_handle::draw(int width, int height, int x, int y)
 {
-wait_for_sort(this);
+    wait_for_sort(this);
 
-int changes = 0;
-int compares = 0;
-float rgb[3];
-register double left=0, right;
-double top;
-register double bottom = y;
-register Observable<int>* curr = _list;
-register double wid = ((double)width / _size);
-    for(int i=0; i<_size; i++)
-    {
-        right = left + wid;
-        top = height * (curr->rawVal() / (double)_max) + y;
-
-        changes += curr->changes();
-        compares += curr->compares();
-        curr->getRGB(rgb[0], rgb[1], rgb[2]);
-
-        
-        glColor3fv(rgb);
-        
-        glBegin( GL_POLYGON );
-            glVertex2f( left , bottom );
-            glVertex2f( left, top);
-            glVertex2f( right, top);
-            glVertex2f( right, bottom );
-        glEnd();
+    int changes = 0;
+    int compares = 0;
     
-        glFlush();
-        left = right;
-        curr++;
-    }
+    _sort->draw(changes, compares, width, height, _max, x, y, _visual);
+
     string text = "Cycles: " + to_string(_cycles);
     glColor3fv( TEXT );
     glRasterPos2i( x, y+height-13 );

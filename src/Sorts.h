@@ -33,6 +33,8 @@ public:
     void run_sort(void* par, semfunction force);
     bool started(){return _started;};
     void stop();
+    void draw(int& changes, int& compares, int width, int height, int _max, int x, int y, int method = 0);
+    int visual_count(){return 3;}
 };
 
 class bubble_sort : public visual_sort
