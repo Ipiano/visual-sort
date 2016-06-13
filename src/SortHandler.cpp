@@ -100,6 +100,7 @@ void sort_handle::draw(int width, int height, int x, int y)
     
     _sort->draw(changes, compares, width, height, _max, x, y, _visual);
 
+    /*
     string text = "Cycles: " + to_string(_cycles);
     glColor3fv( TEXT );
     glRasterPos2i( x, y+height-13 );
@@ -124,7 +125,7 @@ void sort_handle::draw(int width, int height, int x, int y)
     for (unsigned int i = 0; i<text.size(); i++)
         glutBitmapCharacter(GLUT_BITMAP_8_BY_13, text[i]);
 
-    
+    */
 unlock_sort(this);
 }
 
