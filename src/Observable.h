@@ -74,6 +74,7 @@ public:
     Observable(T obj){ color = NNN; _T = obj; };
 
     T rawVal(){ return _T; };
+#ifdef __unix__
     Observable<T>& operator =(const Observable<T>& right)
     {
         _T = right._T;
@@ -81,6 +82,16 @@ public:
         right._setColor(CMP);
         return *this;
     }
+#endif
+#ifdef _WIN32 || _WIN64
+    Observable<T>& operator =(Observable<T>& right)
+    {
+        _T = right._T;
+        _setColor(TCH);
+        right._setColor(CMP);
+        return *this;
+    }
+#endif
 
     Observable<T>& operator =(T right)
     {
