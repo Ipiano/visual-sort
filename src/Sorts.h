@@ -24,6 +24,7 @@ protected:
     void wait();
     void unlock();
     virtual void kill();
+    virtual void getColor(float rgb[3], int item){}
 
 public:
     visual_sort();
@@ -100,6 +101,18 @@ protected:
 public:
     quick_sort();
     ~quick_sort();
+};
+
+class heap_sort : public visual_sort
+{
+private:
+    int end;
+    void hsort(void* par);
+    void sift(int start);
+    void build();
+protected:
+    void _run_sort(void* par);
+    void getColor(float rgb[3], int item);
 };
 
 #endif

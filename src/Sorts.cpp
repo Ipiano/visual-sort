@@ -90,6 +90,7 @@ void visual_sort::draw(int& changes, int& compares, int width, int height, int _
         changes += curr->changes();
         compares += curr->compares();
         curr->getRGB(rgb[0], rgb[1], rgb[2]);
+        getColor(rgb, i);
 
         
         glColor3fv(rgb);
@@ -560,4 +561,91 @@ void quick_sort::qsort(void* par, int left, int right)
     qsort(par, origleft, pivleft);
     //cout << "R -> ";
     qsort(par, pivright, origright);
+}
+
+void heap_sort::_run_sort(void* par)
+{
+    hsort(par);
+}
+
+void heap_sort::hsort(void* par)
+{
+    end = _size-1;
+    Observable<int> tmp;
+
+    build();
+
+    _list[end].hold();
+    while(end > 0)
+    {
+    ((sort_handle*)par)->add_cycle();
+    wait();
+        tmp = _list[end];
+        _list[end] = _list[0];
+        _list[0] = tmp;
+    unlock();
+        _list[end--].unhold();
+        _list[end].hold();
+        sift(0);
+    }
+}
+
+void heap_sort::build()
+{
+    int start = _size-1;
+    //cout << "Build" << endl;
+    while(start >= 0)
+    {
+        sift(start);
+        start--;
+    }
+}
+
+void heap_sort::sift(int start)
+{
+    int root = start;
+    int child, swap;
+    Observable<int> tmp;
+    //cout << "Sift" << endl;
+    _list[root].hold();
+    while(root*2 < end)
+    {
+    wait();
+        child = root*2;
+        swap = root;
+        if(_list[swap] < _list[child])
+            swap = child;
+        if(child+1 <= end && _list[swap] < _list[child+1])
+            swap = child+1;
+        if(swap == root)
+        {
+            _list[root].unhold();
+            return;
+        }
+        else
+        {
+            tmp = _list[root];
+            _list[root] = _list[swap];
+            _list[swap] = tmp;
+            _list[root].unhold();
+            root = swap;
+            _list[root].hold();
+        }
+    unlock();
+    }
+    _list[root].unhold();
+}
+
+void heap_sort::getColor(float rgb[3], int item)
+{
+    if(item >= end) return;
+    const float start[3] = {248.0/255, 255.0/255, 108.0/255};
+    if(rgb[0] > 0.9 && rgb[1] > 0.9 && rgb[2] > 0.9)
+    {
+        int height = log(_size)+1;
+        int level = log(item);
+        rgb[0] = start[0] - start[0]/height*level;
+        rgb[1] = start[1] - start[1]/height*level;
+        rgb[2] = start[2] - start[2]/height*level;
+    }
 }
