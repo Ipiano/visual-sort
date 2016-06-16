@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
                 if(ident == "bb")sort = new bogo_sort();
                 if(ident == "q")sort = new quick_sort();
                 if(ident == "m")sort = new merge_sort();
-                
+                if(ident == "h")sort = new heap_sort();
             }
         }
         else
