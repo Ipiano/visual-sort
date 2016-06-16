@@ -441,6 +441,8 @@ void quick_sort::getPivot(int& mid, int& pivleft, int& pivright, int left, int r
 
 void quick_sort::qsort(void* par, int left, int right)
 {
+    ((sort_handle*)par)->add_cycle();
+    
     //cout << "Left: " << left << " : Right: " << right << endl;
     int pivot;
     int origleft = left, origright = right;
