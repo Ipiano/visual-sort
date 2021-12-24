@@ -1,0 +1,5 @@
+src/visusort
+build
+
+*.o
+*.a
