@@ -91,11 +91,11 @@ void visual_sort::run_sort(void* par, semfunction force)
 void visual_sort::draw(int& changes, int& compares, int width, int height, int _max, int x, int y, int method)
 {
     float rgb[3];
-    register double left = 0, right;
+    double left = 0, right;
     double top;
-    register double bottom         = y;
-    register Observable<int>* curr = _list;
-    register double wid            = ((double)width / _size);
+    double bottom         = y;
+    Observable<int>* curr = _list;
+    double wid            = ((double)width / _size);
 
     for (int i = 0; i < _size; i++)
     {
