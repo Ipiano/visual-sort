@@ -411,14 +411,9 @@ void quick_sort::_run_sort(void* par)
     qsort(par, 0, _size - 1);
 }
 
-template <class T> T median(T& a, T& b, T& c)
+template <class T> T median(const T& a, const T& b, const T& c)
 {
-    if ((a < b && a > c) || (a < c && a > b))
-        return a;
-    if ((b < a && b > c) || (b < c && b > a))
-        return b;
-    if ((c < a && c > b) || (c < b && c > a))
-        return c;
+    return (a >= b && b >= c) ? c : ((b >= a && a >= c) ? a : c);
 }
 
 void quick_sort::getPivot(int& mid, int& pivleft, int& pivright, int left, int right)
