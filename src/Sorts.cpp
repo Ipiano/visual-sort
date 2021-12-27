@@ -1,35 +1,53 @@
-#include <vector>
-#include <iostream>
-#include <random>
-#include <thread>
-#include <mutex>
-#include <cmath>
-#include <functional>
-#include <algorithm>
-#include <GL/freeglut.h>
 #include "Sorts.h"
-#include "SortHandler.h"
+
 #include "Constants.h"
 #include "Globals.h"
+#include "SortHandler.h"
+
+#include <GL/freeglut.h>
+
+#include <algorithm>
+#include <cmath>
+#include <functional>
+#include <iostream>
+#include <mutex>
+#include <random>
+#include <thread>
+#include <vector>
 
 using namespace std;
-#define while(a) while(a) if(_quit){ kill(); break;} else
-#define for(a) for(a) if (_quit){ kill(); break;} else
 
-visual_sort::visual_sort(){};
-visual_sort::~visual_sort(){};
+// clang-format off
+#define while(a)             \
+    while (a) if (_quit)     \
+    {                        \
+        kill();              \
+        break;               \
+    }                        \
+    else
+#define for(a)             \
+    for (a) if (_quit)     \
+    {                      \
+        kill();            \
+        break;             \
+    }                      \
+    else
+// clang-format on
+
+visual_sort::visual_sort() {};
+visual_sort::~visual_sort() {};
 void visual_sort::setup(Observable<int>* list, int size, semfunction lockfun, semfunction unlockfun)
 {
-    _quit = false;
-    _lock = lockfun;
-    _unlock = unlockfun;
-    _done = false;
-    _list = list;
-    _size = size;
+    _quit    = false;
+    _lock    = lockfun;
+    _unlock  = unlockfun;
+    _done    = false;
+    _list    = list;
+    _size    = size;
     _started = false;
 }
 
-void visual_sort::kill(){};
+void visual_sort::kill() {};
 
 void visual_sort::wait()
 {
@@ -46,88 +64,84 @@ void visual_sort::stop()
     _quit = true;
 }
 
-
 void visual_sort::run_sort(void* par, semfunction force)
 {
-    _started = true;
+    _started            = true;
     sort_handle* parent = (sort_handle*)par;
-    
+
     _run_sort(par);
     int i;
-    for(i=1; i<_size; i++)
+    for (i = 1; i < _size; i++)
     {
-    
-wait();
-_list[i-1].hold();
-_list[i].touch();
-unlock();
 
+        wait();
+        _list[i - 1].hold();
+        _list[i].touch();
+        unlock();
     }
 
-wait();
-_list[_size - 1].hold();
-force();
-wait();
+    wait();
+    _list[_size - 1].hold();
+    force();
+    wait();
     _done = true;
-force();
-
+    force();
 }
 
 void visual_sort::draw(int& changes, int& compares, int width, int height, int _max, int x, int y, int method)
 {
     float rgb[3];
-    register double left=0, right;
+    register double left = 0, right;
     double top;
-    register double bottom = y;
+    register double bottom         = y;
     register Observable<int>* curr = _list;
-    register double wid = ((double)width / _size);
-    
-    for(int i=0; i<_size; i++)
+    register double wid            = ((double)width / _size);
+
+    for (int i = 0; i < _size; i++)
     {
         right = left + wid;
-        top = height * (curr->rawVal() / (double)_max) + y;
+        top   = height * (curr->rawVal() / (double)_max) + y;
 
         changes += curr->changes();
         compares += curr->compares();
         curr->getRGB(rgb[0], rgb[1], rgb[2]);
         getColor(rgb, i);
 
-        
         glColor3fv(rgb);
-        
-        glBegin( GL_POLYGON );
-        switch(method)
+
+        glBegin(GL_POLYGON);
+        switch (method)
         {
-            case 1:
-                glVertex2f( left , top-wid/2 );
-                glVertex2f( left, top+wid/2);
-                glVertex2f( right, top+wid/2);
-                glVertex2f( right, top-wid/2 );
-                break;
-            case 2:
-                glVertex2f( left , screen_Height/2-top/2 );
-                glVertex2f( left, screen_Height/2+top/2);
-                glVertex2f( right, screen_Height/2+top/2);
-                glVertex2f( right, screen_Height/2-top/2 );
-                break;
-            case 0:
-            default:
-                glVertex2f( left , bottom );
-                glVertex2f( left, top);
-                glVertex2f( right, top);
-                glVertex2f( right, bottom );
-                break;
+        case 1:
+            glVertex2f(left, top - wid / 2);
+            glVertex2f(left, top + wid / 2);
+            glVertex2f(right, top + wid / 2);
+            glVertex2f(right, top - wid / 2);
+            break;
+        case 2:
+            glVertex2f(left, screen_Height / 2 - top / 2);
+            glVertex2f(left, screen_Height / 2 + top / 2);
+            glVertex2f(right, screen_Height / 2 + top / 2);
+            glVertex2f(right, screen_Height / 2 - top / 2);
+            break;
+        case 0:
+        default:
+            glVertex2f(left, bottom);
+            glVertex2f(left, top);
+            glVertex2f(right, top);
+            glVertex2f(right, bottom);
+            break;
         }
         glEnd();
-    
+
         left = right;
         curr++;
     }
     glFlush();
 }
 
-bubble_sort::bubble_sort(){};
-bubble_sort::~bubble_sort(){};
+bubble_sort::bubble_sort() {};
+bubble_sort::~bubble_sort() {};
 
 void bubble_sort::_run_sort(void* par)
 {
@@ -141,39 +155,39 @@ void bubble_sort::bsort(void* par)
     Observable<int> tmp;
     int i;
 
-    for(i=_size-2; i>=0 && !done; i--)
+    for (i = _size - 2; i >= 0 && !done; i--)
     {
         wait();
         if (i < _size - 3)
             _list[i + 3].unhold();
-        if (i < _size-2)
+        if (i < _size - 2)
             _list[i + 2].hold();
         unlock();
 
         swapped = false;
         int j;
-        for(j=0; j<=i; j++)
+        for (j = 0; j <= i; j++)
         {
-        
-wait();
-            if(_list[j] > _list[j+1])
+
+            wait();
+            if (_list[j] > _list[j + 1])
             {
-                swapped = true;
-                tmp = move(_list[j]);
-                _list[j] = move(_list[j+1]);
-                _list[j+1] = move(tmp);
+                swapped      = true;
+                tmp          = move(_list[j]);
+                _list[j]     = move(_list[j + 1]);
+                _list[j + 1] = move(tmp);
             }
 
-unlock();
-
+            unlock();
         }
-        if(!swapped) done = true;
-parent -> add_cycle();
+        if (!swapped)
+            done = true;
+        parent->add_cycle();
     }
 }
 
-bogo_sort::bogo_sort(){};
-bogo_sort::~bogo_sort(){};
+bogo_sort::bogo_sort() {};
+bogo_sort::~bogo_sort() {};
 void bogo_sort::_run_sort(void* par)
 {
     bsort(par);
@@ -181,42 +195,42 @@ void bogo_sort::_run_sort(void* par)
 void bogo_sort::bsort(void* par)
 {
     sort_handle* parent = (sort_handle*)par;
-    bool done = false;
+    bool done           = false;
     int swaps, left, right;
-    Observable<int>tmp;
-    while(!done)
+    Observable<int> tmp;
+    while (!done)
     {
-        swaps = rand()%_size+_size;
-        
+        swaps = rand() % _size + _size;
+
         done = true;
         int i;
-        for(i=0; i<_size-1 && done; i++)
+        for (i = 0; i < _size - 1 && done; i++)
         {
             wait();
-            
-            if(_list[i] > _list[i+1])
+
+            if (_list[i] > _list[i + 1])
                 done = false;
-                
+
             unlock();
         }
-        for(int i=0; i<swaps && !done; i++)
+        for (int i = 0; i < swaps && !done; i++)
         {
             wait();
-            
-            left = rand()%_size;
-            right = rand()%_size;
-            
-            tmp = _list[left];
-            _list[left] = _list[right];
+
+            left  = rand() % _size;
+            right = rand() % _size;
+
+            tmp          = _list[left];
+            _list[left]  = _list[right];
             _list[right] = tmp;
 
             unlock();
         }
-            parent -> add_cycle();
+        parent->add_cycle();
     }
 }
 
-merge_sort::merge_sort(){};
+merge_sort::merge_sort() {};
 merge_sort::~merge_sort()
 {
     delete[] _merged;
@@ -237,33 +251,34 @@ void merge_sort::_run_sort(void* par)
 
 void merge_sort::msort(int start, int size, void* par)
 {
-    if (_quit)return;
+    if (_quit)
+        return;
     sort_handle* parent = (sort_handle*)par;
-    if(size == 1)
+    if (size == 1)
     {
         //scout << "Merging 1 item: " << start << endl;
-wait();
-_list[start].tmpHold();
-parent -> add_cycle();
-unlock();
-        return;   
+        wait();
+        _list[start].tmpHold();
+        parent->add_cycle();
+        unlock();
+        return;
     }
 
-    int right = start+size;
-    int middle = start+size/2;
-    
+    int right  = start + size;
+    int middle = start + size / 2;
+
     //cout << "Splitting " << start << ": " << size << " into " << start << ": " << middle-start << " / " << middle << ": " << right-middle << endl;
-    msort(start, middle-start, parent);
-    msort(middle, right-middle, parent);
-    
-    int m = 0;
+    msort(start, middle - start, parent);
+    msort(middle, right - middle, parent);
+
+    int m    = 0;
     int left = start;
-    right = middle;
-    
-    while(left < middle && right < start+size)
+    right    = middle;
+
+    while (left < middle && right < start + size)
     {
-wait();
-        if(_list[left] > _list[right])
+        wait();
+        if (_list[left] > _list[right])
         {
             _merged[m++] = _list[right++];
         }
@@ -271,37 +286,37 @@ wait();
         {
             _merged[m++] = _list[left++];
         }
-unlock();
+        unlock();
     }
-    
-    while(left < middle)
+
+    while (left < middle)
     {
-wait();
+        wait();
         _merged[m++] = _list[left++];
-unlock();
-     }
-    
-    while(right < start+size)
-    {
-wait();
-        _merged[m++] = _list[right++]; 
-unlock();
+        unlock();
     }
-    
+
+    while (right < start + size)
+    {
+        wait();
+        _merged[m++] = _list[right++];
+        unlock();
+    }
+
     int j = 0;
     int i;
     for (i = start; j < size; i++)
     {
-wait();
+        wait();
         _list[i] = _merged[j];
-unlock();
+        unlock();
         j++;
     }
-    
-parent -> add_cycle();
+
+    parent->add_cycle();
 }
 
-radix_sort::radix_sort(){};
+radix_sort::radix_sort() {};
 radix_sort::~radix_sort()
 {
     delete[] _copy;
@@ -333,12 +348,12 @@ void radix_sort::_run_sort(void* par)
 void radix_sort::rsort(void* par)
 {
     sort_handle* parent = (sort_handle*)par;
-    _copy = new Observable<int>[_size];
-    bool done = false;
-    int radix = 1;
+    _copy               = new Observable<int>[_size];
+    bool done           = false;
+    int radix           = 1;
     int buckets[10];
     int num;
-    int maxRadix = -1;
+    int maxRadix  = -1;
     bool foundEnd = false;
     while (!done)
     {
@@ -364,13 +379,13 @@ void radix_sort::rsort(void* par)
         foundEnd = true;
 
         int lastNum = buckets[0];
-        int tmp = 0;
-        buckets[0] = 0;
+        int tmp     = 0;
+        buckets[0]  = 0;
         for (int i = 1; i < 10; i++)
         {
-            tmp = buckets[i];
+            tmp        = buckets[i];
             buckets[i] = buckets[i - 1] + lastNum;
-            lastNum = tmp;
+            lastNum    = tmp;
         }
 
         for (int i = 0; i < _size; i++)
@@ -382,21 +397,21 @@ void radix_sort::rsort(void* par)
             unlock();
         }
         radix++;
-        if (radix > maxRadix) done = true;
+        if (radix > maxRadix)
+            done = true;
         parent->add_cycle();
     }
 }
 
-quick_sort::quick_sort(){};
-quick_sort::~quick_sort(){};
+quick_sort::quick_sort() {};
+quick_sort::~quick_sort() {};
 
 void quick_sort::_run_sort(void* par)
 {
-    qsort(par, 0, _size-1);
+    qsort(par, 0, _size - 1);
 }
 
-template <class T> 
-T median(T& a, T& b, T& c)
+template <class T> T median(T& a, T& b, T& c)
 {
     if ((a < b && a > c) || (a < c && a > b))
         return a;
@@ -415,35 +430,41 @@ void quick_sort::getPivot(int& mid, int& pivleft, int& pivright, int left, int r
         if (right - left > 5)
         {
             pivot = median(_list[mid - 1], _list[mid], _list[mid + 1]).rawVal();
-            if (mid - 1 >= 0 && _list[mid - 1] == pivot) pivleft = pivright = mid = mid - 1;
-            else if (_list[mid + 1] == pivot) pivleft = pivright = mid = mid + 1;
-            else pivleft = pivright = mid;
+            if (mid - 1 >= 0 && _list[mid - 1] == pivot)
+                pivleft = pivright = mid = mid - 1;
+            else if (_list[mid + 1] == pivot)
+                pivleft = pivright = mid = mid + 1;
+            else
+                pivleft = pivright = mid;
         }
         else
             pivleft = pivright = mid;
     }
     else
     {
-        mid = (left + right) / 2;
+        mid       = (left + right) / 2;
         int sames = pivright - pivleft;
         int newLeft, newRight = newLeft = mid - sames / 2;
-        if (newLeft < 0) cout << "Error" << endl;
+        if (newLeft < 0)
+            cout << "Error" << endl;
         int i;
         for (i = pivleft; i <= pivright; i++)
         {
             swap(_list[i], _list[newRight++]);
         }
-        pivleft = newLeft;
-        pivright = newRight-1;
+        pivleft  = newLeft;
+        pivright = newRight - 1;
     }
-    while (pivleft > left && _list[pivleft - 1] == _list[pivleft])pivleft--;
-    while (pivright < right && _list[pivright + 1] == _list[pivright])pivright++;
+    while (pivleft > left && _list[pivleft - 1] == _list[pivleft])
+        pivleft--;
+    while (pivright < right && _list[pivright + 1] == _list[pivright])
+        pivright++;
 }
 
 void quick_sort::qsort(void* par, int left, int right)
 {
     ((sort_handle*)par)->add_cycle();
-    
+
     //cout << "Left: " << left << " : Right: " << right << endl;
     int pivot;
     int origleft = left, origright = right;
@@ -472,8 +493,10 @@ void quick_sort::qsort(void* par, int left, int right)
     */
 
     getPivot(mid, pivleft, pivright, left, right);
-    if (right < pivright)right = pivright;
-    if (left > pivleft) left = pivleft;
+    if (right < pivright)
+        right = pivright;
+    if (left > pivleft)
+        left = pivleft;
     pivot = _list[mid].rawVal();
 
     //cout << pivleft << "-" << pivright << " -> " << pivot << endl;
@@ -489,14 +512,15 @@ void quick_sort::qsort(void* par, int left, int right)
                 high = _list[left];
             if (_list[left] < low)
                 low = _list[left];
-            
+
             if (left == pivleft)
             {
                 _list[mid].unhold();
                 getPivot(mid, pivleft, pivright, left, right);
                 pivot = _list[mid].rawVal();
                 _list[mid].hold();
-                if (left == pivleft)break;
+                if (left == pivleft)
+                    break;
                 left--;
             }
 
@@ -525,7 +549,8 @@ void quick_sort::qsort(void* par, int left, int right)
                 pivot = _list[mid].rawVal();
                 _list[mid].hold();
 
-                if (right == pivright)break;
+                if (right == pivright)
+                    break;
                 right++;
             }
 
@@ -556,7 +581,8 @@ void quick_sort::qsort(void* par, int left, int right)
     }
     _list[mid].unhold();
 
-    if (high == low) return;
+    if (high == low)
+        return;
     //cout << "L -> ";
     qsort(par, origleft, pivleft);
     //cout << "R -> ";
@@ -570,20 +596,20 @@ void heap_sort::_run_sort(void* par)
 
 void heap_sort::hsort(void* par)
 {
-    end = _size-1;
+    end = _size - 1;
     Observable<int> tmp;
 
     build();
 
     _list[end].hold();
-    while(end > 0)
+    while (end > 0)
     {
-    ((sort_handle*)par)->add_cycle();
-    wait();
-        tmp = _list[end];
+        ((sort_handle*)par)->add_cycle();
+        wait();
+        tmp        = _list[end];
         _list[end] = _list[0];
-        _list[0] = tmp;
-    unlock();
+        _list[0]   = tmp;
+        unlock();
         _list[end--].unhold();
         _list[end].hold();
         sift(0);
@@ -592,9 +618,9 @@ void heap_sort::hsort(void* par)
 
 void heap_sort::build()
 {
-    int start = _size-1;
+    int start = _size - 1;
     //cout << "Build" << endl;
-    while(start >= 0)
+    while (start >= 0)
     {
         sift(start);
         start--;
@@ -608,44 +634,45 @@ void heap_sort::sift(int start)
     Observable<int> tmp;
     //cout << "Sift" << endl;
     _list[root].hold();
-    while(root*2 < end)
+    while (root * 2 < end)
     {
-    wait();
-        child = root*2;
-        swap = root;
-        if(_list[swap] < _list[child])
+        wait();
+        child = root * 2;
+        swap  = root;
+        if (_list[swap] < _list[child])
             swap = child;
-        if(child+1 <= end && _list[swap] < _list[child+1])
-            swap = child+1;
-        if(swap == root)
+        if (child + 1 <= end && _list[swap] < _list[child + 1])
+            swap = child + 1;
+        if (swap == root)
         {
             _list[root].unhold();
             return;
         }
         else
         {
-            tmp = _list[root];
+            tmp         = _list[root];
             _list[root] = _list[swap];
             _list[swap] = tmp;
             _list[root].unhold();
             root = swap;
             _list[root].hold();
         }
-    unlock();
+        unlock();
     }
     _list[root].unhold();
 }
 
 void heap_sort::getColor(float rgb[3], int item)
 {
-    if(item >= end) return;
-    const float start[3] = {248.0/255, 255.0/255, 108.0/255};
-    if(rgb[0] > 0.9 && rgb[1] > 0.9 && rgb[2] > 0.9)
+    if (item >= end)
+        return;
+    const float start[3] = {248.0 / 255, 255.0 / 255, 108.0 / 255};
+    if (rgb[0] > 0.9 && rgb[1] > 0.9 && rgb[2] > 0.9)
     {
-        int height = log(_size)+1;
-        int level = log(item);
-        rgb[0] = start[0] - start[0]/height*level;
-        rgb[1] = start[1] - start[1]/height*level;
-        rgb[2] = start[2] - start[2]/height*level;
+        int height = log(_size) + 1;
+        int level  = log(item);
+        rgb[0]     = start[0] - start[0] / height * level;
+        rgb[1]     = start[1] - start[1] / height * level;
+        rgb[2]     = start[2] - start[2] / height * level;
     }
 }
