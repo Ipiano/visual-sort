@@ -1,116 +1,124 @@
 #ifndef _VIS_SORT_
 #define _VIS_SORT_
 
-#include <vector>
-#include <mutex>
-#include <functional>
 #include "Constants.h"
 #include "Observable.h"
 
+#include <functional>
+#include <mutex>
+#include <vector>
+
 class visual_sort
 {
-private:
+  private:
     bool _done = false;
 
-protected:
+  protected:
     Observable<int>* _list;
     int _size;
     bool _started = false;
-    bool _quit = false;
+    bool _quit    = false;
     semfunction _lock;
     semfunction _unlock;
-    
+
     virtual void _run_sort(void* par) = 0;
     void wait();
     void unlock();
     virtual void kill();
-    virtual void getColor(float rgb[3], int item){}
+    virtual void getColor(float rgb[3], int item) { }
 
-public:
+  public:
     visual_sort();
     virtual ~visual_sort();
     virtual void setup(Observable<int>* list, int size, semfunction lockfun, semfunction unlockfun);
-    bool finished(){return _done;};
+    bool finished() { return _done; };
     void run_sort(void* par, semfunction force);
-    bool started(){return _started;};
+    bool started() { return _started; };
     void stop();
     void draw(int& changes, int& compares, int width, int height, int _max, int x, int y, int method = 0);
-    int visual_count(){return 3;}
+    int visual_count() { return 3; }
 };
 
 class bubble_sort : public visual_sort
 {
-private:
+  private:
     void bsort(void* par);
-protected:
+
+  protected:
     virtual void _run_sort(void* par);
-public:
+
+  public:
     bubble_sort();
     virtual ~bubble_sort();
-    
 };
 
 class bogo_sort : public visual_sort
 {
-private:
+  private:
     void bsort(void* parent);
-protected:
+
+  protected:
     void _run_sort(void* parent);
-public:
+
+  public:
     bogo_sort();
     virtual ~bogo_sort();
 };
 
 class merge_sort : public visual_sort
 {
-private:
+  private:
     Observable<int>* _merged = nullptr;
     void msort(int start, int size, void* par);
 
-protected:
+  protected:
     void _run_sort(void* parent);
     virtual void kill();
-public:
+
+  public:
     merge_sort();
     virtual ~merge_sort();
 };
 
 class radix_sort : public visual_sort
 {
-private:
+  private:
     Observable<int>* _copy = nullptr;
     int getBucket(Observable<int> num, int rad);
     void rsort(void* par);
-protected:
+
+  protected:
     void _run_sort(void* par);
     virtual void kill();
-public:
+
+  public:
     radix_sort();
     virtual ~radix_sort();
 };
 
 class quick_sort : public visual_sort
 {
-private:
+  private:
     void qsort(void* par, int left, int right);
     void getPivot(int& mid, int& pivleft, int& pivright, int left, int right);
 
-protected:
+  protected:
     void _run_sort(void* par);
 
-public:
+  public:
     quick_sort();
     ~quick_sort();
 };
 
 class heap_sort : public visual_sort
 {
-private:
+  private:
     int end;
     void hsort(void* par);
     void sift(int start);
     void build();
-protected:
+
+  protected:
     void _run_sort(void* par);
     void getColor(float rgb[3], int item);
 };
