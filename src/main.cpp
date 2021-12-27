@@ -1,8 +1,8 @@
-#include "Callbacks.h"
-#include "Constants.h"
-#include "Globals.h"
-#include "SortHandler.h"
-#include "Sorts.h"
+#include "constants.h"
+#include "globals.h"
+#include "rendering/callbacks.h"
+#include "sorting/sort_handler.h"
+#include "sorting/sorts.h"
 
 #include <GL/freeglut.h>
 
@@ -27,12 +27,12 @@ void usage()
 
 int main(int argc, char* argv[])
 {
-    int max           = 500;
-    int sortNum       = 100;
-    int modNum        = 5;
-    int visualization = 0;
-    bool uniques      = true;
-    visual_sort* sort = new merge_sort();
+    int max                    = 500;
+    int sortNum                = 100;
+    int modNum                 = 5;
+    int visualization          = 0;
+    bool uniques               = true;
+    sorting::visual_sort* sort = new sorting::merge_sort();
     if (argc > 7)
     {
         usage();
@@ -59,17 +59,17 @@ int main(int argc, char* argv[])
             {
                 string ident = string(argv[i]).substr(1);
                 if (ident == "r")
-                    sort = new radix_sort();
+                    sort = new sorting::radix_sort();
                 if (ident == "b")
-                    sort = new bubble_sort();
+                    sort = new sorting::bubble_sort();
                 if (ident == "bb")
-                    sort = new bogo_sort();
+                    sort = new sorting::bogo_sort();
                 if (ident == "q")
-                    sort = new quick_sort();
+                    sort = new sorting::quick_sort();
                 if (ident == "m")
-                    sort = new merge_sort();
+                    sort = new sorting::merge_sort();
                 if (ident == "h")
-                    sort = new heap_sort();
+                    sort = new sorting::heap_sort();
             }
         }
         else
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 
 void init_Program()
 {
-    sorter = new sort_handle();
+    sorter = new sorting::sort_handle();
 }
 
 void denit_Program()
@@ -131,8 +131,8 @@ void initOpenGL()
     glClearColor(0.0, 0.0, 0.0, 0.0); // use black for glClear command
 
     // callback routines
-    glutDisplayFunc(redraw);  // how to redisplay window
-    glutReshapeFunc(reshape); // how to resize window
-    glutKeyboardFunc(keypress);
-    glutIdleFunc(idle);
+    glutDisplayFunc(rendering::redraw);  // how to redisplay window
+    glutReshapeFunc(rendering::reshape); // how to resize window
+    glutKeyboardFunc(rendering::keypress);
+    glutIdleFunc(rendering::idle);
 }

@@ -1,8 +1,8 @@
-#include "Callbacks.h"
+#include "callbacks.h"
 
-#include "Constants.h"
-#include "Globals.h"
-#include "SortHandler.h"
+#include "constants.h"
+#include "globals.h"
+#include "sorting/sort_handler.h"
 
 #include <GL/freeglut.h>
 
@@ -11,6 +11,8 @@
 
 using namespace std;
 
+namespace rendering
+{
 void redraw(void)
 {
     //cout << "Draw" << endl;
@@ -59,4 +61,5 @@ void idle()
 
     sorter->reset();
     sorter->animate();
+}
 }

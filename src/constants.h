@@ -1,5 +1,5 @@
-#ifndef _CONST_H_
-#define _CONST_H_
+#pragma once
+
 #include <functional>
 
 const int ESCAPE     = 27;
@@ -11,5 +11,3 @@ const float TEXT[]   = {0.5, 0.5, 0.5};
 const float BLACK[]  = {0, 0, 0};
 typedef unsigned char byte;
 typedef std::function<void()> semfunction;
-
-#endif

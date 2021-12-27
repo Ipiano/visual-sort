@@ -1,8 +1,8 @@
-#include "Sorts.h"
+#include "sorts.h"
 
-#include "Constants.h"
-#include "Globals.h"
-#include "SortHandler.h"
+#include "constants.h"
+#include "globals.h"
+#include "sorting/sort_handler.h"
 
 #include <GL/freeglut.h>
 
@@ -17,6 +17,8 @@
 
 using namespace std;
 
+namespace sorting
+{
 // clang-format off
 #define while(a)             \
     while (a) if (_quit)     \
@@ -36,7 +38,7 @@ using namespace std;
 
 visual_sort::visual_sort() {};
 visual_sort::~visual_sort() {};
-void visual_sort::setup(Observable<int>* list, int size, semfunction lockfun, semfunction unlockfun)
+void visual_sort::setup(util::Observable<int>* list, int size, semfunction lockfun, semfunction unlockfun)
 {
     _quit    = false;
     _lock    = lockfun;
@@ -93,9 +95,9 @@ void visual_sort::draw(int& changes, int& compares, int width, int height, int _
     float rgb[3];
     double left = 0, right;
     double top;
-    double bottom         = y;
-    Observable<int>* curr = _list;
-    double wid            = ((double)width / _size);
+    double bottom               = y;
+    util::Observable<int>* curr = _list;
+    double wid                  = ((double)width / _size);
 
     for (int i = 0; i < _size; i++)
     {
@@ -152,7 +154,7 @@ void bubble_sort::bsort(void* par)
 {
     sort_handle* parent = (sort_handle*)par;
     bool swapped, done = false;
-    Observable<int> tmp;
+    util::Observable<int> tmp;
     int i;
 
     for (i = _size - 2; i >= 0 && !done; i--)
@@ -197,7 +199,7 @@ void bogo_sort::bsort(void* par)
     sort_handle* parent = (sort_handle*)par;
     bool done           = false;
     int swaps, left, right;
-    Observable<int> tmp;
+    util::Observable<int> tmp;
     while (!done)
     {
         swaps = rand() % _size + _size;
@@ -243,7 +245,7 @@ void merge_sort::kill()
 
 void merge_sort::_run_sort(void* par)
 {
-    _merged = new Observable<int>[_size];
+    _merged = new util::Observable<int>[_size];
     msort(0, _size, par);
     delete[] _merged;
     _merged = nullptr;
@@ -328,7 +330,7 @@ void radix_sort::kill()
     _copy = nullptr;
 }
 
-int radix_sort::getBucket(Observable<int> num, int rad)
+int radix_sort::getBucket(util::Observable<int> num, int rad)
 {
     int ret;
     string word = to_string(num);
@@ -348,7 +350,7 @@ void radix_sort::_run_sort(void* par)
 void radix_sort::rsort(void* par)
 {
     sort_handle* parent = (sort_handle*)par;
-    _copy               = new Observable<int>[_size];
+    _copy               = new util::Observable<int>[_size];
     bool done           = false;
     int radix           = 1;
     int buckets[10];
@@ -465,7 +467,7 @@ void quick_sort::qsort(void* par, int left, int right)
     int origleft = left, origright = right;
     int pivleft = -1, pivright = -1;
     int mid;
-    Observable<int> low = _list[left], high = _list[right];
+    util::Observable<int> low = _list[left], high = _list[right];
 
     if (right - left < 2)
     {
@@ -592,7 +594,7 @@ void heap_sort::_run_sort(void* par)
 void heap_sort::hsort(void* par)
 {
     end = _size - 1;
-    Observable<int> tmp;
+    util::Observable<int> tmp;
 
     build();
 
@@ -626,7 +628,7 @@ void heap_sort::sift(int start)
 {
     int root = start;
     int child, swap;
-    Observable<int> tmp;
+    util::Observable<int> tmp;
     //cout << "Sift" << endl;
     _list[root].hold();
     while (root * 2 < end)
@@ -670,4 +672,5 @@ void heap_sort::getColor(float rgb[3], int item)
         rgb[1]     = start[1] - start[1] / height * level;
         rgb[2]     = start[2] - start[2] / height * level;
     }
+}
 }

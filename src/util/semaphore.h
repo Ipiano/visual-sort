@@ -1,5 +1,10 @@
+#pragma once
+
 #include <condition_variable>
 #include <mutex>
+
+namespace util
+{
 
 class semaphore
 {
@@ -28,3 +33,4 @@ class semaphore
         --_count;
     }
 };
+}

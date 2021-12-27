@@ -1,20 +1,21 @@
-#ifndef _VIS_SORT_
-#define _VIS_SORT_
+#pragma once
 
-#include "Constants.h"
-#include "Observable.h"
+#include "constants.h"
+#include "util/observable.h"
 
 #include <functional>
 #include <mutex>
 #include <vector>
 
+namespace sorting
+{
 class visual_sort
 {
   private:
     bool _done = false;
 
   protected:
-    Observable<int>* _list;
+    util::Observable<int>* _list;
     int _size;
     bool _started = false;
     bool _quit    = false;
@@ -30,7 +31,7 @@ class visual_sort
   public:
     visual_sort();
     virtual ~visual_sort();
-    virtual void setup(Observable<int>* list, int size, semfunction lockfun, semfunction unlockfun);
+    virtual void setup(util::Observable<int>* list, int size, semfunction lockfun, semfunction unlockfun);
     bool finished() { return _done; };
     void run_sort(void* par, semfunction force);
     bool started() { return _started; };
@@ -68,7 +69,7 @@ class bogo_sort : public visual_sort
 class merge_sort : public visual_sort
 {
   private:
-    Observable<int>* _merged = nullptr;
+    util::Observable<int>* _merged = nullptr;
     void msort(int start, int size, void* par);
 
   protected:
@@ -83,8 +84,8 @@ class merge_sort : public visual_sort
 class radix_sort : public visual_sort
 {
   private:
-    Observable<int>* _copy = nullptr;
-    int getBucket(Observable<int> num, int rad);
+    util::Observable<int>* _copy = nullptr;
+    int getBucket(util::Observable<int> num, int rad);
     void rsort(void* par);
 
   protected:
@@ -122,5 +123,4 @@ class heap_sort : public visual_sort
     void _run_sort(void* par);
     void getColor(float rgb[3], int item);
 };
-
-#endif
+}
