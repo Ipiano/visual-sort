@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 namespace sorting
 {
 class sort_handle;
@@ -11,5 +13,5 @@ extern int screen_width;
 extern int screen_height;
 extern int window;
 
-extern sorting::sort_handle* sorter;
+extern std::unique_ptr<sorting::sort_handle> sorter;
 }

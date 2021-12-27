@@ -16,11 +16,8 @@ using namespace std;
 
 namespace sorting
 {
-sort_handle::sort_handle() {};
-sort_handle::~sort_handle()
-{
-    delete[] _list;
-}
+sort_handle::sort_handle()  = default;
+sort_handle::~sort_handle() = default;
 
 void sort_handle::animate()
 {
@@ -51,9 +48,9 @@ void sort_handle::reset(bool force)
 
         _running = false;
         _cycles  = 0;
-        delete[] _list;
-        _list = nullptr;
-        _list = new util::Observable<int>[_size];
+
+        _list.clear();
+        _list.resize(_size);
 
         if (!_ordered)
         {
@@ -68,7 +65,7 @@ void sort_handle::reset(bool force)
             {
                 _list[i] = i;
             }
-            random_shuffle(_list, _list + _size);
+            random_shuffle(_list.begin(), _list.end());
         }
 
         if (!force)
@@ -78,16 +75,16 @@ void sort_handle::reset(bool force)
         if (_randomvis)
             _visual = rand() % _sort->visual_count();
 
-        _sort->setup(_list, _size, lockfun, unlockfun);
+        _sort->setup(_list.data(), _size, lockfun, unlockfun);
         _wait(100000000);
     }
 }
 
-void sort_handle::reset(visual_sort* sort, int items, int max, int loops, bool ordered, bool force, int visual)
+void sort_handle::reset(visual_sort& sort, int items, int max, int loops, bool ordered, bool force, int visual)
 {
     _loops_per_draw = loops;
     _ordered        = ordered;
-    _sort           = sort;
+    _sort           = &sort;
     _size           = items;
     _max            = max;
     _visual         = visual;
