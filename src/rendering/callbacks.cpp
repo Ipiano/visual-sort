@@ -19,7 +19,7 @@ void redraw(void)
     glClear(GL_COLOR_BUFFER_BIT);
     glFlush();
 
-    sorter->draw(screen_Width, screen_Height, 0, 0);
+    global::sorter->draw(global::screen_width, global::screen_height, 0, 0);
     //Swap buffers using double buffering to avoid flickering
     glutSwapBuffers();
 }
@@ -27,8 +27,8 @@ void redraw(void)
 void reshape(int w, int h)
 {
     // store new window dimensions globally
-    screen_Width  = w;
-    screen_Height = h;
+    global::screen_width  = w;
+    global::screen_height = h;
 
     // project 3-D scene onto 2-D
     glMatrixMode(GL_PROJECTION); // use an orthographic projection
@@ -47,7 +47,7 @@ void keypress(unsigned char key, int x, int y)
         glutLeaveMainLoop();
         break;
     case 'r':
-        sorter->reset(true);
+        global::sorter->reset(true);
     default:
         //Redraw the display
         glutPostRedisplay();
@@ -59,7 +59,7 @@ void idle()
     //cin.get();
     glutPostRedisplay();
 
-    sorter->reset();
-    sorter->animate();
+    global::sorter->reset();
+    global::sorter->animate();
 }
 }

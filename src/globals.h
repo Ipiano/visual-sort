@@ -5,7 +5,11 @@ namespace sorting
 class sort_handle;
 }
 
-extern int screen_Width;
-extern int screen_Height;
-extern sorting::sort_handle* sorter;
+namespace global
+{
+extern int screen_width;
+extern int screen_height;
 extern int window;
+
+extern sorting::sort_handle* sorter;
+}
