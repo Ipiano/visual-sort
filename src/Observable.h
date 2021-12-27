@@ -6,18 +6,22 @@ template <class T>
 class Observable
 {
 private:
+    // The actual value being observed
     T _T;
+
     static const int CMP = 3;
     static const int HLD = 0;
     static const int THLD = 1;
     static const int TCH = 2;
     static const int NNN = 4;
-    int color;
-    int _compares = 0;
-    int _changes = 0;
-    bool _changed = false;
 
-    void _setColor(int col, bool overwrite = false)
+    // Stats about how much the value has been touched
+    mutable int color;
+    mutable int _compares = 0;
+    mutable int _changes = 0;
+    mutable bool _changed = false;
+
+    void _setColor(int col, bool overwrite = false) const
     {
         if (col == CMP) _compares++;
         if (col == TCH) _changes++;
@@ -28,13 +32,13 @@ private:
         }
     };
 public:
-    void hold(){ _setColor(HLD); };
-    void touch(){ _setColor(TCH); };
-    void tmpHold(){ _setColor(THLD); };
-    void unhold(){ _setColor(NNN, true); };
-    int compares(){ return _compares; _compares = 0; };
-    int changes(){ return _changes; _changes = 0; };
-    bool getRGB(float& r, float& g, float& b)
+    void hold() const { _setColor(HLD); };
+    void touch() const { _setColor(TCH); };
+    void tmpHold() const { _setColor(THLD); };
+    void unhold() const { _setColor(NNN, true); };
+    int compares() const { return _compares; _compares = 0; };
+    int changes() const { return _changes; _changes = 0; };
+    bool getRGB(float& r, float& g, float& b) const 
     {
         bool ret = _changed;
         _changed = false;
@@ -73,8 +77,8 @@ public:
 
     Observable(T obj){ color = NNN; _T = obj; };
 
-    T rawVal(){ return _T; };
-#ifdef __unix__
+    T rawVal() const { return _T; };
+    
     Observable<T>& operator =(const Observable<T>& right)
     {
         _T = right._T;
@@ -82,25 +86,15 @@ public:
         right._setColor(CMP);
         return *this;
     }
-#endif
-#if defined(_WIN32) || defined(_WIN64)
-    Observable<T>& operator =(Observable<T>& right)
-    {
-        _T = right._T;
-        _setColor(TCH);
-        right._setColor(CMP);
-        return *this;
-    }
-#endif
 
-    Observable<T>& operator =(T right)
+    Observable<T>& operator =(const T& right)
     {
         _T = right;
         _setColor(TCH);
         return *this;
     }
 
-    Observable<T> operator +(Observable<T>& right)
+    Observable<T> operator +(const Observable<T>& right) const
     {
         Observable<T> ret = *this;
         ret._T += right._T;
@@ -110,7 +104,7 @@ public:
         return ret;
     }
 
-    Observable<T>& operator +=(Observable<T>& right)
+    Observable<T>& operator +=(const Observable<T>& right)
     {
         _T += right._T;
         _setColor(TCH);
@@ -135,7 +129,7 @@ public:
         return *this;
     }
 
-    Observable<T> operator -(Observable<T>& right)
+    Observable<T> operator -(const Observable<T>& right) const
     {
         Observable<T> ret = *this;
         ret._T = -right._T;
@@ -144,7 +138,7 @@ public:
         right._setColor(TCH);
     }
 
-    Observable<T> operator -()
+    Observable<T> operator -() const 
     {
         Observable<T> ret = *this;
         ret._T = -_T;
@@ -153,7 +147,7 @@ public:
         return ret;
     }
 
-    Observable<T>& operator -=(Observable<T>& right)
+    Observable<T>& operator -=(const Observable<T>& right)
     {
         _T -= right._T;
         _setColor(TCH);
@@ -179,7 +173,7 @@ public:
         return *this;
     }
 
-    Observable<T> operator *(Observable<T>& right)
+    Observable<T> operator *(const Observable<T>& right) const
     {
         Observable<T> ret = *this;
         ret._T *= right._T;
@@ -188,7 +182,7 @@ public:
         right._setColor(TCH);
         return ret;
     }
-    Observable<T>& operator *=(Observable<T>& right)
+    Observable<T>& operator *=(const Observable<T>& right)
     {
         _T *= right._T;
         _setColor(TCH);
@@ -196,7 +190,7 @@ public:
         return *this;
     }
 
-    Observable<T> operator /(Observable<T>& right)
+    Observable<T> operator /(const Observable<T>& right) const
     {
         Observable<T> ret = *this;
         ret._T /= right._T;
@@ -205,7 +199,7 @@ public:
         right._setColor(TCH);
         return ret;
     }
-    Observable<T>& operator /=(Observable<T>& right)
+    Observable<T>& operator /=(const Observable<T>& right)
     {
         _T /= right._T;
         _setColor(TCH);
@@ -213,7 +207,7 @@ public:
         return *this;
     }
 
-    Observable<T> operator %(Observable<T>& right)
+    Observable<T> operator %(const Observable<T>& right) const
     {
         Observable<T> ret = *this;
         ret._T %= right._T;
@@ -222,7 +216,7 @@ public:
         ret._setColor(TCH);
         return ret;
     }
-    Observable<T>& operator %=(Observable<T>& right)
+    Observable<T>& operator %=(const Observable<T>& right)
     {
         _T %= right._T;
         _setColor(TCH);
@@ -247,54 +241,54 @@ public:
     Observable<T>& operator >>=(Observable<T>& right);
     */
 
-    bool operator !()
+    bool operator !() const
     {
         _setColor(CMP);
         return !_T;
     }
-    bool operator &&(Observable<T>& right)
+    bool operator &&(const Observable<T>& right) const
     {
         _setColor(CMP);
         right._setColor(CMP);
         return _T && right._T;
     }
-    bool operator ||(Observable<T>& right)
+    bool operator ||(const Observable<T>& right) const
     {
         _setColor(CMP);
         right._setColor(CMP);
         return _T || right._T;
     }
-    bool operator ==(Observable<T>& right)
+    bool operator ==(const Observable<T>& right) const
     {
         _setColor(CMP);
         right._setColor(CMP);
         return _T == right._T;
     }
-    bool operator !=(Observable<T>& right)
+    bool operator !=(const Observable<T>& right) const
     {
         _setColor(CMP);
         right._setColor(CMP);
         return _T != right._T;
     }
-    bool operator <(Observable<T>& right)
+    bool operator <(const Observable<T>& right) const
     {
         _setColor(CMP);
         right._setColor(CMP);
         return _T < right._T;
     }
-    bool operator >(Observable<T>& right)
+    bool operator >(const Observable<T>& right) const
     {
         _setColor(CMP);
         right._setColor(CMP);
         return _T > right._T;
     }
-    bool operator <=(Observable<T>& right)
+    bool operator <=(const Observable<T>& right) const
     {
         _setColor(CMP);
         right._setColor(CMP);
         return _T <= right._T;
     }
-    bool operator >=(Observable<T>& right)
+    bool operator >=(const Observable<T>& right) const
     {
         _setColor(CMP);
         right._setColor(CMP);
@@ -302,42 +296,42 @@ public:
     }
 
     //
-    bool operator &&(T& T_)
+    bool operator &&(const T& T_) const
     {
         _setColor(CMP);
         return _T && T_;
     }
-    bool operator ||(T& T_)
+    bool operator ||(const T& T_) const
     {
         _setColor(CMP);
         return _T || T_;
     }
-    bool operator ==(T& T_)
+    bool operator ==(const T& T_) const
     {
         _setColor(CMP);
         return _T == T_;
     }
-    bool operator !=(T& T_)
+    bool operator !=(const T& T_) const
     {
         _setColor(CMP);
         return _T != T_;
     }
-    bool operator <(T& T_)
+    bool operator <(const T& T_) const
     {
         _setColor(CMP);
         return _T < T_;
     }
-    bool operator >(T& T_)
+    bool operator >(const T& T_) const
     {
         _setColor(CMP);
         return _T > T_;
     }
-    bool operator <=(T& T_)
+    bool operator <=(const T& T_) const
     {
         _setColor(CMP);
         return _T <= T_;
     }
-    bool operator >=(T& T_)
+    bool operator >=(const T& T_) const
     {
         _setColor(CMP);
         return _T >= T_;
@@ -345,55 +339,56 @@ public:
 
 
     //
-    friend bool operator &&(T& T_, Observable<T>& _T)
+    friend bool operator &&(const T& T_, const Observable<T>& _T)
     {
         _T._setColor(CMP);
         return _T._T && T_;
     }
-    friend bool operator ||(T& T_, Observable<T>& _T)
+    friend bool operator ||(const T& T_, const Observable<T>& _T)
     {
         _T._setColor(CMP);
         return _T._T || T_;
     }
-    friend bool operator ==(T& T_, Observable<T>& _T)
+    friend bool operator ==(const T& T_, const Observable<T>& _T)
     {
         _T._setColor(CMP);
         return _T._T == T_;
     }
-    friend bool operator !=(T& T_, Observable<T>& _T)
+    friend bool operator !=(const T& T_, const Observable<T>& _T)
     {
         _T._setColor(CMP);
         return _T._T != T_;
     }
-    friend bool operator <(T& T_, Observable<T>& _T)
+    friend bool operator <(const T& T_, const Observable<T>& _T)
     {
         _T._setColor(CMP);
         return _T._T < T_;
     }
-    friend bool operator >(T& T_, Observable<T>& _T)
+    friend bool operator >(const T& T_, const Observable<T>& _T)
     {
         _T._setColor(CMP);
         return _T._T > T_;
     }
-    friend bool operator <=(T& T_, Observable<T>& _T)
+    friend bool operator <=(const T& T_, const Observable<T>& _T)
     {
         _T._setColor(CMP);
         return _T._T <= T_;
     }
-    friend bool operator >=(T& T_, Observable<T>& _T)
+    friend bool operator >=(const T& T_, const Observable<T>& _T)
     {
         _T._setColor(CMP);
         return _T._T >= T_;
     }
 
     //Observable<T>& operator [](std::ptrdiff_t i);
-    friend std::string to_string(Observable<T> obs)
+    friend std::string to_string(const Observable<T>& obs)
     {
+        using std::to_string;
         obs._setColor(TCH);
         return to_string(obs._T);
     }
 
-    friend std::ostream& operator << (std::ostream& out, Observable<T>& obs)
+    friend std::ostream& operator << (std::ostream& out, const Observable<T>& obs)
     {
         obs._setColor(TCH);
         return out << obs.rawVal();
