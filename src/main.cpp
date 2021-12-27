@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
     glutInit(&argc, argv);
     initOpenGL();
 
-    sorter->reset(sort, sortNum, max, modNum, uniques, false, visualization);
+    global::sorter->reset(sort, sortNum, max, modNum, uniques, false, visualization);
 
     glutMainLoop();
 
@@ -109,24 +109,24 @@ int main(int argc, char* argv[])
 
 void init_Program()
 {
-    sorter = new sorting::sort_handle();
+    global::sorter = new sorting::sort_handle();
 }
 
 void denit_Program()
 {
-    delete sorter;
+    delete global::sorter;
 }
 
 void initOpenGL()
 {
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE); // 32-bit graphics and double buffering
 
-    screen_Width  = 500;
-    screen_Height = 500;
+    global::screen_width  = 500;
+    global::screen_height = 500;
 
-    glutInitWindowSize(screen_Width, screen_Height); // initial window size
-    glutInitWindowPosition(100, 50);                 // initial window  position
-    window = glutCreateWindow("Visual Sort");        // window title
+    glutInitWindowSize(global::screen_width, global::screen_height); // initial window size
+    glutInitWindowPosition(100, 50);                                 // initial window  position
+    global::window = glutCreateWindow("Visual Sort");                // window title
 
     glClearColor(0.0, 0.0, 0.0, 0.0); // use black for glClear command
 

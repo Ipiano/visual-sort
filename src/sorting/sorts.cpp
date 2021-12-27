@@ -121,10 +121,10 @@ void visual_sort::draw(int& changes, int& compares, int width, int height, int _
             glVertex2f(right, top - wid / 2);
             break;
         case 2:
-            glVertex2f(left, screen_Height / 2 - top / 2);
-            glVertex2f(left, screen_Height / 2 + top / 2);
-            glVertex2f(right, screen_Height / 2 + top / 2);
-            glVertex2f(right, screen_Height / 2 - top / 2);
+            glVertex2f(left, global::screen_height / 2 - top / 2);
+            glVertex2f(left, global::screen_height / 2 + top / 2);
+            glVertex2f(right, global::screen_height / 2 + top / 2);
+            glVertex2f(right, global::screen_height / 2 - top / 2);
             break;
         case 0:
         default:
