@@ -27,12 +27,14 @@ void usage()
 
 int main(int argc, char* argv[])
 {
-    int max                    = 500;
-    int sortNum                = 100;
-    int modNum                 = 5;
-    int visualization          = 0;
-    bool uniques               = true;
-    sorting::visual_sort* sort = new sorting::merge_sort();
+    int max           = 500;
+    int sortNum       = 100;
+    int modNum        = 5;
+    int visualization = 0;
+    bool uniques      = true;
+
+    std::unique_ptr<sorting::visual_sort> sort = std::make_unique<sorting::merge_sort>();
+
     if (argc > 7)
     {
         usage();
@@ -59,17 +61,17 @@ int main(int argc, char* argv[])
             {
                 string ident = string(argv[i]).substr(1);
                 if (ident == "r")
-                    sort = new sorting::radix_sort();
+                    sort = std::make_unique<sorting::radix_sort>();
                 if (ident == "b")
-                    sort = new sorting::bubble_sort();
+                    sort = std::make_unique<sorting::bubble_sort>();
                 if (ident == "bb")
-                    sort = new sorting::bogo_sort();
+                    sort = std::make_unique<sorting::bogo_sort>();
                 if (ident == "q")
-                    sort = new sorting::quick_sort();
+                    sort = std::make_unique<sorting::quick_sort>();
                 if (ident == "m")
-                    sort = new sorting::merge_sort();
+                    sort = std::make_unique<sorting::merge_sort>();
                 if (ident == "h")
-                    sort = new sorting::heap_sort();
+                    sort = std::make_unique<sorting::heap_sort>();
             }
         }
         else
@@ -97,24 +99,23 @@ int main(int argc, char* argv[])
     glutInit(&argc, argv);
     initOpenGL();
 
-    global::sorter->reset(sort, sortNum, max, modNum, uniques, false, visualization);
+    global::sorter->reset(*sort, sortNum, max, modNum, uniques, false, visualization);
 
     glutMainLoop();
 
     denit_Program();
 
-    delete sort;
     return 0;
 }
 
 void init_Program()
 {
-    global::sorter = new sorting::sort_handle();
+    global::sorter = std::make_unique<sorting::sort_handle>();
 }
 
 void denit_Program()
 {
-    delete global::sorter;
+    global::sorter.reset();
 }
 
 void initOpenGL()

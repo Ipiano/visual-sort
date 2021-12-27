@@ -47,10 +47,6 @@ class bubble_sort : public visual_sort
 
   protected:
     virtual void _run_sort(void* par);
-
-  public:
-    bubble_sort();
-    virtual ~bubble_sort();
 };
 
 class bogo_sort : public visual_sort
@@ -60,41 +56,27 @@ class bogo_sort : public visual_sort
 
   protected:
     void _run_sort(void* parent);
-
-  public:
-    bogo_sort();
-    virtual ~bogo_sort();
 };
 
 class merge_sort : public visual_sort
 {
   private:
-    util::Observable<int>* _merged = nullptr;
+    std::vector<util::Observable<int>> _merged;
     void msort(int start, int size, void* par);
 
   protected:
     void _run_sort(void* parent);
-    virtual void kill();
-
-  public:
-    merge_sort();
-    virtual ~merge_sort();
 };
 
 class radix_sort : public visual_sort
 {
   private:
-    util::Observable<int>* _copy = nullptr;
+    std::vector<util::Observable<int>> _copy;
     int getBucket(util::Observable<int> num, int rad);
     void rsort(void* par);
 
   protected:
     void _run_sort(void* par);
-    virtual void kill();
-
-  public:
-    radix_sort();
-    virtual ~radix_sort();
 };
 
 class quick_sort : public visual_sort
@@ -105,10 +87,6 @@ class quick_sort : public visual_sort
 
   protected:
     void _run_sort(void* par);
-
-  public:
-    quick_sort();
-    ~quick_sort();
 };
 
 class heap_sort : public visual_sort

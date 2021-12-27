@@ -12,7 +12,7 @@ endif()
 
 add_executable(visual_sort)
 
-target_compile_features(visual_sort PRIVATE cxx_std_11)
+target_compile_features(visual_sort PRIVATE cxx_std_14)
 
 target_include_directories(visual_sort PRIVATE src)
 

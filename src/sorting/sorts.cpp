@@ -36,8 +36,8 @@ namespace sorting
     else
 // clang-format on
 
-visual_sort::visual_sort() {};
-visual_sort::~visual_sort() {};
+visual_sort::visual_sort()  = default;
+visual_sort::~visual_sort() = default;
 void visual_sort::setup(util::Observable<int>* list, int size, semfunction lockfun, semfunction unlockfun)
 {
     _quit    = false;
@@ -142,9 +142,6 @@ void visual_sort::draw(int& changes, int& compares, int width, int height, int _
     glFlush();
 }
 
-bubble_sort::bubble_sort() {};
-bubble_sort::~bubble_sort() {};
-
 void bubble_sort::_run_sort(void* par)
 {
     bsort(par);
@@ -188,8 +185,6 @@ void bubble_sort::bsort(void* par)
     }
 }
 
-bogo_sort::bogo_sort() {};
-bogo_sort::~bogo_sort() {};
 void bogo_sort::_run_sort(void* par)
 {
     bsort(par);
@@ -232,23 +227,10 @@ void bogo_sort::bsort(void* par)
     }
 }
 
-merge_sort::merge_sort() {};
-merge_sort::~merge_sort()
-{
-    delete[] _merged;
-};
-void merge_sort::kill()
-{
-    delete[] _merged;
-    _merged = nullptr;
-}
-
 void merge_sort::_run_sort(void* par)
 {
-    _merged = new util::Observable<int>[_size];
+    _merged.resize(_size);
     msort(0, _size, par);
-    delete[] _merged;
-    _merged = nullptr;
 }
 
 void merge_sort::msort(int start, int size, void* par)
@@ -318,18 +300,6 @@ void merge_sort::msort(int start, int size, void* par)
     parent->add_cycle();
 }
 
-radix_sort::radix_sort() {};
-radix_sort::~radix_sort()
-{
-    delete[] _copy;
-}
-
-void radix_sort::kill()
-{
-    delete[] _copy;
-    _copy = nullptr;
-}
-
 int radix_sort::getBucket(util::Observable<int> num, int rad)
 {
     int ret;
@@ -350,9 +320,9 @@ void radix_sort::_run_sort(void* par)
 void radix_sort::rsort(void* par)
 {
     sort_handle* parent = (sort_handle*)par;
-    _copy               = new util::Observable<int>[_size];
-    bool done           = false;
-    int radix           = 1;
+    _copy.resize(_size);
+    bool done = false;
+    int radix = 1;
     int buckets[10];
     int num;
     int maxRadix  = -1;
@@ -404,9 +374,6 @@ void radix_sort::rsort(void* par)
         parent->add_cycle();
     }
 }
-
-quick_sort::quick_sort() {};
-quick_sort::~quick_sort() {};
 
 void quick_sort::_run_sort(void* par)
 {
