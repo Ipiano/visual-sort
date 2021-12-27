@@ -1,19 +1,20 @@
-#ifndef _SORT_HANDLE_
-#define _SORT_HANDLE_
+#pragma once
 
-#include "Observable.h"
-#include "Sorts.h"
-#include "semaphore.h"
+#include "sorting/sorts.h"
+#include "util/observable.h"
+#include "util/semaphore.h"
 
 #include <iostream>
 #include <thread>
 #include <vector>
 
+namespace sorting
+{
 class sort_handle
 {
   protected:
-    visual_sort* _sort     = nullptr;
-    Observable<int>* _list = nullptr;
+    visual_sort* _sort           = nullptr;
+    util::Observable<int>* _list = nullptr;
     int _size;
 
     int _cycles;
@@ -28,8 +29,8 @@ class sort_handle
     bool _randomvis     = false;
 
     bool _sort_locked;
-    semaphore _sem1;
-    semaphore _sem2;
+    util::semaphore _sem1;
+    util::semaphore _sem2;
 
     static void wait_for_handle(void* ths);
     static void unlock_handle(void* ths, bool force);
@@ -58,5 +59,4 @@ class sort_handle
     void draw(int width, int height, int x = 0, int y = 0);
     void add_cycle() { _cycles++; };
 };
-
-#endif
+}

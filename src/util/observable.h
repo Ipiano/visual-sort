@@ -1,7 +1,9 @@
-#ifndef _OBSERVABLE_H_
-#define _OBSERVABLE_H_
+#pragma once
 
 #include <string>
+
+namespace util
+{
 template <class T> class Observable
 {
   private:
@@ -408,4 +410,4 @@ template <class T> class Observable
         return out << obs.rawVal();
     }
 };
-#endif
+}

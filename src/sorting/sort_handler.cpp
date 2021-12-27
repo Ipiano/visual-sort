@@ -1,7 +1,7 @@
-#include "SortHandler.h"
+#include "sort_handler.h"
 
-#include "Constants.h"
-#include "Globals.h"
+#include "constants.h"
+#include "globals.h"
 
 #include <GL/freeglut.h>
 
@@ -14,6 +14,8 @@
 
 using namespace std;
 
+namespace sorting
+{
 sort_handle::sort_handle() {};
 sort_handle::~sort_handle()
 {
@@ -51,7 +53,7 @@ void sort_handle::reset(bool force)
         _cycles  = 0;
         delete[] _list;
         _list = nullptr;
-        _list = new Observable<int>[_size];
+        _list = new util::Observable<int>[_size];
 
         if (!_ordered)
         {
@@ -164,4 +166,5 @@ void sort_handle::unlock_handle(void* ths, bool force)
     }
     else
         obj->_currLoops++;
+}
 }
