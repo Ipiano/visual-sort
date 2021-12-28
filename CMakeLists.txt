@@ -19,8 +19,13 @@ target_include_directories(visual_sort PRIVATE src)
 
 target_sources(
   visual_sort
-  PRIVATE src/rendering/callbacks.cpp src/args.cpp src/globals.cpp src/main.cpp
-          src/sorting/sort_handler.cpp src/sorting/sorts.cpp)
+  PRIVATE src/rendering/callbacks.cpp
+          src/args.cpp
+          src/globals.cpp
+          src/main.cpp
+          src/sorting/sort_handler.cpp
+          src/sorting/sorts.cpp
+          src/glut/window.cpp)
 
 target_link_libraries(
   visual_sort PRIVATE Threads::Threads GLUT::GLUT OpenGL::GL OpenGL::GLU
