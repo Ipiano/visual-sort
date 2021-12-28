@@ -13,7 +13,7 @@ using namespace std;
 
 namespace rendering
 {
-void redraw(void)
+void redraw()
 {
     //cout << "Draw" << endl;
     glClear(GL_COLOR_BUFFER_BIT);
@@ -24,21 +24,27 @@ void redraw(void)
     glutSwapBuffers();
 }
 
-void reshape(int w, int h)
+void reshape(glut::Size size)
 {
     // store new window dimensions globally
-    global::screen_width  = w;
-    global::screen_height = h;
+    global::screen_width  = size.width;
+    global::screen_height = size.height;
 
     // project 3-D scene onto 2-D
     glMatrixMode(GL_PROJECTION); // use an orthographic projection
     glLoadIdentity();            // initialize transformation matrix
-    gluOrtho2D(0.0, w, 0.0, h);  // make OpenGL coordinates
-    glViewport(0, 0, w, h);      // the same as the screen coordinates
+
+    // make OpenGL coordinates
+    gluOrtho2D(0.0, global::screen_width, 0.0, global::screen_height);
+
+    // the same as the screen coordinates
+    glViewport(0, 0, global::screen_width, global::screen_height);
 }
 
-void keypress(unsigned char key, int x, int y)
+void keypress(unsigned char key, glut::Coordinate coord)
 {
+    static_cast<void>(coord);
+
     //Check if the key is specific ones, take appropriate action
     switch (key)
     {

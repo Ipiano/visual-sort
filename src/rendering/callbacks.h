@@ -1,9 +1,11 @@
 #pragma once
 
+#include "glut/window.h"
+
 namespace rendering
 {
-void redraw(void);
-void reshape(int w, int h);
-void keypress(unsigned char key, int x, int y);
+void redraw();
+void reshape(glut::Size size);
+void keypress(unsigned char key, glut::Coordinate coord);
 void idle();
 }
