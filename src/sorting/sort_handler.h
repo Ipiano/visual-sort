@@ -4,6 +4,7 @@
 #include "util/observable.h"
 #include "util/semaphore.h"
 
+#include <chrono>
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -36,11 +37,7 @@ class sort_handle
     static void unlock_handle(void* ths, bool force);
     static void unlock_sort(sort_handle* ths, bool forcelock = false);
     static void wait_for_sort(sort_handle* ths, bool forcewait = false);
-    void _wait(unsigned long long clocks)
-    {
-        for (int i = 0; i < clocks; i++)
-            int n = i;
-    };
+    void _wait(std::chrono::milliseconds time) { std::this_thread::sleep_for(time); };
 
   public:
     enum class draw_mode

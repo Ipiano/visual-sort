@@ -76,7 +76,7 @@ void sort_handle::reset(bool force)
             _visual = rand() % _sort->visual_count();
 
         _sort->setup(_list.data(), _size, lockfun, unlockfun);
-        _wait(100000000);
+        _wait(std::chrono::milliseconds(100));
     }
 }
 
