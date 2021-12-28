@@ -95,6 +95,19 @@ void sort_handle::reset(visual_sort& sort, int items, int max, int loops, bool o
     reset();
 }
 
+void drawText(const std::string& s, double x, double y)
+{
+    glPushMatrix();
+    glTranslated(x, y, 0);
+    glScalef(0.1, 0.1, 1);
+
+    glColor3fv(TEXT);
+    for (const auto c : s)
+        glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, c);
+
+    glPopMatrix();
+}
+
 void sort_handle::draw(int width, int height, int x, int y)
 {
     wait_for_sort(this);
@@ -104,32 +117,15 @@ void sort_handle::draw(int width, int height, int x, int y)
 
     _sort->draw(changes, compares, width, height, _max, x, y, _visual);
 
-    /*
-    string text = "Cycles: " + to_string(_cycles);
-    glColor3fv( TEXT );
-    glRasterPos2i( x, y+height-13 );
-    for(unsigned int i=0; i<text.size(); i++)
-        glutBitmapCharacter( GLUT_BITMAP_8_BY_13, text[i] );
+    const auto text_left   = x;
+    const auto text_top    = (y + height);
+    const auto text_height = 15;
 
-    text = "Array Reads: " + to_string(compares);
-    glColor3fv(TEXT);
-    glRasterPos2i(x, y + height - 13*2);
-    for (unsigned int i = 0; i<text.size(); i++)
-        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, text[i]);
+    drawText("Cycles: " + to_string(_cycles), text_left, text_top - text_height);
+    drawText("Array Reads: " + to_string(compares), text_left, text_top - text_height * 2);
+    drawText("Array Writes: " + to_string(changes), text_left, text_top - text_height * 3);
+    drawText("Total Array Operations: " + to_string(changes + compares), text_left, text_top - text_height * 4);
 
-    text = "Array Writes: " + to_string(changes);
-    glColor3fv(TEXT);
-    glRasterPos2i(x, y + height - 13*3);
-    for (unsigned int i = 0; i<text.size(); i++)
-        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, text[i]);
-
-    text = "Total Array Operations: " + to_string(changes+compares);
-    glColor3fv(TEXT);
-    glRasterPos2i(x, y + height - 13*4);
-    for (unsigned int i = 0; i<text.size(); i++)
-        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, text[i]);
-
-    */
     unlock_sort(this);
 }
 
