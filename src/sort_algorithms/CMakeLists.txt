@@ -1,0 +1,3 @@
+add_library(sort_algorithms INTERFACE)
+target_include_directories(sort_algorithms INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_compile_features(sort_algorithms INTERFACE cxx_std_11)

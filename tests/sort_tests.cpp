@@ -1,3 +1,5 @@
+#include "algorithms/sorting/bubble_sort.hpp"
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -6,6 +8,7 @@
 #include <random>
 
 using namespace testing;
+using namespace algorithms::sorting;
 
 template <class T> using sort_function = std::function<void(std::vector<T>&)>;
 
@@ -142,4 +145,4 @@ TEST_P(SortIntegers, LargeSets)
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(AllSorts, SortIntegers, testing::Values([](std::vector<int>& x) { std::sort(x.begin(), x.end()); }));
+INSTANTIATE_TEST_SUITE_P(AllSorts, SortIntegers, testing::Values([](std::vector<int>& x) { bubble_sort(x.begin(), x.end()); }));

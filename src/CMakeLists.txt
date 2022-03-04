@@ -1,1 +1,2 @@
+add_subdirectory(sort_algorithms)
 add_subdirectory(visualizer)
