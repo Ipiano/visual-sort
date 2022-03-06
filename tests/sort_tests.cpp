@@ -1,4 +1,5 @@
 #include "algorithms/sorting/bubble_sort.hpp"
+#include "algorithms/sorting/merge_sort.hpp"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -145,4 +146,6 @@ TEST_P(SortIntegers, LargeSets)
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(AllSorts, SortIntegers, testing::Values([](std::vector<int>& x) { bubble_sort(x.begin(), x.end()); }));
+INSTANTIATE_TEST_SUITE_P(AllSorts, SortIntegers,
+                         testing::Values([](std::vector<int>& x) { bubble_sort(x.begin(), x.end()); },
+                                         [](std::vector<int>& x) { merge_sort(x.begin(), x.end()); }));
