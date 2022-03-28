@@ -1,4 +1,5 @@
 #include "algorithms/sorting/bubble_sort.hpp"
+#include "algorithms/sorting/bucket_sort.hpp"
 #include "algorithms/sorting/merge_sort.hpp"
 
 #include <gmock/gmock.h>
@@ -148,4 +149,60 @@ TEST_P(SortIntegers, LargeSets)
 
 INSTANTIATE_TEST_SUITE_P(AllSorts, SortIntegers,
                          testing::Values([](std::vector<int>& x) { bubble_sort(x.begin(), x.end()); },
-                                         [](std::vector<int>& x) { merge_sort(x.begin(), x.end()); }));
+                                         [](std::vector<int>& x) { merge_sort(x.begin(), x.end()); },
+                                         [](std::vector<int>& x) { bucket_sort(x.begin(), x.end()); }));
+
+TEST(BucketSortStrings, Simple)
+{
+    std::vector<std::string> values = {"bcde", "abcd", "defg", "cdef"};
+    auto sorted_values              = values;
+
+    bucket_sort(values.begin(), values.end());
+    std::sort(sorted_values.begin(), sorted_values.end());
+
+    ASSERT_THAT(values, ElementsAreArray(sorted_values));
+}
+
+TEST(BucketSortStrings, Duplicates)
+{
+    std::vector<std::string> values = {"bcde", "abcd", "abcd", "defg", "cdef", "bcde"};
+    auto sorted_values              = values;
+
+    bucket_sort(values.begin(), values.end());
+    std::sort(sorted_values.begin(), sorted_values.end());
+
+    ASSERT_THAT(values, ElementsAreArray(sorted_values));
+}
+
+TEST(BucketSortStrings, Ragged)
+{
+    std::vector<std::string> values = {"bcdefgh", "abcdefg", "abcd", "defghi", "cdef", "bcdefg"};
+    auto sorted_values              = values;
+
+    bucket_sort(values.begin(), values.end());
+    std::sort(sorted_values.begin(), sorted_values.end());
+
+    ASSERT_THAT(values, ElementsAreArray(sorted_values));
+}
+
+TEST(BucketSortStrings, CommonPrefix)
+{
+    std::vector<std::string> values = {"ABCD-12345", "ABCD-23456", "ABCD-34567"};
+    auto sorted_values              = values;
+
+    bucket_sort(values.begin(), values.end());
+    std::sort(sorted_values.begin(), sorted_values.end());
+
+    ASSERT_THAT(values, ElementsAreArray(sorted_values));
+}
+
+TEST(BucketSortStrings, CommonPrefixRagged)
+{
+    std::vector<std::string> values = {"ABCD-12345", "ABCD-2345678", "ABCD-345678"};
+    auto sorted_values              = values;
+
+    bucket_sort(values.begin(), values.end());
+    std::sort(sorted_values.begin(), sorted_values.end());
+
+    ASSERT_THAT(values, ElementsAreArray(sorted_values));
+}
