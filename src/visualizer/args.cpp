@@ -1,38 +1,35 @@
 #include "args.h"
 
-#include "sorting/sorts.h"
-
 #include <boost/program_options.hpp>
 
 #include <iostream>
 
-using algorithm_ptr = sorting::visual_sort*;
-using string_list   = std::vector<std::string>;
+using string_list = std::vector<std::string>;
 
 namespace po = boost::program_options;
 
-const std::array<std::tuple<string_list, std::unique_ptr<sorting::visual_sort>>, 6> ALGORITHMS {{
-    {string_list {{"bb", "bogo", "bogosort"}}, std::make_unique<sorting::bogo_sort>()},
-    {string_list {{"b", "bubble", "bubblesort"}}, std::make_unique<sorting::bubble_sort>()},
-    {string_list {{"q", "quick", "quicksort"}}, std::make_unique<sorting::quick_sort>()},
-    {string_list {{"h", "heap", "heapsort"}}, std::make_unique<sorting::heap_sort>()},
-    {string_list {{"m", "merge", "mergesort"}}, std::make_unique<sorting::merge_sort>()},
-    {string_list {{"r", "radix", "radixsort"}}, std::make_unique<sorting::radix_sort>()},
-}};
+// const std::array<std::tuple<string_list, std::unique_ptr<sorting::visual_sort>>, 6> ALGORITHMS {{
+//     {string_list {{"bb", "bogo", "bogosort"}}, std::make_unique<sorting::bogo_sort>()},
+//     {string_list {{"b", "bubble", "bubblesort"}}, std::make_unique<sorting::bubble_sort>()},
+//     {string_list {{"q", "quick", "quicksort"}}, std::make_unique<sorting::quick_sort>()},
+//     {string_list {{"h", "heap", "heapsort"}}, std::make_unique<sorting::heap_sort>()},
+//     {string_list {{"m", "merge", "mergesort"}}, std::make_unique<sorting::merge_sort>()},
+//     {string_list {{"r", "radix", "radixsort"}}, std::make_unique<sorting::radix_sort>()},
+// }};
 
 void showHelp(const char* arg0, const po::options_description& options)
 {
     std::cout << options << "\n\nSort Algorithms:\n";
-    for (const auto& algo : ALGORITHMS)
-    {
-        std::string names;
-        for (const auto& name : std::get<0>(algo))
-        {
-            names += name + "/";
-        }
-        names.pop_back();
-        std::cout << "\t" << names << "\n";
-    }
+    // for (const auto& algo : ALGORITHMS)
+    // {
+    //     std::string names;
+    //     for (const auto& name : std::get<0>(algo))
+    //     {
+    //         names += name + "/";
+    //     }
+    //     names.pop_back();
+    //     std::cout << "\t" << names << "\n";
+    // }
     std::cout << "\nExample:\n\t" << arg0 << " --algo=bubble --visual 2 --unique=no\n" << std::endl;
     exit(0);
 }
@@ -60,24 +57,24 @@ std::istream& operator>>(std::istream& in, Visualization& v)
 
 // Needs to be in same namespace as the pointer (sorting::visual_sort)
 // for ADL to work
-namespace sorting
-{
-void validate(boost::any& v, const std::vector<std::string>& values, algorithm_ptr*, int)
-{
-    po::validators::check_first_occurrence(v);
-    const std::string& s = po::validators::get_single_string(values);
+// namespace sorting
+// {
+// void validate(boost::any& v, const std::vector<std::string>& values, algorithm_ptr*, int)
+// {
+//     po::validators::check_first_occurrence(v);
+//     const std::string& s = po::validators::get_single_string(values);
 
-    for (const auto& algo : ALGORITHMS)
-    {
-        if (std::find(std::get<0>(algo).begin(), std::get<0>(algo).end(), s) != std::get<0>(algo).end())
-        {
-            v = std::get<1>(algo).get();
-            return;
-        }
-    }
-    throw po::invalid_option_value("Unknown algorithm option: " + s);
-}
-}
+//     for (const auto& algo : ALGORITHMS)
+//     {
+//         if (std::find(std::get<0>(algo).begin(), std::get<0>(algo).end(), s) != std::get<0>(algo).end())
+//         {
+//             v = std::get<1>(algo).get();
+//             return;
+//         }
+//     }
+//     throw po::invalid_option_value("Unknown algorithm option: " + s);
+// }
+// }
 
 ProgramArgs parse_args(int argc, char** argv)
 {
@@ -89,12 +86,12 @@ ProgramArgs parse_args(int argc, char** argv)
     options.add_options()
         ("help", "Show this help")
 
-        ("algo,a,algorithm",
-            po::value<algorithm_ptr>(&result.sort_algorithm)
-                ->default_value(
-                    std::get<1>(ALGORITHMS[0]).get(),
-                    std::get<0>(ALGORITHMS[0])[0]),
-            "Sort algorithm")
+        // ("algo,a,algorithm",
+        //     po::value<algorithm_ptr>(&result.sort_algorithm)
+        //         ->default_value(
+        //             std::get<1>(ALGORITHMS[0]).get(),
+        //             std::get<0>(ALGORITHMS[0])[0]),
+        //     "Sort algorithm")
         ("visual,v",
             po::value<Visualization>(&result.draw_mode)
                 ->default_value(
