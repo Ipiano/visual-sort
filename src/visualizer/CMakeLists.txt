@@ -10,20 +10,17 @@ endif()
 
 add_executable(visual_sort)
 
-target_compile_features(visual_sort PRIVATE cxx_std_11)
-
 target_include_directories(visual_sort PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
-target_sources(
-  visual_sort
-  PRIVATE globals.cpp
-          main.cpp
-          args.cpp
-          rendering/callbacks.cpp
-          sorting/sort_handler.cpp
-          sorting/sorts.cpp
-          glut/window.cpp)
+target_sources(visual_sort PRIVATE main.cpp args.cpp sort_visualizer.cpp
+                                   glut/window.cpp)
 
 target_link_libraries(
-  visual_sort PRIVATE Threads::Threads GLUT::GLUT OpenGL::GL OpenGL::GLU
-                      Boost::boost Boost::program_options)
+  visual_sort
+  PRIVATE sort_algorithms
+          Threads::Threads
+          GLUT::GLUT
+          OpenGL::GL
+          OpenGL::GLU
+          Boost::boost
+          Boost::program_options)

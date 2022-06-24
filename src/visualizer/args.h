@@ -2,11 +2,6 @@
 
 #include <memory>
 
-namespace sorting
-{
-class visual_sort;
-}
-
 enum class Visualization
 {
     // Slope from bottom left to upper right
@@ -35,10 +30,6 @@ struct ProgramArgs
 
     // Number of items to sort
     size_t set_size;
-
-    // Always set; contains a pointer that lives for the lifetime
-    // of the application
-    sorting::visual_sort* sort_algorithm;
 };
 
 ProgramArgs parse_args(int argc, char** argv);
