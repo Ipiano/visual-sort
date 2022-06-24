@@ -49,10 +49,10 @@ void keypress(unsigned char key, glut::Coordinate coord)
     switch (key)
     {
         //Exit
-    case ESCAPE:
+    case constants::keys::ESCAPE:
         glutLeaveMainLoop();
         break;
-    case 'r':
+    case constants::keys::RESET:
         global::sorter->reset(true);
     default:
         //Redraw the display
