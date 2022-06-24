@@ -80,6 +80,12 @@ class SortVisualizer
     // if there's nothing to draw
     void draw();
 
+    // Get total number of moves so far
+    std::size_t totalMoves() { return m_total_moves; }
+
+    // Get total number of compares so far
+    std::size_t totalCompares() { return m_total_compares; }
+
   private:
     // Handlers for events to increment counters and potentially block
     // the sort thread
@@ -93,8 +99,11 @@ class SortVisualizer
     draw_function m_draw_fn;
 
     // Number of actions that have happened
-    std::atomic<std::size_t> m_compares;
-    std::atomic<std::size_t> m_moves;
+    std::atomic<std::size_t> m_compares_since_draw;
+    std::atomic<std::size_t> m_moves_since_draw;
+
+    std::atomic<std::size_t> m_total_compares;
+    std::atomic<std::size_t> m_total_moves;
 
     // Modified by the sort thread, drawn by the render thread; so be
     // careful about threadsafety

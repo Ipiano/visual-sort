@@ -13,7 +13,7 @@ add_executable(visual_sort)
 target_include_directories(visual_sort PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 target_sources(visual_sort PRIVATE main.cpp args.cpp sort_visualizer.cpp
-                                   glut/window.cpp)
+                                   rendering/utils.cpp glut/window.cpp)
 
 target_link_libraries(
   visual_sort

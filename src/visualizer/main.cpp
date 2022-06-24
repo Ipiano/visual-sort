@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "glut/window.h"
 #include "rendering/render_items.h"
+#include "rendering/utils.h"
 #include "sort_visualizer.h"
 
 #include <GL/freeglut.h>
@@ -37,6 +38,18 @@ int main(int argc, char* argv[])
             glFlush();
 
             visualizer.draw();
+
+            const auto text_left   = 0;
+            const auto text_top    = screen_height;
+            const auto text_height = 15;
+
+            const auto reads  = visualizer.totalCompares();
+            const auto writes = visualizer.totalMoves();
+
+            //drawText("Cycles: " + to_string(_cycles), text_left, text_top - text_height);
+            rendering::renderText("Array Reads: " + to_string(reads), text_left, text_top - text_height * 2);
+            rendering::renderText("Array Writes: " + to_string(writes), text_left, text_top - text_height * 3);
+            rendering::renderText("Total Array Operations: " + to_string(reads + writes), text_left, text_top - text_height * 4);
 
             //Swap buffers using double buffering to avoid flickering
             glutSwapBuffers();
