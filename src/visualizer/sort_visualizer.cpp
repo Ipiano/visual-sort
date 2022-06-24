@@ -67,8 +67,11 @@ void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn
     m_items.reserve(values.size());
     std::transform(values.begin(), values.end(), std::back_inserter(m_items), [this](int x) { return Item(*this, x); });
 
-    m_moves    = 0;
-    m_compares = 0;
+    m_moves_since_draw = 0;
+    m_total_moves      = 0;
+
+    m_compares_since_draw = 0;
+    m_total_compares      = 0;
 
     m_cancel_flag   = false;
     m_complete_flag = false;
@@ -118,13 +121,15 @@ void SortVisualizer::draw()
 
 void SortVisualizer::onCompare()
 {
-    m_compares++;
+    m_compares_since_draw++;
+    m_total_compares++;
     checkDraw();
 }
 
 void SortVisualizer::onMove()
 {
-    m_moves++;
+    m_moves_since_draw++;
+    m_total_moves++;
     checkDraw();
 }
 
@@ -144,7 +149,7 @@ bool SortVisualizer::needDraw()
         return false;
     }
 
-    return m_moves > 10;
+    return m_moves_since_draw > 10;
 }
 
 void SortVisualizer::waitForDraw()
@@ -152,6 +157,6 @@ void SortVisualizer::waitForDraw()
     std::unique_lock<std::mutex> lck(m_ready_draw_mutex);
     m_ready_draw = true;
     m_wait_draw.wait(lck, [this] { return !m_ready_draw || m_cancel_flag; });
-    m_moves    = 0;
-    m_compares = 0;
+    m_moves_since_draw    = 0;
+    m_compares_since_draw = 0;
 }
