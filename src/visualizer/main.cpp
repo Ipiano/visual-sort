@@ -84,13 +84,10 @@ int main(int argc, char* argv[])
             }
         });
 
-    std::uniform_int_distribution<int> dist(0, 100);
-    std::mt19937_64 reng;
-    std::vector<int> nums(100, 0);
-    std::transform(nums.begin(), nums.end(), nums.begin(), [&](int) { return dist(reng); });
+    auto data_set = args.data_set_factory();
 
     visualizer.start(
-        nums,
+        data_set,
         [](std::vector<SortVisualizer::Item>& items, const std::atomic_bool& cancelled)
         { algorithms::sorting::bubble_sort(items.begin(), items.end()); },
         [&](const std::vector<SortVisualizer::Item>& items)

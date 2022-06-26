@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 
 enum class Visualization
@@ -22,14 +23,12 @@ struct ProgramArgs
 {
     Visualization draw_mode;
 
-    // If true, all sorted values should be unique
-    bool unique_values;
+    // Function that will produce data sets to sort
+    std::function<std::vector<int>()> data_set_factory;
 
     // Number of sort algorithm steps to execute between draws
     size_t steps_per_draw;
 
-    // Number of items to sort
-    size_t set_size;
 };
 
 ProgramArgs parse_args(int argc, char** argv);
