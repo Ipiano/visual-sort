@@ -1,5 +1,6 @@
 #include "args.h"
 
+#include "algorithms/sorting/bogo_sort.hpp"
 #include "algorithms/sorting/bubble_sort.hpp"
 #include "algorithms/sorting/merge_sort.hpp"
 #include "rendering/render_items.h"
@@ -39,6 +40,9 @@ const static std::initializer_list<std::tuple<string_list, sort_function>> ALGOR
 
     {string_list {"m", "merge", "mergesort"},
      [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::merge_sort(items.begin(), items.end()); }},
+
+    {string_list {"bb", "bogo", "bogosort"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled)
+     { algorithms::sorting::bogo_sort(items.begin(), items.end(), cancelled); }},
 
     {string_list {"s", "std", "stl"},
      [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::sort(items.begin(), items.end()); }}};
