@@ -10,16 +10,16 @@ using Item = SortVisualizer::Item;
 Item::Item(Item&& other) : m_value(other.m_value), m_visual(other.m_visual), m_touches(SortVisualizer::Touch::MOVE)
 {
     other.addTouch(Touch::MOVE);
-    m_visual.onMove();
+    addMove();
 }
 
 Item& Item::operator=(Item&& other)
 {
-    std::swap(m_value, other.m_value);
-    std::swap(m_touches, other.m_touches);
+    m_value   = other.m_value;
+    m_touches = other.m_touches;
 
-    addTouch(Touch::MOVE);
     other.addTouch(Touch::MOVE);
+    addMove();
 
     // During any run of the sort, it should not be possible for any
     // item to get created except by the constructor where we set the
@@ -31,10 +31,9 @@ Item& Item::operator=(Item&& other)
 
 bool Item::operator<(const Item& other) const
 {
-    addTouch(Touch::COMPARE);
     other.addTouch(Touch::COMPARE);
+    addCompare();
 
-    m_visual.onCompare();
     return m_value < other.m_value;
 }
 
