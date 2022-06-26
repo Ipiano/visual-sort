@@ -62,6 +62,8 @@ class SortVisualizer
     using sort_function = std::function<void(std::vector<Item>& items, const std::atomic_bool& cancel_flag)>;
     using draw_function = std::function<void(const std::vector<Item>& items)>;
 
+    SortVisualizer(std::size_t moves_per_draw);
+
     // Cancels any ongoing sort
     ~SortVisualizer();
 
@@ -94,6 +96,8 @@ class SortVisualizer
     void checkDraw();
     bool needDraw();
     void waitForDraw();
+
+    const std::size_t m_moves_per_draw;
 
     // The function that should be invoked to draw the items in onDraw
     draw_function m_draw_fn;

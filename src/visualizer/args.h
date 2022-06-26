@@ -21,13 +21,12 @@ enum class Visualization
 
 struct ProgramArgs
 {
+    std::size_t steps_between_draws;
     Visualization draw_mode;
 
     // Function that will produce data sets to sort
     std::function<std::vector<int>()> data_set_factory;
 
-    // Number of sort algorithm steps to execute between draws
-    size_t steps_per_draw;
 
 };
 

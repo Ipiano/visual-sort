@@ -158,7 +158,7 @@ ProgramArgs parse_args(int argc, char** argv)
             "Number of items to sort")
 
         ("steps,s",
-            po::value<size_t>(&result.steps_per_draw)->default_value(10),
+            po::value<size_t>(&result.steps_between_draws)->default_value(10),
             "Number of steps to execute between screen updates")
 
         ("unique,u",
