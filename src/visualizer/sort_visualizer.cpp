@@ -88,6 +88,12 @@ void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn
         [this, sort_fn]()
         {
             sort_fn(m_items, m_cancel_flag);
+
+            // Force two redraws, just get the screen all nice and clean
+            // for the result
+            waitForDraw();
+            waitForDraw();
+
             m_complete_flag = true;
         });
 }
