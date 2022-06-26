@@ -2,7 +2,11 @@
 
 #include <boost/program_options.hpp>
 
+#include <algorithm>
 #include <iostream>
+#include <numeric>
+#include <random>
+
 
 using string_list = std::vector<std::string>;
 
@@ -76,12 +80,62 @@ std::istream& operator>>(std::istream& in, Visualization& v)
 // }
 // }
 
+std::vector<int> uniqueDataset(std::size_t count, std::mt19937& reng)
+{
+    std::vector<int> items(count, 0);
+    for (int i = 0; i < count; ++i)
+    {
+        items[i] = i;
+    }
+
+    std::shuffle(items.begin(), items.end(), reng);
+    return items;
+}
+
+std::vector<int> nonUniqueDataset(std::size_t count, std::mt19937& reng)
+{
+    std::uniform_int_distribution<int> dist(0, count);
+
+    std::vector<int> items(count, 0);
+    std::transform(items.begin(), items.end(), items.begin(), [&](int) { return dist(reng); });
+
+    return items;
+}
+
+std::function<std::vector<int>()> makeDatasetFactory(std::size_t number_of_items, bool unique)
+{
+    struct factory
+    {
+        std::function<std::vector<int>(std::size_t, std::mt19937&)> m_factory;
+        std::mt19937 m_reng =
+            std::mt19937 {static_cast<std::mt19937::result_type>(std::chrono::system_clock::now().time_since_epoch().count())};
+        std::size_t m_count;
+
+        std::vector<int> operator()() { return m_factory(m_count, m_reng); }
+    };
+
+    factory result;
+    result.m_count = number_of_items;
+
+    if (unique)
+    {
+        result.m_factory = &uniqueDataset;
+    }
+    else
+    {
+        result.m_factory = &nonUniqueDataset;
+    }
+    return result;
+}
+
 ProgramArgs parse_args(int argc, char** argv)
 {
     ProgramArgs result;
 
     po::options_description options("Options");
 
+    std::size_t set_size;
+    bool unique_values;
     // clang-format off
     options.add_options()
         ("help", "Show this help")
@@ -99,8 +153,8 @@ ProgramArgs parse_args(int argc, char** argv)
                     std::to_string(static_cast<unsigned long>(Visualization::SLOPE_BARS))),
             "Visualization (0-2)")
 
-        ("n",
-            po::value<size_t>(&result.set_size)->default_value(100),
+        (",n",
+            po::value<size_t>(&set_size)->default_value(100),
             "Number of items to sort")
 
         ("steps,s",
@@ -108,7 +162,7 @@ ProgramArgs parse_args(int argc, char** argv)
             "Number of steps to execute between screen updates")
 
         ("unique,u",
-            po::value<bool>(&result.unique_values)->default_value(true),
+            po::value<bool>(&unique_values)->default_value(true),
             "Prohibit duplicate values in the dataset")
     ;
     // clang-format on
@@ -129,5 +183,8 @@ ProgramArgs parse_args(int argc, char** argv)
         std::cout << e.what() << "\n\n";
         showHelp(argv[0], options);
     }
+
+    result.data_set_factory = makeDatasetFactory(set_size, unique_values);
+
     return result;
 }
