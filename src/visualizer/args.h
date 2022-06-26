@@ -1,5 +1,7 @@
 #pragma once
 
+#include "sort_visualizer.h"
+
 #include <functional>
 #include <memory>
 
@@ -27,6 +29,8 @@ struct ProgramArgs
     // Function that will produce data sets to sort
     std::function<std::vector<int>()> data_set_factory;
 
+    // Function that should be invoked to sort a list
+    SortVisualizer::sort_function sort_function;
 
 };
 

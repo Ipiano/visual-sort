@@ -1,5 +1,7 @@
 #include "args.h"
 
+#include "algorithms/sorting/bubble_sort.hpp"
+#include "algorithms/sorting/merge_sort.hpp"
 #include <boost/program_options.hpp>
 
 #include <algorithm>
@@ -8,9 +10,22 @@
 #include <random>
 
 
-using string_list = std::vector<std::string>;
 
 namespace po = boost::program_options;
+
+using string_list   = std::vector<std::string>;
+using Item          = SortVisualizer::Item;
+using sort_function = SortVisualizer::sort_function;
+
+const static std::initializer_list<std::tuple<string_list, sort_function>> ALGORITHMS {
+    {string_list {"b", "bubble", "bubblesort"},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::bubble_sort(items.begin(), items.end()); }},
+
+    {string_list {"m", "merge", "mergesort"},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::merge_sort(items.begin(), items.end()); }},
+
+    {string_list {"s", "std", "stl"},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::sort(items.begin(), items.end()); }}};
 
 // const std::array<std::tuple<string_list, std::unique_ptr<sorting::visual_sort>>, 6> ALGORITHMS {{
 //     {string_list {{"bb", "bogo", "bogosort"}}, std::make_unique<sorting::bogo_sort>()},
@@ -24,16 +39,16 @@ namespace po = boost::program_options;
 void showHelp(const char* arg0, const po::options_description& options)
 {
     std::cout << options << "\n\nSort Algorithms:\n";
-    // for (const auto& algo : ALGORITHMS)
-    // {
-    //     std::string names;
-    //     for (const auto& name : std::get<0>(algo))
-    //     {
-    //         names += name + "/";
-    //     }
-    //     names.pop_back();
-    //     std::cout << "\t" << names << "\n";
-    // }
+    for (const auto& algo : ALGORITHMS)
+    {
+        std::string names;
+        for (const auto& name : std::get<0>(algo))
+        {
+            names += name + "/";
+        }
+        names.pop_back();
+        std::cout << "\t" << names << "\n";
+    }
     std::cout << "\nExample:\n\t" << arg0 << " --algo=bubble --visual 2 --unique=no\n" << std::endl;
     exit(0);
 }
@@ -140,12 +155,12 @@ ProgramArgs parse_args(int argc, char** argv)
     options.add_options()
         ("help", "Show this help")
 
-        // ("algo,a,algorithm",
-        //     po::value<algorithm_ptr>(&result.sort_algorithm)
-        //         ->default_value(
-        //             std::get<1>(ALGORITHMS[0]).get(),
-        //             std::get<0>(ALGORITHMS[0])[0]),
-        //     "Sort algorithm")
+        ("algo,a,algorithm",
+            po::value<sort_function>(&result.sort_function)
+                ->default_value(
+                    std::get<1>(*ALGORITHMS.begin()),
+                    std::get<0>(*ALGORITHMS.begin())[0]),
+            "Sort algorithm")
         ("visual,v",
             po::value<Visualization>(&result.draw_mode)
                 ->default_value(

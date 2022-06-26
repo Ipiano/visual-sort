@@ -87,9 +87,7 @@ int main(int argc, char* argv[])
     auto data_set = args.data_set_factory();
 
     visualizer.start(
-        data_set,
-        [](std::vector<SortVisualizer::Item>& items, const std::atomic_bool& cancelled)
-        { algorithms::sorting::bubble_sort(items.begin(), items.end()); },
+        data_set, args.sort_function,
         [&](const std::vector<SortVisualizer::Item>& items)
         {
             rendering::render_items(items.begin(), items.end(), {0, 0}, {screen_width, screen_height});
