@@ -1,5 +1,7 @@
 #pragma once
 
+#include "glut/window.h"
+
 #include <atomic>
 #include <condition_variable>
 #include <functional>
@@ -60,7 +62,8 @@ class SortVisualizer
     // cancel flag at appropriate points in the algorithm and exit early
     // if it is cleared.
     using sort_function = std::function<void(std::vector<Item>& items, const std::atomic_bool& cancel_flag)>;
-    using draw_function = std::function<void(const std::vector<Item>& items)>;
+    using draw_function =
+        std::function<void(const std::vector<Item>& items, int max_item, glut::Coordinate viewport_origin, glut::Size viewport_size)>;
 
     SortVisualizer(std::size_t moves_per_draw);
 
@@ -80,7 +83,7 @@ class SortVisualizer
 
     // Draw the current sort on the OGL canvas. Returns immediately
     // if there's nothing to draw
-    void draw();
+    void draw(glut::Coordinate viewport_origin, glut::Size viewport_size);
 
     // Get total number of moves so far
     std::size_t totalMoves() { return m_total_moves; }
@@ -112,6 +115,9 @@ class SortVisualizer
     // Modified by the sort thread, drawn by the render thread; so be
     // careful about threadsafety
     std::vector<Item> m_items;
+
+    // Set when a new sort starts based on the max item sorted
+    int m_max_value;
 
     // The thread doing sorts and flags to communicate with it
     std::thread m_thread;

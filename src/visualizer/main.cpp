@@ -20,15 +20,13 @@ int main(int argc, char* argv[])
 
     const auto args = parse_args(argc, argv);
 
-    int screen_width  = 500;
-    int screen_height = 500;
+    glut::Size screen_size {500, 500};
 
-    glut::Window win("Visual Sort", glut::display_mode::double_buffered | glut::display_mode::rgba, {-1, -1},
-                     {screen_width, screen_height});
+    glut::Window win("Visual Sort", glut::display_mode::double_buffered | glut::display_mode::rgba, {-1, -1}, screen_size);
 
     glClearColor(0.0, 0.0, 0.0, 0.0); // use black for glClear command
 
-    SortVisualizer visualizer;
+    SortVisualizer visualizer(args.steps_between_draws);
 
     win.setDisplayCallback(
         [&]
@@ -37,10 +35,10 @@ int main(int argc, char* argv[])
             glClear(GL_COLOR_BUFFER_BIT);
             glFlush();
 
-            visualizer.draw();
+            visualizer.draw({0, 0}, screen_size);
 
             const auto text_left   = 0;
-            const auto text_top    = screen_height;
+            const auto text_top    = screen_size.height;
             const auto text_height = 15;
 
             const auto reads  = visualizer.totalCompares();
@@ -58,18 +56,17 @@ int main(int argc, char* argv[])
     win.setReshapeCallback(
         [&](glut::Size size)
         {
-            screen_width  = size.width;
-            screen_height = size.height;
+            screen_size = size;
 
             // project 3-D scene onto 2-D
             glMatrixMode(GL_PROJECTION); // use an orthographic projection
             glLoadIdentity();            // initialize transformation matrix
 
             // make OpenGL coordinates
-            gluOrtho2D(0.0, screen_width, 0.0, screen_height);
+            gluOrtho2D(0.0, screen_size.width, 0.0, screen_size.height);
 
             // the same as the screen coordinates
-            glViewport(0, 0, screen_width, screen_height);
+            glViewport(0, 0, screen_size.width, screen_size.height);
         });
 
     win.setKeyPressCallback([](unsigned char key, glut::Coordinate coord)
@@ -88,9 +85,9 @@ int main(int argc, char* argv[])
 
     visualizer.start(
         data_set, args.sort_function,
-        [&](const std::vector<SortVisualizer::Item>& items)
+        [&](const std::vector<SortVisualizer::Item>& items, int max_value, glut::Coordinate viewport_origin, glut::Size viewport_size)
         {
-            rendering::render_items(items.begin(), items.end(), {0, 0}, {screen_width, screen_height});
+            args.draw_function(items, max_value, viewport_origin, viewport_size);
             std::this_thread::sleep_for(chrono::milliseconds(1));
         });
 

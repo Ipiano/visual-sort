@@ -2,6 +2,8 @@
 
 #include "algorithms/sorting/bubble_sort.hpp"
 #include "algorithms/sorting/merge_sort.hpp"
+#include "rendering/render_items.h"
+
 #include <boost/program_options.hpp>
 
 #include <algorithm>
@@ -9,7 +11,21 @@
 #include <numeric>
 #include <random>
 
+enum class Visualization
+{
+    // Slope from bottom left to upper right
+    SLOPE_BARS,
 
+    // Slope, but it's shifted up and mirrored across
+    // the X axis
+    SLOPE_MIRRORED,
+
+    // Slope, but only the top of each bar is drawn
+    SLOPE_POINTS,
+
+    // Placeholder for max value
+    MAX_VALUE
+};
 
 namespace po = boost::program_options;
 
@@ -74,26 +90,49 @@ std::istream& operator>>(std::istream& in, Visualization& v)
     return in;
 }
 
-// Needs to be in same namespace as the pointer (sorting::visual_sort)
-// for ADL to work
-// namespace sorting
-// {
-// void validate(boost::any& v, const std::vector<std::string>& values, algorithm_ptr*, int)
-// {
-//     po::validators::check_first_occurrence(v);
-//     const std::string& s = po::validators::get_single_string(values);
+void validate(boost::any& v, const std::vector<std::string>& values, sort_function*, int)
+{
+    po::validators::check_first_occurrence(v);
+    const std::string& s = po::validators::get_single_string(values);
 
-//     for (const auto& algo : ALGORITHMS)
-//     {
-//         if (std::find(std::get<0>(algo).begin(), std::get<0>(algo).end(), s) != std::get<0>(algo).end())
-//         {
-//             v = std::get<1>(algo).get();
-//             return;
-//         }
-//     }
-//     throw po::invalid_option_value("Unknown algorithm option: " + s);
-// }
-// }
+    for (const auto& algo : ALGORITHMS)
+    {
+        if (std::find(std::get<0>(algo).begin(), std::get<0>(algo).end(), s) != std::get<0>(algo).end())
+        {
+            v = std::get<1>(algo);
+            return;
+        }
+    }
+    throw po::invalid_option_value("Unknown algorithm option: " + s);
+}
+
+SortVisualizer::draw_function makeDrawFunction(Visualization which)
+{
+    switch (which)
+    {
+    case Visualization::SLOPE_MIRRORED:
+        return [](const std::vector<Item>& items, int max_item, glut::Coordinate viewport_origin, glut::Size viewport_size)
+        {
+            rendering::renderItems(items.begin(), items.end(),
+                                   rendering::LeftToRightMirrorStrategy(viewport_origin, viewport_size, max_item, items.size()));
+        };
+
+    case Visualization::SLOPE_POINTS:
+        return [](const std::vector<Item>& items, int max_item, glut::Coordinate viewport_origin, glut::Size viewport_size)
+        {
+            rendering::renderItems(items.begin(), items.end(),
+                                   rendering::LeftToRightDotStrategy(viewport_origin, viewport_size, max_item, items.size()));
+        };
+
+    case Visualization::SLOPE_BARS:
+    default:
+        return [](const std::vector<Item>& items, int max_item, glut::Coordinate viewport_origin, glut::Size viewport_size)
+        {
+            rendering::renderItems(items.begin(), items.end(),
+                                   rendering::LeftToRightSlopeStrategy(viewport_origin, viewport_size, max_item, items.size()));
+        };
+    }
+}
 
 std::vector<int> uniqueDataset(std::size_t count, std::mt19937& reng)
 {
@@ -151,6 +190,8 @@ ProgramArgs parse_args(int argc, char** argv)
 
     std::size_t set_size;
     bool unique_values;
+    Visualization visual_choice;
+
     // clang-format off
     options.add_options()
         ("help", "Show this help")
@@ -162,7 +203,7 @@ ProgramArgs parse_args(int argc, char** argv)
                     std::get<0>(*ALGORITHMS.begin())[0]),
             "Sort algorithm")
         ("visual,v",
-            po::value<Visualization>(&result.draw_mode)
+            po::value<Visualization>(&visual_choice)
                 ->default_value(
                     Visualization::SLOPE_BARS,
                     std::to_string(static_cast<unsigned long>(Visualization::SLOPE_BARS))),
@@ -200,6 +241,7 @@ ProgramArgs parse_args(int argc, char** argv)
     }
 
     result.data_set_factory = makeDatasetFactory(set_size, unique_values);
+    result.draw_function    = makeDrawFunction(visual_choice);
 
     return result;
 }

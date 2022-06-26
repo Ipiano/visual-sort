@@ -1,66 +1,101 @@
 #pragma once
 
+#include "constants.h"
 #include "rendering/render_items.h"
 #include "sort_visualizer.h"
 
 #include <algorithm>
+#include <iostream>
 #include <numeric>
 
 namespace rendering
 {
-std::array<float, 3> getColor(SortVisualizer::Touch::type touches)
+template <class InputIt, class DrawStrategy> void renderItems(InputIt begin, InputIt end, DrawStrategy&& strategy)
+{
+    for (std::size_t index = 0; begin != end; ++begin, ++index)
+    {
+        strategy(index, *begin);
+    }
+    glFlush();
+}
+
+inline const std::array<float, 3>& getColor(SortVisualizer::Touch::type touches)
 {
     const bool moved    = touches & SortVisualizer::Touch::MOVE;
     const bool compared = touches & SortVisualizer::Touch::COMPARE;
 
     if (moved)
     {
-        return {constants::colors::HOLD[0], constants::colors::HOLD[1], constants::colors::HOLD[2]};
+        return constants::colors::MOVE;
     }
     else if (compared)
     {
-        return {constants::colors::ACCESS[0], constants::colors::ACCESS[1], constants::colors::ACCESS[2]};
+        return constants::colors::COMPARE;
     }
     else
     {
-        return {constants::colors::FREE[0], constants::colors::FREE[1], constants::colors::FREE[2]};
+        return constants::colors::FREE;
     }
 }
 
-template <class InputIt> void render_items(InputIt begin, InputIt end, glut::Coordinate viewport_origin, glut::Size viewport_size)
+template <class CrtpType>
+LeftToRightStrategyBase<CrtpType>::LeftToRightStrategyBase(glut::Coordinate viewport_origin, glut::Size viewport_size, int max_value,
+                                                           std::size_t item_count)
+    : m_viewport_origin(viewport_origin)
+    , m_viewport_size(viewport_size)
+    , m_max_value(max_value)
+    , m_item_count(item_count)
+    , m_item_width(static_cast<double>(viewport_size.width) / item_count)
+
 {
-    const auto item_count = std::distance(begin, end);
-
-    double left = viewport_origin.x;
-    double right;
-    double top;
-    double bottom = viewport_origin.y;
-
-    double item_width = (static_cast<double>(viewport_size.width) / item_count);
-
-    const int max_value = std::accumulate(begin, end, std::numeric_limits<int>::min(), [](int a, int b) { return std::max(a, b); });
-
-    for (; begin != end; begin = std::next(begin))
-    {
-        right = left + item_width;
-        top   = viewport_size.height * (static_cast<int>(*begin) / static_cast<double>(max_value)) + viewport_origin.y;
-
-        const auto item_state = begin->getAndClearTouches();
-        const auto item_color = getColor(item_state);
-
-        glColor3fv(item_color.data());
-
-        glBegin(GL_POLYGON);
-
-        glVertex2f(left, bottom);
-        glVertex2f(left, top);
-        glVertex2f(right, top);
-        glVertex2f(right, bottom);
-
-        glEnd();
-
-        left = right;
-    }
-    glFlush();
 }
+
+template <class CrtpType>
+void LeftToRightStrategyBase<CrtpType>::operator()(const std::size_t index, const SortVisualizer::Item& item) const
+{
+    const auto item_state = item.getAndClearTouches();
+    const auto item_color = getColor(item_state);
+
+    double left  = m_viewport_origin.x + m_item_width * index;
+    double right = left + m_item_width;
+    double bottom, top;
+    std::tie(bottom, top) = getVerticalBounds(index, item);
+
+    glColor3fv(item_color.data());
+
+    glBegin(GL_POLYGON);
+
+    glVertex2f(left, bottom);
+    glVertex2f(left, top);
+    glVertex2f(right, top);
+    glVertex2f(right, bottom);
+
+    glEnd();
+}
+
+template <class CrtpType>
+std::pair<int, int> LeftToRightStrategyBase<CrtpType>::getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const
+{
+    return static_cast<const CrtpType&>(*this).getVerticalBounds(index, item);
+}
+
+inline std::pair<int, int> LeftToRightSlopeStrategy::getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const
+{
+    return {0, m_viewport_size.height / static_cast<double>(m_max_value) * static_cast<int>(item) + m_viewport_origin.y};
+}
+
+inline std::pair<int, int> LeftToRightMirrorStrategy::getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const
+{
+    const auto magnitude = (m_viewport_size.height / static_cast<double>(m_max_value) * static_cast<int>(item)) / 2.0;
+    const auto center    = m_viewport_origin.y + m_viewport_size.height / 2.0;
+    return {center - magnitude, center + magnitude};
+}
+
+inline std::pair<int, int> LeftToRightDotStrategy::getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const
+{
+    const auto magnitude = m_item_width / 2.0;
+    const auto center    = m_viewport_size.height / static_cast<double>(m_max_value) * static_cast<int>(item) + m_viewport_origin.y;
+    return {center - magnitude, center + magnitude};
+}
+
 }

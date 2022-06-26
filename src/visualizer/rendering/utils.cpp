@@ -13,7 +13,7 @@ void renderText(const std::string& s, double x, double y)
     glTranslated(x, y, 0);
     glScalef(0.1, 0.1, 1);
 
-    glColor3fv(constants::colors::TEXT);
+    glColor3fv(constants::colors::TEXT.data());
     for (const auto c : s)
         glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, c);
 

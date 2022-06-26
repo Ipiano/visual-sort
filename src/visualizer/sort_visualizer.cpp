@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <numeric>
 #include <utility>
 
 using Item = SortVisualizer::Item;
@@ -67,6 +68,8 @@ void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn
     m_cancel_flag = true;
     m_draw_fn     = std::move(draw_fn);
 
+    m_max_value = std::accumulate(values.begin(), values.end(), 0, [](int l, int r) { return std::max(l, r); });
+
     m_items.clear();
     m_items.reserve(values.size());
     std::transform(values.begin(), values.end(), std::back_inserter(m_items), [this](int x) { return Item(*this, x); });
@@ -109,13 +112,13 @@ bool SortVisualizer::readyToDraw()
     return !m_cancel_flag && m_ready_draw;
 }
 
-void SortVisualizer::draw()
+void SortVisualizer::draw(glut::Coordinate viewport_origin, glut::Size viewport_size)
 {
     // If the thread is waiting to draw, draw the screen and then
     // wake up that thread
     if (m_ready_draw)
     {
-        m_draw_fn(m_items);
+        m_draw_fn(m_items, m_max_value, viewport_origin, viewport_size);
 
         std::unique_lock<std::mutex> lck(m_ready_draw_mutex);
         m_ready_draw = false;
