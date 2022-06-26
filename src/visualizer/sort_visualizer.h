@@ -51,6 +51,16 @@ class SortVisualizer
 
       private:
         void addTouch(Touch::type type) const { m_touches |= type; }
+        void addMove() const
+        {
+            addTouch(Touch::MOVE);
+            m_visual.onMove();
+        };
+        void addCompare() const
+        {
+            addTouch(Touch::COMPARE);
+            m_visual.onCompare();
+        };
 
         int m_value;
 
