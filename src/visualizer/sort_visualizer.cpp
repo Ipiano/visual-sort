@@ -44,6 +44,10 @@ SortVisualizer::Touch::type Item::getAndClearTouches() const
     return result;
 }
 
+SortVisualizer::SortVisualizer(std::size_t moves_per_draw) : m_moves_per_draw(moves_per_draw)
+{
+}
+
 SortVisualizer::~SortVisualizer()
 {
     cancel();
@@ -149,7 +153,7 @@ bool SortVisualizer::needDraw()
         return false;
     }
 
-    return m_moves_since_draw > 10;
+    return m_moves_since_draw > m_moves_per_draw;
 }
 
 void SortVisualizer::waitForDraw()
