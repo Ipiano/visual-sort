@@ -44,7 +44,8 @@ SortVisualizer::Touch::type Item::getAndClearTouches() const
     return result;
 }
 
-SortVisualizer::SortVisualizer(std::size_t moves_per_draw) : m_moves_per_draw(moves_per_draw)
+SortVisualizer::SortVisualizer(std::size_t moves_per_draw)
+    : m_moves_per_draw(moves_per_draw), m_ready_draw(false), m_cancel_flag(true), m_total_compares(0), m_total_moves(0)
 {
 }
 
@@ -55,12 +56,8 @@ SortVisualizer::~SortVisualizer()
 
 void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn, draw_function draw_fn)
 {
-    // Should never get called during an active sort
-    if (m_thread.joinable())
-    {
-        assert(m_complete_flag);
-        m_thread.join();
-    }
+    // If a different sort was running, kill it and wait for it to finish
+    cancel();
 
     // Set cancelled while we initialize the items to prevent trying to
     // wait for a draw from within this function
