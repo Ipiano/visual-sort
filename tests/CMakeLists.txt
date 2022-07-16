@@ -12,6 +12,7 @@ set(SORT_TEST_OUTPUT ${VISUAL_SORT_REPORTS_DIR}/sort-tests.xml)
 add_custom_command(
     OUTPUT "${SORT_TEST_OUTPUT}"
     COMMAND $<TARGET_FILE:sort_tests> --gtest_color=yes "--gtest_output=xml:${SORT_TEST_OUTPUT}"
+    DEPENDS $<TARGET_FILE:sort_tests>
     USES_TERMINAL
 )
 
