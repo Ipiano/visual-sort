@@ -1,0 +1,21 @@
+name: Formatting
+on: [push]
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: DoozyX/clang-format-lint-action@v0.14
+        with:
+          clangFormatVersion: 14
+
+  cmake-format:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: PuneetMatharu/cmake-format-lint-action@v1.0.0
+        with:
+          args: --config-files .cmake-format.json --in-place
+      - name: Check for changes
+        run: git diff --exit-code
