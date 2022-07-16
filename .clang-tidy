@@ -6,7 +6,6 @@ Checks: >
     modernize-*,
     performance-*,
     readability-*,
-    -clang-diagnostic-c++17-extensions,
     -modernize-use-trailing-return-type,
     -readability-identifier-length,
     -readability-magic-numbers,
