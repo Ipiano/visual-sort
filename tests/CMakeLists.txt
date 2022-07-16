@@ -8,6 +8,20 @@ if(VISUAL_SORT_TEST_WITH_SANITIZERS)
     target_link_libraries(sort_tests PRIVATE fsanitize::undefined fsanitize::address)
 endif()
 
+set(SORT_TEST_OUTPUT ${VISUAL_SORT_REPORTS_DIR}/sort-tests.xml)
+add_custom_command(
+    OUTPUT "${SORT_TEST_OUTPUT}"
+    COMMAND $<TARGET_FILE:sort_tests> --gtest_color=yes "--gtest_output=xml:${SORT_TEST_OUTPUT}"
+    USES_TERMINAL
+)
+
+add_custom_target(run-sort-tests DEPENDS ${SORT_TEST_OUTPUT})
+
+if(VISUAL_SORT_IS_ROOT_PROJECT)
+    add_custom_target(check)
+    add_dependencies(check run-sort-tests)
+endif()
+
 if(VISUAL_SORT_INSTRUMENT_COVERAGE)
     find_package(gcovr 4.2 REQUIRED)
 
