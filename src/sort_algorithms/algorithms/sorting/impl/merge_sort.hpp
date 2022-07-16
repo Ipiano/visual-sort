@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iterator>
 #include <utility>
+#include <vector>
 
 namespace algorithms::sorting::_impl
 {
