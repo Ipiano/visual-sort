@@ -44,8 +44,13 @@ const static std::initializer_list<std::tuple<string_list, sort_function>> ALGOR
     {string_list {"bb", "bogo", "bogosort"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled)
      { algorithms::sorting::bogo_sort(items.begin(), items.end(), cancelled); }},
 
-    {string_list {"s", "std", "stl"},
-     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::sort(items.begin(), items.end()); }}};
+    {string_list {"std", "stl", "std::sort"},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::sort(items.begin(), items.end()); }},
+
+    {string_list {"stable", "std::stable_sort"},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::stable_sort(items.begin(), items.end()); }}
+
+};
 
 // const std::array<std::tuple<string_list, std::unique_ptr<sorting::visual_sort>>, 6> ALGORITHMS {{
 //     {string_list {{"bb", "bogo", "bogosort"}}, std::make_unique<sorting::bogo_sort>()},
