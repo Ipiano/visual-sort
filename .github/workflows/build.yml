@@ -1,0 +1,83 @@
+name: Build/Test/Coverage
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install -y --no-install-recommends \
+            cmake clang-12 llvm-12 \
+            python3 python3-pip python-is-python3 \
+            freeglut3-dev libboost-dev libboost-program-options-dev
+
+          python -m pip install gcovr
+
+      - name: Build Project
+        run: |
+          git submodule update --init --recursive
+          cmake -B build \
+                -DCMAKE_CXX_COMPILER=clang++-12 \
+                -DCMAKE_C_COMPILER=clang-12 \
+                -DVISUAL_SORT_INSTRUMENT_COVERAGE=ON
+
+          cmake --build build
+
+      - name: Run Tests
+        run: |
+          cmake --build build --target check
+
+      - name: Add Test Report PR Annotations
+        uses: mikepenz/action-junit-report@v2
+        if: github.event_name == 'pull_request'
+        with:
+          report_paths: 'build/reports/sort-tests.xml'
+
+      - name: Generate Coverage Report
+        run: |
+          cmake --build build --target coverage
+
+      - name: Trim Report File Paths
+        run: |
+          sed "s|$PWD/||g" -i build/reports/sort-coverage.xml
+
+      - name: Extract Coverage Percentage
+        run: |
+          RATE=$(grep -o -m 1 -P '(?<=line-rate=").*?(?=")' ./build/reports/sort-coverage.xml | head -1)
+          PERCENT="$(echo "($RATE * 100)/1" | bc)"
+
+          BADGE_COLOR=red
+          if [ $PERCENT -ge 60 ]; then BADGE_COLOR=orange; fi
+          if [ $PERCENT -ge 80 ]; then BADGE_COLOR=yellow; fi
+          if [ $PERCENT -ge 95 ]; then BADGE_COLOR=brightgreen; fi
+
+          echo "$RATE -> $PERCENT : $BADGE_COLOR"
+
+          echo "COVERAGE_PERCENT=$PERCENT" >> $GITHUB_ENV
+          echo "COVERAGE_COLOR=$BADGE_COLOR" >> $GITHUB_ENV
+
+
+      - name: Create Coverage Badge
+        uses: schneegans/dynamic-badges-action@v1.1.0
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          auth: ${{ secrets.COVERAGE_GIST_TOKEN }}
+          gistID: bd681dd7ad9d0d4bd031cbf22e9866d4
+          filename: sort-coverage-badge.json
+          label: Coverage
+          message: ${{ env.COVERAGE_PERCENT }}
+          color: ${{ env.COVERAGE_COLOR }}
+
+      - name: Coverage Summary
+        uses: 5monkeys/cobertura-action@master
+        if: github.event_name == 'pull_request'
+        with:
+          path: 'build/reports/sort-coverage.xml'
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          show_line: true
+          show_branch: true
+          skip_covered: false
+          minimum_coverage: 0
