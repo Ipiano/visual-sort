@@ -62,7 +62,7 @@ jobs:
 
       - name: Create Coverage Badge
         uses: schneegans/dynamic-badges-action@v1.1.0
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           auth: ${{ secrets.COVERAGE_GIST_TOKEN }}
           gistID: bd681dd7ad9d0d4bd031cbf22e9866d4
