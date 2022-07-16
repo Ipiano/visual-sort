@@ -11,7 +11,9 @@ template <class RandomIt, class Compare> void bubble_sort(RandomIt begin, Random
     using std::swap;
 
     if (distance(begin, end) <= 1)
+    {
         return;
+    }
 
     for (auto end_it = end; end_it > begin; --end_it)
     {

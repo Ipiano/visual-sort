@@ -63,6 +63,12 @@ class Window
     Window(const std::string& name, display_mode_t mode, Coordinate position = {-1, -1}, Size size = {300, 300});
     ~Window();
 
+    Window(const Window&)            = delete;
+    Window& operator=(const Window&) = delete;
+
+    Window(Window&&)            = delete;
+    Window& operator=(Window&&) = delete;
+
     template <class T> void setDisplayCallback(T&& callback) { setDisplayCallback(display_callback_t(std::forward<T>(callback))); }
     template <class T> void setReshapeCallback(T&& callback) { setReshapeCallback(reshape_callback_t(std::forward<T>(callback))); }
     template <class T> void setKeyPressCallback(T&& callback) { setKeyPressCallback(keypress_callback_t(std::forward<T>(callback))); }
@@ -77,6 +83,7 @@ class Window
         idle_callback_t onIdle;
     };
 
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
     static std::unordered_map<int, WindowData> s_windows;
 
     void setDisplayCallback(display_callback_t&& callback);

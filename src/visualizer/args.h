@@ -7,7 +7,7 @@
 
 struct ProgramArgs
 {
-    std::size_t steps_between_draws;
+    std::size_t steps_between_draws = 0;
 
     // Function that will produce data sets to sort
     std::function<std::vector<int>()> data_set_factory;

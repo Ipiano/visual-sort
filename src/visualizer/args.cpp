@@ -90,7 +90,7 @@ std::istream& operator>>(std::istream& in, Visualization& v)
     return in;
 }
 
-void validate(boost::any& v, const std::vector<std::string>& values, sort_function*, int)
+void validate(boost::any& v, const std::vector<std::string>& values, sort_function* dispatch_unused, int unused)
 {
     po::validators::check_first_occurrence(v);
     const std::string& s = po::validators::get_single_string(values);
@@ -148,7 +148,7 @@ std::vector<int> uniqueDataset(std::size_t count, std::mt19937& reng)
 
 std::vector<int> nonUniqueDataset(std::size_t count, std::mt19937& reng)
 {
-    std::uniform_int_distribution<int> dist(0, count);
+    std::uniform_int_distribution<int> dist(0, static_cast<int>(count));
 
     std::vector<int> items(count, 0);
     std::transform(items.begin(), items.end(), items.begin(), [&](int) { return dist(reng); });
@@ -163,7 +163,7 @@ std::function<std::vector<int>()> makeDatasetFactory(std::size_t number_of_items
         std::function<std::vector<int>(std::size_t, std::mt19937&)> m_factory;
         std::mt19937 m_reng =
             std::mt19937 {static_cast<std::mt19937::result_type>(std::chrono::system_clock::now().time_since_epoch().count())};
-        std::size_t m_count;
+        std::size_t m_count = 0;
 
         std::vector<int> operator()() { return m_factory(m_count, m_reng); }
     };
@@ -229,15 +229,15 @@ ProgramArgs parse_args(int argc, char** argv)
         po::store(po::parse_command_line(argc, argv, options), vm);
         po::notify(vm);
 
-        if (vm.count("help"))
+        if (vm.count("help") > 0)
         {
-            showHelp(argv[0], options);
+            showHelp(*argv, options);
         }
     }
     catch (const po::error& e)
     {
         std::cout << e.what() << "\n\n";
-        showHelp(argv[0], options);
+        showHelp(*argv, options);
     }
 
     result.data_set_factory = makeDatasetFactory(set_size, unique_values);

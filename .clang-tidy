@@ -1,0 +1,15 @@
+WarningsAsErrors: '*'
+Checks: >
+    bugprone-*,
+    clang-analyzer-*,
+    cppcoreguidelines-*,
+    modernize-*,
+    performance-*,
+    readability-*,
+    -clang-diagnostic-c++17-extensions,
+    -modernize-use-trailing-return-type,
+    -readability-identifier-length,
+    -readability-magic-numbers,
+    -readability-isolate-declaration,
+    -cppcoreguidelines-init-variables,
+    -cppcoreguidelines-avoid-magic-numbers,
