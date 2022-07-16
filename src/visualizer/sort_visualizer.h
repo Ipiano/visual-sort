@@ -33,7 +33,9 @@ class SortVisualizer
     class Item
     {
       public:
-        Item(SortVisualizer& visualizer, int value) : m_value(value), m_visual(visualizer), m_touches(Touch::NONE) { }
+        using underlying_type = int;
+
+        Item(SortVisualizer& visualizer, underlying_type value) : m_value(value), m_visual(visualizer), m_touches(Touch::NONE) { }
         ~Item() = default;
 
         Item(const Item&)            = delete;
@@ -44,7 +46,7 @@ class SortVisualizer
 
         bool operator<(const Item& other) const;
 
-        operator int() const { return m_value; }
+        operator underlying_type() const { return m_value; }
 
         // Get the set of touches that have occurred since they were
         // last reset, then reset them.
@@ -63,7 +65,7 @@ class SortVisualizer
             m_visual.onCompare();
         };
 
-        int m_value;
+        underlying_type m_value;
 
         SortVisualizer& m_visual;
         mutable Touch::type m_touches;
