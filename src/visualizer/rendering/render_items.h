@@ -15,9 +15,17 @@ template <class InputIt, class DrawStrategy> void renderItems(InputIt begin, Inp
 template <class CrtpType> struct LeftToRightStrategyBase
 {
     LeftToRightStrategyBase(glut::Coordinate viewport_origin, glut::Size viewport_size, int max_value, std::size_t item_count);
-    void operator()(const std::size_t index, const SortVisualizer::Item& item) const;
+    void operator()(std::size_t index, const SortVisualizer::Item& item) const;
 
   protected:
+    glut::Coordinate viewportOrigin() const noexcept { return m_viewport_origin; }
+    glut::Size viewportSize() const noexcept { return m_viewport_size; };
+
+    int maxValue() const noexcept { return m_max_value; };
+    std::size_t itemCount() const noexcept { return m_item_count; };
+    double itemWidth() const noexcept { return m_item_width; };
+
+  private:
     const glut::Coordinate m_viewport_origin;
     const glut::Size m_viewport_size;
 
@@ -25,9 +33,8 @@ template <class CrtpType> struct LeftToRightStrategyBase
     const std::size_t m_item_count;
     const double m_item_width;
 
-  private:
     // Returns the bottom and top edges (respectively)
-    std::pair<int, int> getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const;
+    std::pair<int, int> getVerticalBounds(std::size_t index, const SortVisualizer::Item& item) const;
 };
 
 // Render strategy that renders items from left to right as a series of
@@ -37,7 +44,7 @@ template <class CrtpType> struct LeftToRightStrategyBase
 struct LeftToRightSlopeStrategy : public LeftToRightStrategyBase<LeftToRightSlopeStrategy>
 {
     using LeftToRightStrategyBase::LeftToRightStrategyBase;
-    std::pair<int, int> getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const;
+    std::pair<int, int> getVerticalBounds(std::size_t index, const SortVisualizer::Item& item) const;
 };
 
 // Render strategy that renders items from left to right as a series of
@@ -47,7 +54,7 @@ struct LeftToRightSlopeStrategy : public LeftToRightStrategyBase<LeftToRightSlop
 struct LeftToRightMirrorStrategy : public LeftToRightStrategyBase<LeftToRightMirrorStrategy>
 {
     using LeftToRightStrategyBase::LeftToRightStrategyBase;
-    std::pair<int, int> getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const;
+    std::pair<int, int> getVerticalBounds(std::size_t index, const SortVisualizer::Item& item) const;
 };
 
 // Render strategy that renders items from left to right as a series of
@@ -56,7 +63,7 @@ struct LeftToRightMirrorStrategy : public LeftToRightStrategyBase<LeftToRightMir
 struct LeftToRightDotStrategy : public LeftToRightStrategyBase<LeftToRightDotStrategy>
 {
     using LeftToRightStrategyBase::LeftToRightStrategyBase;
-    std::pair<int, int> getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const;
+    std::pair<int, int> getVerticalBounds(std::size_t index, const SortVisualizer::Item& item) const;
 };
 }
 

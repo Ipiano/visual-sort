@@ -34,12 +34,13 @@ class SortVisualizer
     {
       public:
         Item(SortVisualizer& visualizer, int value) : m_value(value), m_visual(visualizer), m_touches(Touch::NONE) { }
+        ~Item() = default;
 
         Item(const Item&)            = delete;
         Item& operator=(const Item&) = delete;
 
-        Item(Item&& other);
-        Item& operator=(Item&& other);
+        Item(Item&& other) noexcept;
+        Item& operator=(Item&& other) noexcept;
 
         bool operator<(const Item& other) const;
 
@@ -79,6 +80,12 @@ class SortVisualizer
 
     // Cancels any ongoing sort
     ~SortVisualizer();
+
+    SortVisualizer(const SortVisualizer&)            = delete;
+    SortVisualizer& operator=(const SortVisualizer&) = delete;
+
+    SortVisualizer(SortVisualizer&&)            = delete;
+    SortVisualizer& operator=(SortVisualizer&&) = delete;
 
     // Sorts a copy of the list of numbers with a specific sort
     // algorithm
@@ -127,7 +134,7 @@ class SortVisualizer
     std::vector<Item> m_items;
 
     // Set when a new sort starts based on the max item sorted
-    int m_max_value;
+    int m_max_value = 0;
 
     // The thread doing sorts and flags to communicate with it
     std::thread m_thread;

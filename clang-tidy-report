@@ -1,0 +1,618 @@
+Enabled checks:
+    bugprone-argument-comment
+    bugprone-assert-side-effect
+    bugprone-bad-signal-to-kill-thread
+    bugprone-bool-pointer-implicit-conversion
+    bugprone-branch-clone
+    bugprone-copy-constructor-init
+    bugprone-dangling-handle
+    bugprone-dynamic-static-initializers
+    bugprone-easily-swappable-parameters
+    bugprone-exception-escape
+    bugprone-fold-init-type
+    bugprone-forward-declaration-namespace
+    bugprone-forwarding-reference-overload
+    bugprone-implicit-widening-of-multiplication-result
+    bugprone-inaccurate-erase
+    bugprone-incorrect-roundings
+    bugprone-infinite-loop
+    bugprone-integer-division
+    bugprone-lambda-function-name
+    bugprone-macro-parentheses
+    bugprone-macro-repeated-side-effects
+    bugprone-misplaced-operator-in-strlen-in-alloc
+    bugprone-misplaced-pointer-arithmetic-in-alloc
+    bugprone-misplaced-widening-cast
+    bugprone-move-forwarding-reference
+    bugprone-multiple-statement-macro
+    bugprone-narrowing-conversions
+    bugprone-no-escape
+    bugprone-not-null-terminated-result
+    bugprone-parent-virtual-call
+    bugprone-posix-return
+    bugprone-redundant-branch-condition
+    bugprone-reserved-identifier
+    bugprone-signal-handler
+    bugprone-signed-char-misuse
+    bugprone-sizeof-container
+    bugprone-sizeof-expression
+    bugprone-spuriously-wake-up-functions
+    bugprone-string-constructor
+    bugprone-string-integer-assignment
+    bugprone-string-literal-with-embedded-nul
+    bugprone-stringview-nullptr
+    bugprone-suspicious-enum-usage
+    bugprone-suspicious-include
+    bugprone-suspicious-memory-comparison
+    bugprone-suspicious-memset-usage
+    bugprone-suspicious-missing-comma
+    bugprone-suspicious-semicolon
+    bugprone-suspicious-string-compare
+    bugprone-swapped-arguments
+    bugprone-terminating-continue
+    bugprone-throw-keyword-missing
+    bugprone-too-small-loop-variable
+    bugprone-undefined-memory-manipulation
+    bugprone-undelegated-constructor
+    bugprone-unhandled-exception-at-new
+    bugprone-unhandled-self-assignment
+    bugprone-unused-raii
+    bugprone-unused-return-value
+    bugprone-use-after-move
+    bugprone-virtual-near-miss
+    clang-analyzer-apiModeling.StdCLibraryFunctions
+    clang-analyzer-apiModeling.TrustNonnull
+    clang-analyzer-apiModeling.google.GTest
+    clang-analyzer-apiModeling.llvm.CastValue
+    clang-analyzer-apiModeling.llvm.ReturnValue
+    clang-analyzer-core.CallAndMessage
+    clang-analyzer-core.CallAndMessageModeling
+    clang-analyzer-core.DivideZero
+    clang-analyzer-core.DynamicTypePropagation
+    clang-analyzer-core.NonNullParamChecker
+    clang-analyzer-core.NonnilStringConstants
+    clang-analyzer-core.NullDereference
+    clang-analyzer-core.StackAddrEscapeBase
+    clang-analyzer-core.StackAddressEscape
+    clang-analyzer-core.UndefinedBinaryOperatorResult
+    clang-analyzer-core.VLASize
+    clang-analyzer-core.builtin.BuiltinFunctions
+    clang-analyzer-core.builtin.NoReturnFunctions
+    clang-analyzer-core.uninitialized.ArraySubscript
+    clang-analyzer-core.uninitialized.Assign
+    clang-analyzer-core.uninitialized.Branch
+    clang-analyzer-core.uninitialized.CapturedBlockVariable
+    clang-analyzer-core.uninitialized.UndefReturn
+    clang-analyzer-cplusplus.InnerPointer
+    clang-analyzer-cplusplus.Move
+    clang-analyzer-cplusplus.NewDelete
+    clang-analyzer-cplusplus.NewDeleteLeaks
+    clang-analyzer-cplusplus.PlacementNew
+    clang-analyzer-cplusplus.PureVirtualCall
+    clang-analyzer-cplusplus.SelfAssignment
+    clang-analyzer-cplusplus.SmartPtrModeling
+    clang-analyzer-cplusplus.StringChecker
+    clang-analyzer-cplusplus.VirtualCallModeling
+    clang-analyzer-deadcode.DeadStores
+    clang-analyzer-fuchsia.HandleChecker
+    clang-analyzer-nullability.NullPassedToNonnull
+    clang-analyzer-nullability.NullReturnedFromNonnull
+    clang-analyzer-nullability.NullabilityBase
+    clang-analyzer-nullability.NullableDereferenced
+    clang-analyzer-nullability.NullablePassedToNonnull
+    clang-analyzer-nullability.NullableReturnedFromNonnull
+    clang-analyzer-optin.cplusplus.UninitializedObject
+    clang-analyzer-optin.cplusplus.VirtualCall
+    clang-analyzer-optin.mpi.MPI-Checker
+    clang-analyzer-optin.osx.OSObjectCStyleCast
+    clang-analyzer-optin.osx.cocoa.localizability.EmptyLocalizationContextChecker
+    clang-analyzer-optin.osx.cocoa.localizability.NonLocalizedStringChecker
+    clang-analyzer-optin.performance.GCDAntipattern
+    clang-analyzer-optin.performance.Padding
+    clang-analyzer-optin.portability.UnixAPI
+    clang-analyzer-osx.API
+    clang-analyzer-osx.MIG
+    clang-analyzer-osx.NSOrCFErrorDerefChecker
+    clang-analyzer-osx.NumberObjectConversion
+    clang-analyzer-osx.OSObjectRetainCount
+    clang-analyzer-osx.ObjCProperty
+    clang-analyzer-osx.SecKeychainAPI
+    clang-analyzer-osx.cocoa.AtSync
+    clang-analyzer-osx.cocoa.AutoreleaseWrite
+    clang-analyzer-osx.cocoa.ClassRelease
+    clang-analyzer-osx.cocoa.Dealloc
+    clang-analyzer-osx.cocoa.IncompatibleMethodTypes
+    clang-analyzer-osx.cocoa.Loops
+    clang-analyzer-osx.cocoa.MissingSuperCall
+    clang-analyzer-osx.cocoa.NSAutoreleasePool
+    clang-analyzer-osx.cocoa.NSError
+    clang-analyzer-osx.cocoa.NilArg
+    clang-analyzer-osx.cocoa.NonNilReturnValue
+    clang-analyzer-osx.cocoa.ObjCGenerics
+    clang-analyzer-osx.cocoa.RetainCount
+    clang-analyzer-osx.cocoa.RetainCountBase
+    clang-analyzer-osx.cocoa.RunLoopAutoreleaseLeak
+    clang-analyzer-osx.cocoa.SelfInit
+    clang-analyzer-osx.cocoa.SuperDealloc
+    clang-analyzer-osx.cocoa.UnusedIvars
+    clang-analyzer-osx.cocoa.VariadicMethodTypes
+    clang-analyzer-osx.coreFoundation.CFError
+    clang-analyzer-osx.coreFoundation.CFNumber
+    clang-analyzer-osx.coreFoundation.CFRetainRelease
+    clang-analyzer-osx.coreFoundation.containers.OutOfBounds
+    clang-analyzer-osx.coreFoundation.containers.PointerSizedValues
+    clang-analyzer-security.FloatLoopCounter
+    clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling
+    clang-analyzer-security.insecureAPI.SecuritySyntaxChecker
+    clang-analyzer-security.insecureAPI.UncheckedReturn
+    clang-analyzer-security.insecureAPI.bcmp
+    clang-analyzer-security.insecureAPI.bcopy
+    clang-analyzer-security.insecureAPI.bzero
+    clang-analyzer-security.insecureAPI.decodeValueOfObjCType
+    clang-analyzer-security.insecureAPI.getpw
+    clang-analyzer-security.insecureAPI.gets
+    clang-analyzer-security.insecureAPI.mkstemp
+    clang-analyzer-security.insecureAPI.mktemp
+    clang-analyzer-security.insecureAPI.rand
+    clang-analyzer-security.insecureAPI.strcpy
+    clang-analyzer-security.insecureAPI.vfork
+    clang-analyzer-unix.API
+    clang-analyzer-unix.DynamicMemoryModeling
+    clang-analyzer-unix.Malloc
+    clang-analyzer-unix.MallocSizeof
+    clang-analyzer-unix.MismatchedDeallocator
+    clang-analyzer-unix.Vfork
+    clang-analyzer-unix.cstring.BadSizeArg
+    clang-analyzer-unix.cstring.CStringModeling
+    clang-analyzer-unix.cstring.NullArg
+    clang-analyzer-valist.CopyToSelf
+    clang-analyzer-valist.Uninitialized
+    clang-analyzer-valist.Unterminated
+    clang-analyzer-valist.ValistBase
+    clang-analyzer-webkit.NoUncountedMemberChecker
+    clang-analyzer-webkit.RefCntblBaseVirtualDtor
+    clang-analyzer-webkit.UncountedLambdaCapturesChecker
+    cppcoreguidelines-avoid-c-arrays
+    cppcoreguidelines-avoid-goto
+    cppcoreguidelines-avoid-magic-numbers
+    cppcoreguidelines-avoid-non-const-global-variables
+    cppcoreguidelines-c-copy-assignment-signature
+    cppcoreguidelines-explicit-virtual-functions
+    cppcoreguidelines-init-variables
+    cppcoreguidelines-interfaces-global-init
+    cppcoreguidelines-macro-usage
+    cppcoreguidelines-narrowing-conversions
+    cppcoreguidelines-no-malloc
+    cppcoreguidelines-non-private-member-variables-in-classes
+    cppcoreguidelines-owning-memory
+    cppcoreguidelines-prefer-member-initializer
+    cppcoreguidelines-pro-bounds-array-to-pointer-decay
+    cppcoreguidelines-pro-bounds-constant-array-index
+    cppcoreguidelines-pro-bounds-pointer-arithmetic
+    cppcoreguidelines-pro-type-const-cast
+    cppcoreguidelines-pro-type-cstyle-cast
+    cppcoreguidelines-pro-type-member-init
+    cppcoreguidelines-pro-type-reinterpret-cast
+    cppcoreguidelines-pro-type-static-cast-downcast
+    cppcoreguidelines-pro-type-union-access
+    cppcoreguidelines-pro-type-vararg
+    cppcoreguidelines-slicing
+    cppcoreguidelines-special-member-functions
+    cppcoreguidelines-virtual-class-destructor
+    modernize-avoid-bind
+    modernize-avoid-c-arrays
+    modernize-concat-nested-namespaces
+    modernize-deprecated-headers
+    modernize-deprecated-ios-base-aliases
+    modernize-loop-convert
+    modernize-make-shared
+    modernize-make-unique
+    modernize-pass-by-value
+    modernize-raw-string-literal
+    modernize-redundant-void-arg
+    modernize-replace-auto-ptr
+    modernize-replace-disallow-copy-and-assign-macro
+    modernize-replace-random-shuffle
+    modernize-return-braced-init-list
+    modernize-shrink-to-fit
+    modernize-unary-static-assert
+    modernize-use-auto
+    modernize-use-bool-literals
+    modernize-use-default-member-init
+    modernize-use-emplace
+    modernize-use-equals-default
+    modernize-use-equals-delete
+    modernize-use-nodiscard
+    modernize-use-noexcept
+    modernize-use-nullptr
+    modernize-use-override
+    modernize-use-transparent-functors
+    modernize-use-uncaught-exceptions
+    modernize-use-using
+    performance-faster-string-find
+    performance-for-range-copy
+    performance-implicit-conversion-in-loop
+    performance-inefficient-algorithm
+    performance-inefficient-string-concatenation
+    performance-inefficient-vector-operation
+    performance-move-const-arg
+    performance-move-constructor-init
+    performance-no-automatic-move
+    performance-no-int-to-ptr
+    performance-noexcept-move-constructor
+    performance-trivially-destructible
+    performance-type-promotion-in-math-fn
+    performance-unnecessary-copy-initialization
+    performance-unnecessary-value-param
+    readability-avoid-const-params-in-decls
+    readability-braces-around-statements
+    readability-const-return-type
+    readability-container-contains
+    readability-container-data-pointer
+    readability-container-size-empty
+    readability-convert-member-functions-to-static
+    readability-delete-null-pointer
+    readability-duplicate-include
+    readability-else-after-return
+    readability-function-cognitive-complexity
+    readability-function-size
+    readability-identifier-length
+    readability-identifier-naming
+    readability-implicit-bool-conversion
+    readability-inconsistent-declaration-parameter-name
+    readability-isolate-declaration
+    readability-magic-numbers
+    readability-make-member-function-const
+    readability-misleading-indentation
+    readability-misplaced-array-index
+    readability-named-parameter
+    readability-non-const-parameter
+    readability-qualified-auto
+    readability-redundant-access-specifiers
+    readability-redundant-control-flow
+    readability-redundant-declaration
+    readability-redundant-function-ptr-dereference
+    readability-redundant-member-init
+    readability-redundant-preprocessor
+    readability-redundant-smartptr-get
+    readability-redundant-string-cstr
+    readability-redundant-string-init
+    readability-simplify-boolean-expr
+    readability-simplify-subscript-expr
+    readability-static-accessed-through-instance
+    readability-static-definition-in-anonymous-namespace
+    readability-string-compare
+    readability-suspicious-call-argument
+    readability-uniqueptr-delete-release
+    readability-uppercase-literal-suffix
+    readability-use-anyofallof
+
+clang-tidy-14 --use-color -header-filter=.* -p=/home/ipiano/code/visual-sort/build/ /home/ipiano/code/visual-sort/src/visualizer/rendering/utils.cpp
+[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.cpp:10:36: [0m[0;1;35mwarning: [0m[1mparameter name 's' is too short, expected at least 3 characters [readability-identifier-length][0m
+void renderText(const std::string& s, double x, double y)
+[0;1;32m                                   ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.cpp:10:46: [0m[0;1;35mwarning: [0m[1mparameter name 'x' is too short, expected at least 3 characters [readability-identifier-length][0m
+void renderText(const std::string& s, double x, double y)
+[0;1;32m                                             ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.cpp:10:56: [0m[0;1;35mwarning: [0m[1mparameter name 'y' is too short, expected at least 3 characters [readability-identifier-length][0m
+void renderText(const std::string& s, double x, double y)
+[0;1;32m                                                       ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.cpp:14:14: [0m[0;1;35mwarning: [0m[1m0.1 is a magic number; consider replacing it with a named constant [cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers][0m
+    glScalef(0.1, 0.1, 1);
+[0;1;32m             ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.cpp:14:19: [0m[0;1;35mwarning: [0m[1m0.1 is a magic number; consider replacing it with a named constant [cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers][0m
+    glScalef(0.1, 0.1, 1);
+[0;1;32m                  ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.cpp:17:21: [0m[0;1;35mwarning: [0m[1mvariable name 'c' is too short, expected at least 3 characters [readability-identifier-length][0m
+    for (const auto c : s)
+[0;1;32m                    ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.cpp:17:27: [0m[0;1;35mwarning: [0m[1mstatement should be inside braces [readability-braces-around-statements][0m
+    for (const auto c : s)
+[0;1;32m                          ^
+[0m[0;32m                           {
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.h:7:36: [0m[0;1;35mwarning: [0m[1mparameter name 's' is too short, expected at least 3 characters [readability-identifier-length][0m
+void renderText(const std::string& s, double x, double y);
+[0;1;32m                                   ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.h:7:46: [0m[0;1;35mwarning: [0m[1mparameter name 'x' is too short, expected at least 3 characters [readability-identifier-length][0m
+void renderText(const std::string& s, double x, double y);
+[0;1;32m                                             ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.h:7:56: [0m[0;1;35mwarning: [0m[1mparameter name 'y' is too short, expected at least 3 characters [readability-identifier-length][0m
+void renderText(const std::string& s, double x, double y);
+[0;1;32m                                                       ^
+[0mclang-tidy-14 --use-color -header-filter=.* -p=/home/ipiano/code/visual-sort/build/ /home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp
+[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:8:37: [0m[0;1;35mwarning: [0m[1mvariable 's_windows' is non-const and globally accessible, consider making it const [cppcoreguidelines-avoid-non-const-global-variables][0m
+decltype(Window::s_windows) Window::s_windows = {};
+[0;1;32m                                    ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:16:5: [0m[0;1;35mwarning: [0m[1m'm_window_id' should be initialized in a member initializer of the constructor [cppcoreguidelines-prefer-member-initializer][0m
+    m_window_id            = glutCreateWindow(name.c_str());
+[0;1;32m    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:30:14: [0m[0;1;35mwarning: [0m[1mmethod 'setDisplayCallback' can be made const [readability-make-member-function-const][0m
+void Window::setDisplayCallback(display_callback_t&& callback)
+[0;1;32m             ^
+[0m[0;32m                                                               const
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:35:14: [0m[0;1;35mwarning: [0m[1mmethod 'setReshapeCallback' can be made const [readability-make-member-function-const][0m
+void Window::setReshapeCallback(reshape_callback_t&& callback)
+[0;1;32m             ^
+[0m[0;32m                                                               const
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:40:14: [0m[0;1;35mwarning: [0m[1mmethod 'setKeyPressCallback' can be made const [readability-make-member-function-const][0m
+void Window::setKeyPressCallback(keypress_callback_t&& callback)
+[0;1;32m             ^
+[0m[0;32m                                                                 const
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:45:14: [0m[0;1;35mwarning: [0m[1mmethod 'setIdleCallback' can be made const [readability-make-member-function-const][0m
+void Window::setIdleCallback(idle_callback_t&& callback)
+[0;1;32m             ^
+[0m[0;32m                                                         const
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:61:30: [0m[0;1;35mwarning: [0m[1mparameter name 'w' is too short, expected at least 3 characters [readability-identifier-length][0m
+        [](const WindowData& w)
+[0;1;32m                             ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:73:43: [0m[0;1;35mwarning: [0m[1mparameter name 'w' is too short, expected at least 3 characters [readability-identifier-length][0m
+        [width, height](const WindowData& w)
+[0;1;32m                                          ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:82:34: [0m[0;1;35mwarning: [0m[1mparameter name 'k' is too short, expected at least 3 characters [readability-identifier-length][0m
+void Window::onKey(unsigned char k, int x, int y)
+[0;1;32m                                 ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:82:41: [0m[0;1;35mwarning: [0m[1mparameter name 'x' is too short, expected at least 3 characters [readability-identifier-length][0m
+void Window::onKey(unsigned char k, int x, int y)
+[0;1;32m                                        ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:82:48: [0m[0;1;35mwarning: [0m[1mparameter name 'y' is too short, expected at least 3 characters [readability-identifier-length][0m
+void Window::onKey(unsigned char k, int x, int y)
+[0;1;32m                                               ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:85:37: [0m[0;1;35mwarning: [0m[1mparameter name 'w' is too short, expected at least 3 characters [readability-identifier-length][0m
+        [k, x, y](const WindowData& w)
+[0;1;32m                                    ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.cpp:97:30: [0m[0;1;35mwarning: [0m[1mparameter name 'w' is too short, expected at least 3 characters [readability-identifier-length][0m
+        [](const WindowData& w)
+[0;1;32m                             ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:52:7: [0m[0;1;35mwarning: [0m[1mclass 'Window' defines a non-default destructor but does not define a copy constructor, a copy assignment operator, a move constructor or a move assignment operator [cppcoreguidelines-special-member-functions][0m
+class Window
+[0;1;32m      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:63:103: [0m[0;1;35mwarning: [0m[1m300 is a magic number; consider replacing it with a named constant [cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers][0m
+    Window(const std::string& name, display_mode_t mode, Coordinate position = {-1, -1}, Size size = {300, 300});
+[0;1;32m                                                                                                      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:63:108: [0m[0;1;35mwarning: [0m[1m300 is a magic number; consider replacing it with a named constant [cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers][0m
+    Window(const std::string& name, display_mode_t mode, Coordinate position = {-1, -1}, Size size = {300, 300});
+[0;1;32m                                                                                                           ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:80:48: [0m[0;1;35mwarning: [0m[1mvariable 's_windows' is non-const and globally accessible, consider making it const [cppcoreguidelines-avoid-non-const-global-variables][0m
+    static std::unordered_map<int, WindowData> s_windows;
+[0;1;32m                                               ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:90:37: [0m[0;1;35mwarning: [0m[1mparameter name 'k' is too short, expected at least 3 characters [readability-identifier-length][0m
+    static void onKey(unsigned char k, int x, int y);
+[0;1;32m                                    ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:90:44: [0m[0;1;35mwarning: [0m[1mparameter name 'x' is too short, expected at least 3 characters [readability-identifier-length][0m
+    static void onKey(unsigned char k, int x, int y);
+[0;1;32m                                           ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:90:51: [0m[0;1;35mwarning: [0m[1mparameter name 'y' is too short, expected at least 3 characters [readability-identifier-length][0m
+    static void onKey(unsigned char k, int x, int y);
+[0;1;32m                                                  ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:94:56: [0m[0;1;35mwarning: [0m[1mparameter name 'f' is too short, expected at least 3 characters [readability-identifier-length][0m
+    template <class F> static void onCurrentWindow(F&& f)
+[0;1;32m                                                       ^
+[0mclang-tidy-14 --use-color -header-filter=.* -p=/home/ipiano/code/visual-sort/build/ /home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.cpp
+[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:52:7: [0m[0;1;35mwarning: [0m[1mclass 'Window' defines a non-default destructor but does not define a copy constructor, a copy assignment operator, a move constructor or a move assignment operator [cppcoreguidelines-special-member-functions][0m
+class Window
+[0;1;32m      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:63:103: [0m[0;1;35mwarning: [0m[1m300 is a magic number; consider replacing it with a named constant [cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers][0m
+    Window(const std::string& name, display_mode_t mode, Coordinate position = {-1, -1}, Size size = {300, 300});
+[0;1;32m                                                                                                      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:63:108: [0m[0;1;35mwarning: [0m[1m300 is a magic number; consider replacing it with a named constant [cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers][0m
+    Window(const std::string& name, display_mode_t mode, Coordinate position = {-1, -1}, Size size = {300, 300});
+[0;1;32m                                                                                                           ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:80:48: [0m[0;1;35mwarning: [0m[1mvariable 's_windows' is non-const and globally accessible, consider making it const [cppcoreguidelines-avoid-non-const-global-variables][0m
+    static std::unordered_map<int, WindowData> s_windows;
+[0;1;32m                                               ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:90:37: [0m[0;1;35mwarning: [0m[1mparameter name 'k' is too short, expected at least 3 characters [readability-identifier-length][0m
+    static void onKey(unsigned char k, int x, int y);
+[0;1;32m                                    ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:90:44: [0m[0;1;35mwarning: [0m[1mparameter name 'x' is too short, expected at least 3 characters [readability-identifier-length][0m
+    static void onKey(unsigned char k, int x, int y);
+[0;1;32m                                           ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:90:51: [0m[0;1;35mwarning: [0m[1mparameter name 'y' is too short, expected at least 3 characters [readability-identifier-length][0m
+    static void onKey(unsigned char k, int x, int y);
+[0;1;32m                                                  ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:94:56: [0m[0;1;35mwarning: [0m[1mparameter name 'f' is too short, expected at least 3 characters [readability-identifier-length][0m
+    template <class F> static void onCurrentWindow(F&& f)
+[0;1;32m                                                       ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.cpp:10:7: [0m[0;1;35mwarning: [0m[1mmove constructors should be marked noexcept [performance-noexcept-move-constructor][0m
+Item::Item(Item&& other) : m_value(other.m_value), m_visual(other.m_visual), m_touches(SortVisualizer::Touch::MOVE)
+[0;1;32m      ^
+[0m[0;32m                          noexcept 
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.cpp:16:13: [0m[0;1;35mwarning: [0m[1mmove assignment operators should be marked noexcept [performance-noexcept-move-constructor][0m
+Item& Item::operator=(Item&& other)
+[0;1;32m            ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.cpp:47:1: [0m[0;1;35mwarning: [0m[1mconstructor does not initialize these fields: m_compares_since_draw, m_moves_since_draw, m_max_value, m_complete_flag [cppcoreguidelines-pro-type-member-init][0m
+SortVisualizer::SortVisualizer(std::size_t moves_per_draw)
+[0;1;32m^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.cpp:57:74: [0m[0;1;35mwarning: [0m[1mthe parameter 'sort_fn' is copied for each invocation but only used as a const reference; consider making it a const reference [performance-unnecessary-value-param][0m
+void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn, draw_function draw_fn)
+[0;1;32m                                                                         ^
+[0m[0;32m                                                           const        &
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.cpp:67:75: [0m[0;1;35mwarning: [0m[1mparameter name 'l' is too short, expected at least 3 characters [readability-identifier-length][0m
+    m_max_value = std::accumulate(values.begin(), values.end(), 0, [](int l, int r) { return std::max(l, r); });
+[0;1;32m                                                                          ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.cpp:67:82: [0m[0;1;35mwarning: [0m[1mparameter name 'r' is too short, expected at least 3 characters [readability-identifier-length][0m
+    m_max_value = std::accumulate(values.begin(), values.end(), 0, [](int l, int r) { return std::max(l, r); });
+[0;1;32m                                                                                 ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.cpp:71:90: [0m[0;1;35mwarning: [0m[1mparameter name 'x' is too short, expected at least 3 characters [readability-identifier-length][0m
+    std::transform(values.begin(), values.end(), std::back_inserter(m_items), [this](int x) { return Item(*this, x); });
+[0;1;32m                                                                                         ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.h:17:7: [0m[0;1;35mwarning: [0m[1mclass 'SortVisualizer' defines a non-default destructor but does not define a copy constructor, a copy assignment operator, a move constructor or a move assignment operator [cppcoreguidelines-special-member-functions][0m
+class SortVisualizer
+[0;1;32m      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.h:33:11: [0m[0;1;35mwarning: [0m[1mclass 'Item' defines a copy constructor, a copy assignment operator, a move constructor and a move assignment operator but does not define a destructor [cppcoreguidelines-special-member-functions][0m
+    class Item
+[0;1;32m          ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.h:41:9: [0m[0;1;35mwarning: [0m[1mmove constructors should be marked noexcept [performance-noexcept-move-constructor][0m
+        Item(Item&& other);
+[0;1;32m        ^
+[0m[0;32m                           noexcept 
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.h:42:15: [0m[0;1;35mwarning: [0m[1mmove assignment operators should be marked noexcept [performance-noexcept-move-constructor][0m
+        Item& operator=(Item&& other);
+[0;1;32m              ^
+[0m[0;32m                                      noexcept 
+[0mclang-tidy-14 --use-color -header-filter=.* -p=/home/ipiano/code/visual-sort/build/ /home/ipiano/code/visual-sort/src/visualizer/main.cpp
+[1m/home/ipiano/code/visual-sort/src/sort_algorithms/algorithms/sorting/bubble_sort.hpp:7:21: [0m[0;1;35mwarning: [0m[1mnested namespace definition is a C++17 extension; define each namespace separately [clang-diagnostic-c++17-extensions][0m
+namespace algorithms::sorting
+[0;1;32m                    ^~~~~~~~~
+[0m[0;32m                     { namespace sorting
+[0m[1m/home/ipiano/code/visual-sort/src/sort_algorithms/algorithms/sorting/bubble_sort.hpp:14:97: [0m[0;1;35mwarning: [0m[1mparameter name 'c' is too short, expected at least 3 characters [readability-identifier-length][0m
+template <class RandomIt, class Compare> void bubble_sort(RandomIt begin, RandomIt end, Compare c)
+[0;1;32m                                                                                                ^
+[0m[1m/home/ipiano/code/visual-sort/src/sort_algorithms/algorithms/sorting/impl/bubble_sort.hpp:6:21: [0m[0;1;35mwarning: [0m[1mnested namespace definition is a C++17 extension; define each namespace separately [clang-diagnostic-c++17-extensions][0m
+namespace algorithms::sorting::_impl
+[0;1;32m                    ^~~~~~~~~~~~~~~~
+[0m[0;32m                     { namespace sorting { namespace _impl
+[0m[1m/home/ipiano/code/visual-sort/src/sort_algorithms/algorithms/sorting/impl/bubble_sort.hpp:13:35: [0m[0;1;35mwarning: [0m[1mstatement should be inside braces [readability-braces-around-statements][0m
+    if (distance(begin, end) <= 1)
+[0;1;32m                                  ^
+[0m[0;32m                                   {
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:52:7: [0m[0;1;35mwarning: [0m[1mclass 'Window' defines a non-default destructor but does not define a copy constructor, a copy assignment operator, a move constructor or a move assignment operator [cppcoreguidelines-special-member-functions][0m
+class Window
+[0;1;32m      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:63:103: [0m[0;1;35mwarning: [0m[1m300 is a magic number; consider replacing it with a named constant [cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers][0m
+    Window(const std::string& name, display_mode_t mode, Coordinate position = {-1, -1}, Size size = {300, 300});
+[0;1;32m                                                                                                      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:63:108: [0m[0;1;35mwarning: [0m[1m300 is a magic number; consider replacing it with a named constant [cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers][0m
+    Window(const std::string& name, display_mode_t mode, Coordinate position = {-1, -1}, Size size = {300, 300});
+[0;1;32m                                                                                                           ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:80:48: [0m[0;1;35mwarning: [0m[1mvariable 's_windows' is non-const and globally accessible, consider making it const [cppcoreguidelines-avoid-non-const-global-variables][0m
+    static std::unordered_map<int, WindowData> s_windows;
+[0;1;32m                                               ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:90:37: [0m[0;1;35mwarning: [0m[1mparameter name 'k' is too short, expected at least 3 characters [readability-identifier-length][0m
+    static void onKey(unsigned char k, int x, int y);
+[0;1;32m                                    ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:90:44: [0m[0;1;35mwarning: [0m[1mparameter name 'x' is too short, expected at least 3 characters [readability-identifier-length][0m
+    static void onKey(unsigned char k, int x, int y);
+[0;1;32m                                           ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:90:51: [0m[0;1;35mwarning: [0m[1mparameter name 'y' is too short, expected at least 3 characters [readability-identifier-length][0m
+    static void onKey(unsigned char k, int x, int y);
+[0;1;32m                                                  ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/glut/window.h:94:56: [0m[0;1;35mwarning: [0m[1mparameter name 'f' is too short, expected at least 3 characters [readability-identifier-length][0m
+    template <class F> static void onCurrentWindow(F&& f)
+[0;1;32m                                                       ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/main.cpp:29:29: [0m[0;1;35mwarning: [0m[1m500 is a magic number; consider replacing it with a named constant [cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers][0m
+    glut::Size screen_size {500, 500};
+[0;1;32m                            ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/main.cpp:29:34: [0m[0;1;35mwarning: [0m[1m500 is a magic number; consider replacing it with a named constant [cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers][0m
+    glut::Size screen_size {500, 500};
+[0;1;32m                                 ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.h:18:21: [0m[0;1;35mwarning: [0m[1mparameter 'index' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls][0m
+    void operator()(const std::size_t index, const SortVisualizer::Item& item) const;
+[0;1;32m                    ^~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.h:21:28: [0m[0;1;35mwarning: [0m[1mmember variable 'm_viewport_origin' has protected visibility [cppcoreguidelines-non-private-member-variables-in-classes][0m
+    const glut::Coordinate m_viewport_origin;
+[0;1;32m                           ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.h:22:22: [0m[0;1;35mwarning: [0m[1mmember variable 'm_viewport_size' has protected visibility [cppcoreguidelines-non-private-member-variables-in-classes][0m
+    const glut::Size m_viewport_size;
+[0;1;32m                     ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.h:24:15: [0m[0;1;35mwarning: [0m[1mmember variable 'm_max_value' has protected visibility [cppcoreguidelines-non-private-member-variables-in-classes][0m
+    const int m_max_value;
+[0;1;32m              ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.h:25:23: [0m[0;1;35mwarning: [0m[1mmember variable 'm_item_count' has protected visibility [cppcoreguidelines-non-private-member-variables-in-classes][0m
+    const std::size_t m_item_count;
+[0;1;32m                      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.h:26:18: [0m[0;1;35mwarning: [0m[1mmember variable 'm_item_width' has protected visibility [cppcoreguidelines-non-private-member-variables-in-classes][0m
+    const double m_item_width;
+[0;1;32m                 ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.h:30:43: [0m[0;1;35mwarning: [0m[1mparameter 'index' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls][0m
+    std::pair<int, int> getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const;
+[0;1;32m                                          ^~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.h:40:43: [0m[0;1;35mwarning: [0m[1mparameter 'index' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls][0m
+    std::pair<int, int> getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const;
+[0;1;32m                                          ^~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.h:50:43: [0m[0;1;35mwarning: [0m[1mparameter 'index' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls][0m
+    std::pair<int, int> getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const;
+[0;1;32m                                          ^~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.h:59:43: [0m[0;1;35mwarning: [0m[1mparameter 'index' is const-qualified in the function declaration; const-qualification of parameters only has an effect in function definitions [readability-avoid-const-params-in-decls][0m
+    std::pair<int, int> getVerticalBounds(const std::size_t index, const SortVisualizer::Item& item) const;
+[0;1;32m                                          ^~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:24:27: [0m[0;1;35mwarning: [0m[1mimplicit conversion 'int' -> bool [readability-implicit-bool-conversion][0m
+    const bool moved    = touches & SortVisualizer::Touch::MOVE;
+[0;1;32m                          ^
+[0m[0;32m                          (                                    ) != 0
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:25:27: [0m[0;1;35mwarning: [0m[1mimplicit conversion 'int' -> bool [readability-implicit-bool-conversion][0m
+    const bool compared = touches & SortVisualizer::Touch::COMPARE;
+[0;1;32m                          ^
+[0m[0;32m                          (                                       ) != 0
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:31:5: [0m[0;1;35mwarning: [0m[1mdo not use 'else' after 'return' [readability-else-after-return][0m
+    else if (compared)
+[0;1;32m    ^~~~~~~~~~~~~~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:42:120: [0m[0;1;35mwarning: [0m[1m2 adjacent parameters of 'LeftToRightStrategyBase<CrtpType>' of convertible types are easily swapped by mistake [bugprone-easily-swappable-parameters][0m
+LeftToRightStrategyBase<CrtpType>::LeftToRightStrategyBase(glut::Coordinate viewport_origin, glut::Size viewport_size, int max_value,
+[0;1;32m                                                                                                                       ^~~~~~~~~~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:42:124: [0m[0;1;30mnote: [0mthe first parameter in the range is 'max_value'[0m
+LeftToRightStrategyBase<CrtpType>::LeftToRightStrategyBase(glut::Coordinate viewport_origin, glut::Size viewport_size, int max_value,
+[0;1;32m                                                                                                                           ^~~~~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:43:72: [0m[0;1;30mnote: [0mthe last parameter in the range is 'item_count'[0m
+                                                           std::size_t item_count)
+[0;1;32m                                                                       ^~~~~~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:42:120: [0m[0;1;30mnote: [0m[0m
+LeftToRightStrategyBase<CrtpType>::LeftToRightStrategyBase(glut::Coordinate viewport_origin, glut::Size viewport_size, int max_value,
+[0;1;32m                                                                                                                       ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:43:60: [0m[0;1;30mnote: [0m'int' and 'std::size_t' may be implicitly converted: 'int' -> 'std::size_t' (as 'unsigned long'), 'std::size_t' (as 'unsigned long') -> 'int'[0m
+                                                           std::size_t item_count)
+[0;1;32m                                                           ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:48:63: [0m[0;1;35mwarning: [0m[1mnarrowing conversion from 'std::size_t' (aka 'unsigned long') to 'double' [bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions][0m
+    , m_item_width(static_cast<double>(viewport_size.width) / item_count)
+[0;1;32m                                                              ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:59:57: [0m[0;1;35mwarning: [0m[1mnarrowing conversion from 'std::size_t' (aka 'unsigned long') to 'double' [bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions][0m
+    double left  = m_viewport_origin.x + m_item_width * index;
+[0;1;32m                                                        ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:61:5: [0m[0;1;35mwarning: [0m[1mmultiple declarations in a single statement reduces readability [readability-isolate-declaration][0m
+    double bottom, top;
+[0;1;32m    ^~~~~~~~~~~~~~~~~~~
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:61:12: [0m[0;1;35mwarning: [0m[1mvariable 'bottom' is not initialized [cppcoreguidelines-init-variables][0m
+    double bottom, top;
+[0;1;32m           ^
+[0m[0;1;30mnote: [0mthis fix will not be applied because it overlaps with another fix[0m
+[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:61:20: [0m[0;1;35mwarning: [0m[1mvariable 'top' is not initialized [cppcoreguidelines-init-variables][0m
+    double bottom, top;
+[0;1;32m                   ^
+[0m[0;1;30mnote: [0mthis fix will not be applied because it overlaps with another fix[0m
+[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:68:16: [0m[0;1;35mwarning: [0m[1mnarrowing conversion from 'double' to 'GLfloat' (aka 'float') [bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions][0m
+    glVertex2f(left, bottom);
+[0;1;32m               ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:68:22: [0m[0;1;35mwarning: [0m[1mnarrowing conversion from 'double' to 'GLfloat' (aka 'float') [bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions][0m
+    glVertex2f(left, bottom);
+[0;1;32m                     ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:69:16: [0m[0;1;35mwarning: [0m[1mnarrowing conversion from 'double' to 'GLfloat' (aka 'float') [bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions][0m
+    glVertex2f(left, top);
+[0;1;32m               ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:69:22: [0m[0;1;35mwarning: [0m[1mnarrowing conversion from 'double' to 'GLfloat' (aka 'float') [bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions][0m
+    glVertex2f(left, top);
+[0;1;32m                     ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:70:16: [0m[0;1;35mwarning: [0m[1mnarrowing conversion from 'double' to 'GLfloat' (aka 'float') [bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions][0m
+    glVertex2f(right, top);
+[0;1;32m               ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:70:23: [0m[0;1;35mwarning: [0m[1mnarrowing conversion from 'double' to 'GLfloat' (aka 'float') [bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions][0m
+    glVertex2f(right, top);
+[0;1;32m                      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:71:16: [0m[0;1;35mwarning: [0m[1mnarrowing conversion from 'double' to 'GLfloat' (aka 'float') [bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions][0m
+    glVertex2f(right, bottom);
+[0;1;32m               ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/render_items.hpp:71:23: [0m[0;1;35mwarning: [0m[1mnarrowing conversion from 'double' to 'GLfloat' (aka 'float') [bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions][0m
+    glVertex2f(right, bottom);
+[0;1;32m                      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.h:7:36: [0m[0;1;35mwarning: [0m[1mparameter name 's' is too short, expected at least 3 characters [readability-identifier-length][0m
+void renderText(const std::string& s, double x, double y);
+[0;1;32m                                   ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.h:7:46: [0m[0;1;35mwarning: [0m[1mparameter name 'x' is too short, expected at least 3 characters [readability-identifier-length][0m
+void renderText(const std::string& s, double x, double y);
+[0;1;32m                                             ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/rendering/utils.h:7:56: [0m[0;1;35mwarning: [0m[1mparameter name 'y' is too short, expected at least 3 characters [readability-identifier-length][0m
+void renderText(const std::string& s, double x, double y);
+[0;1;32m                                                       ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.h:17:7: [0m[0;1;35mwarning: [0m[1mclass 'SortVisualizer' defines a non-default destructor but does not define a copy constructor, a copy assignment operator, a move constructor or a move assignment operator [cppcoreguidelines-special-member-functions][0m
+class SortVisualizer
+[0;1;32m      ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.h:33:11: [0m[0;1;35mwarning: [0m[1mclass 'Item' defines a copy constructor, a copy assignment operator, a move constructor and a move assignment operator but does not define a destructor [cppcoreguidelines-special-member-functions][0m
+    class Item
+[0;1;32m          ^
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.h:41:9: [0m[0;1;35mwarning: [0m[1mmove constructors should be marked noexcept [performance-noexcept-move-constructor][0m
+        Item(Item&& other);
+[0;1;32m        ^
+[0m[0;32m                           noexcept 
+[0m[1m/home/ipiano/code/visual-sort/src/visualizer/sort_visualizer.h:42:15: [0m[0;1;35mwarning: [0m[1mmove assignment operators should be marked noexcept [performance-noexcept-move-constructor][0m
+        Item& operator=(Item&& other);
+[0;1;32m              ^
+[0m[0;32m                                      noexcept 
+[0m

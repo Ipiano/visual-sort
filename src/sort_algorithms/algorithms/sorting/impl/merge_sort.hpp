@@ -25,7 +25,7 @@ template <class T> class scratch_space
     scratch_space(std::size_t capacity)
     {
         m_buffer.reserve(capacity);
-        m_next = m_buffer.begin();
+        m_next = m_buffer.begin(); // NOLINT (cppcoreguidelines-prefer-member-initializer) This must be initialized after reserve()
     }
 
     void add(T& value)
@@ -62,7 +62,9 @@ void merge_sort(const RandomIt begin, const RandomIt end, Compare compare, scrat
     const auto dist = distance(begin, end);
 
     if (dist < 2)
+    {
         return;
+    }
 
     const auto pivot = begin + (dist / 2);
     merge_sort(begin, pivot, compare, scratch);

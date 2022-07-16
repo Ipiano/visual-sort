@@ -15,7 +15,9 @@ void renderText(const std::string& s, double x, double y)
 
     glColor3fv(constants::colors::TEXT.data());
     for (const auto c : s)
+    {
         glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, c);
+    }
 
     glPopMatrix();
 }

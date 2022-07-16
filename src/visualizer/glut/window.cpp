@@ -5,6 +5,7 @@
 
 namespace glut
 {
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 decltype(Window::s_windows) Window::s_windows = {};
 
 Window::Window(const std::string& name, display_mode_t mode, Coordinate position, Size size)
@@ -13,6 +14,7 @@ Window::Window(const std::string& name, display_mode_t mode, Coordinate position
     glutInitWindowPosition(position.x, position.y);
     glutInitWindowSize(size.width, size.height);
 
+    // NOLINTNEXTLINE(cppcoreguidelines-prefer-member-initializer)
     m_window_id            = glutCreateWindow(name.c_str());
     s_windows[m_window_id] = {};
 
@@ -27,21 +29,25 @@ Window::~Window()
     s_windows.erase(m_window_id);
 }
 
+// NOLINTNEXTLINE(readability-make-member-function-const)
 void Window::setDisplayCallback(display_callback_t&& callback)
 {
     s_windows[m_window_id].onDisplay = std::move(callback);
 }
 
+// NOLINTNEXTLINE(readability-make-member-function-const)
 void Window::setReshapeCallback(reshape_callback_t&& callback)
 {
     s_windows[m_window_id].onReshape = std::move(callback);
 }
 
+// NOLINTNEXTLINE(readability-make-member-function-const)
 void Window::setKeyPressCallback(keypress_callback_t&& callback)
 {
     s_windows[m_window_id].onKey = std::move(callback);
 }
 
+// NOLINTNEXTLINE(readability-make-member-function-const)
 void Window::setIdleCallback(idle_callback_t&& callback)
 {
     s_windows[m_window_id].onIdle = std::move(callback);

@@ -7,13 +7,13 @@
 
 using Item = SortVisualizer::Item;
 
-Item::Item(Item&& other) : m_value(other.m_value), m_visual(other.m_visual), m_touches(SortVisualizer::Touch::MOVE)
+Item::Item(Item&& other) noexcept : m_value(other.m_value), m_visual(other.m_visual), m_touches(SortVisualizer::Touch::MOVE)
 {
     other.addTouch(Touch::MOVE);
     addMove();
 }
 
-Item& Item::operator=(Item&& other)
+Item& Item::operator=(Item&& other) noexcept
 {
     m_value   = other.m_value;
     m_touches = other.m_touches;
@@ -45,7 +45,14 @@ SortVisualizer::Touch::type Item::getAndClearTouches() const
 }
 
 SortVisualizer::SortVisualizer(std::size_t moves_per_draw)
-    : m_moves_per_draw(moves_per_draw), m_ready_draw(false), m_cancel_flag(true), m_total_compares(0), m_total_moves(0)
+    : m_moves_per_draw(moves_per_draw)
+    , m_ready_draw(false)
+    , m_cancel_flag(true)
+    , m_total_compares(0)
+    , m_total_moves(0)
+    , m_compares_since_draw(0)
+    , m_moves_since_draw(0)
+    , m_complete_flag(false)
 {
 }
 
@@ -81,7 +88,7 @@ void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn
     m_ready_draw    = false;
 
     m_thread = std::thread(
-        [this, sort_fn]()
+        [this, sort_fn = std::move(sort_fn)]()
         {
             sort_fn(m_items, m_cancel_flag);
 
