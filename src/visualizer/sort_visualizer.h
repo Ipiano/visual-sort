@@ -35,7 +35,7 @@ class SortVisualizer
       public:
         Item(SortVisualizer& visualizer, int value) : m_value(value), m_visual(visualizer), m_touches(Touch::NONE) { }
 
-        Item(const Item&) = delete;
+        Item(const Item&)            = delete;
         Item& operator=(const Item&) = delete;
 
         Item(Item&& other);
