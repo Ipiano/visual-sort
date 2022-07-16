@@ -1,0 +1,22 @@
+name: Linting
+on: [push]
+
+jobs:
+  clang-tidy:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            clang-tidy cmake freeglut3-dev \
+            libboost-dev libboost-program-options-dev
+
+      - name: Generate Compilation Database
+        run: |
+          git submodule update --init --recursive
+          cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+      - name: Run clang-tidy
+        run: |
+          ./tools/check-clang-tidy.sh
