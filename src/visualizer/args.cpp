@@ -2,6 +2,7 @@
 
 #include "algorithms/sorting/bogo_sort.hpp"
 #include "algorithms/sorting/bubble_sort.hpp"
+#include "algorithms/sorting/bucket_sort.hpp"
 #include "algorithms/sorting/merge_sort.hpp"
 #include "rendering/render_items.h"
 
@@ -48,7 +49,10 @@ const static std::initializer_list<std::tuple<string_list, sort_function>> ALGOR
      [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::sort(items.begin(), items.end()); }},
 
     {string_list {"stable", "std::stable_sort"},
-     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::stable_sort(items.begin(), items.end()); }}
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::stable_sort(items.begin(), items.end()); }},
+
+    {string_list {"r", "radix"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled)
+     { algorithms::sorting::bucket_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); }}
 
 };
 
