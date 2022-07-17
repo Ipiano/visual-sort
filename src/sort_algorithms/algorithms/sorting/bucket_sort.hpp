@@ -23,7 +23,7 @@ template <class ValueT, class EnableT = void> struct traits;
 template <class ValueT> struct traits<ValueT, std::enable_if_t<std::is_integral_v<ValueT>, void>>
 {
     // Sort by 0 or 1 bits
-    static std::size_t bucket_count() noexcept { return 2; }
+    constexpr static std::size_t bucket_count() noexcept { return 2; }
 
     // Check order is least-significant to most
     // NOLINTNEXTLINE (bugprone-easily-swappable-parameters)
@@ -59,7 +59,7 @@ template <> struct traits<std::string>
     using ValueT = std::string;
 
     // Sort by 0 or 1 bits
-    static std::size_t bucket_count() noexcept { return 256; }
+    constexpr static std::size_t bucket_count() noexcept { return 256; }
 
     // Check order is last character to first; if the iteration count is
     // larger than the string, then it will return bucket 0 until we finish
