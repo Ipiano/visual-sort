@@ -1,5 +1,7 @@
 #pragma once
 
+#include "algorithms/sorting/impl/scratch_space.hpp"
+
 #include <array>
 #include <iterator>
 #include <utility>
@@ -15,10 +17,10 @@ template <class RandomIt, class Traits> void bucket_sort(RandomIt begin, RandomI
 
     const auto item_count = static_cast<std::size_t>(std::distance(begin, end));
 
-    std::array<std::vector<value_type>, Traits::bucket_count()> buckets;
+    std::array<scratch_space<value_type>, Traits::bucket_count()> buckets;
     for (auto& bucket : buckets)
     {
-        bucket.reserve(item_count);
+        bucket = algorithms::sorting::_impl::scratch_space<value_type>(item_count);
     }
 
     const std::size_t max_iterations = Traits::max_iterations(begin, end);
@@ -27,7 +29,7 @@ template <class RandomIt, class Traits> void bucket_sort(RandomIt begin, RandomI
         // Sort into buckets
         for (auto it = begin; it != end; ++it)
         {
-            buckets[Traits::bucket_index(*it, iteration, max_iterations)].emplace_back(std::move(*it));
+            buckets[Traits::bucket_index(*it, iteration, max_iterations)].add(std::move(*it));
         }
 
         // Move back to original list and clears the buckets for the next round
