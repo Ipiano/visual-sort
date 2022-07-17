@@ -23,7 +23,7 @@ template <class T> class scratch_space
         m_next = m_buffer.begin(); // NOLINT (cppcoreguidelines-prefer-member-initializer) This must be initialized after reserve()
     }
 
-    void add(T& value)
+    void add(T&& value)
     {
         if (m_next == m_buffer.end())
         {

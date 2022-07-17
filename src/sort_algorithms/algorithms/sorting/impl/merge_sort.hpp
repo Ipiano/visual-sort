@@ -39,25 +39,25 @@ void merge_sort(const RandomIt begin, const RandomIt end, Compare compare, scrat
     {
         if (compare(*left, *right))
         {
-            scratch.add(*left);
+            scratch.add(move(*left));
             ++left;
         }
         else
         {
-            scratch.add(*right);
+            scratch.add(move(*right));
             ++right;
         }
     }
 
     while (left < pivot)
     {
-        scratch.add(*left);
+        scratch.add(move(*left));
         ++left;
     }
 
     while (right < end)
     {
-        scratch.add(*right);
+        scratch.add(move(*right));
         ++right;
     }
 
