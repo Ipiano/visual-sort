@@ -17,7 +17,7 @@ template <class T> class scratch_space
   public:
     using iterator = typename std::vector<T>::iterator;
 
-    scratch_space(std::size_t capacity)
+    scratch_space(std::size_t capacity = 0)
     {
         m_buffer.reserve(capacity);
         m_next = m_buffer.begin(); // NOLINT (cppcoreguidelines-prefer-member-initializer) This must be initialized after reserve()
