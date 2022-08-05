@@ -1,5 +1,7 @@
 #include "sort_visualizer.h"
 
+#include "rendering/tone.h"
+
 #include <algorithm>
 #include <cassert>
 #include <numeric>
@@ -79,6 +81,7 @@ void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn
     m_complete_flag = false;
     m_ready_draw    = false;
 
+    rendering::audio::g_tone.start();
     m_thread = std::thread(
         [this, sort_fn = std::move(sort_fn)]()
         {
@@ -98,11 +101,13 @@ void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn
             waitForDraw();
 
             m_complete_flag = true;
+            rendering::audio::g_tone.stop();
         });
 }
 
 void SortVisualizer::cancel()
 {
+    rendering::audio::g_tone.stop();
     if (m_thread.joinable())
     {
         // Cancel the sort, wake up the sort thread if it happens to be
