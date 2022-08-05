@@ -9,6 +9,7 @@
 #include "rendering/color_strategy.hpp"
 #include "rendering/draw_strategy.hpp"
 #include "rendering/render_items.hpp"
+#include "rendering/tone_strategy.hpp"
 #include "sort_visualizer.h"
 
 #include <boost/program_options.hpp>
@@ -300,7 +301,7 @@ template <rendering::DrawStrategyChoices drawing_v, rendering::ColorStrategyChoi
         rendering::renderItems(
             items.begin(), items.end(),
             typename rendering::draw_strategy_traits<drawing_v>::type(viewport_origin, viewport_size, max_item, items.size()),
-            typename rendering::color_strategy_traits<coloring_v>::type(items.size()));
+            typename rendering::color_strategy_traits<coloring_v>::type(items.size()), rendering::ProportionalToneStrategy(max_item));
     }
 };
 
