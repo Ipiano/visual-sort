@@ -4,6 +4,7 @@
 #include "algorithms/sorting/bubble_sort.hpp"
 #include "algorithms/sorting/bucket_sort.hpp"
 #include "algorithms/sorting/merge_sort.hpp"
+#include "algorithms/sorting/quick_sort.hpp"
 #include "rendering/render_items.h"
 
 #include <boost/program_options.hpp>
@@ -52,7 +53,10 @@ const static std::initializer_list<std::tuple<string_list, sort_function>> ALGOR
      [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::stable_sort(items.begin(), items.end()); }},
 
     {string_list {"r", "radix"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled)
-     { algorithms::sorting::bucket_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); }}
+     { algorithms::sorting::bucket_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); }},
+
+    {string_list {"q", "quick", "quicksort"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled)
+     { algorithms::sorting::quick_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); }}
 
 };
 
