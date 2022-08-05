@@ -2,9 +2,11 @@
 
 #include "constants.h"
 #include "rendering/render_items.h"
+#include "rendering/tone.h"
 #include "sort_visualizer.h"
 
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <numeric>
 
@@ -12,11 +14,28 @@ namespace rendering
 {
 template <class InputIt, class DrawStrategy> void renderItems(InputIt begin, InputIt end, DrawStrategy&& strategy)
 {
+    //audio::g_tone.start();
     for (std::size_t index = 0; begin != end; ++begin, ++index)
     {
         strategy(index, *begin);
     }
+    //audio::g_tone.stop();
     glFlush();
+}
+
+inline void playTone(SortVisualizer::Touch::type touches, SortVisualizer::Item::underlying_type value,
+                     SortVisualizer::Item::underlying_type max_value)
+{
+    using namespace std::chrono;
+
+    const bool moved    = (touches & SortVisualizer::Touch::MOVE) != 0;
+    const bool compared = (touches & SortVisualizer::Touch::COMPARE) != 0;
+
+    if (moved)
+    {
+        audio::g_tone.set_pitch(static_cast<float>(value) / max_value * 10);
+        //std::this_thread::sleep_for(microseconds(100));
+    }
 }
 
 inline const std::array<float, 3>& getColor(SortVisualizer::Touch::type touches)
@@ -53,6 +72,7 @@ void LeftToRightStrategyBase<CrtpType>::operator()(const std::size_t index, cons
 {
     const auto item_state = item.getAndClearTouches();
     const auto item_color = getColor(item_state);
+    playTone(item_state, item, m_max_value);
 
     float left  = m_viewport_origin.x + m_item_width * static_cast<float>(index);
     float right = left + m_item_width;
