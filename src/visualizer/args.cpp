@@ -230,6 +230,8 @@ ProgramArgs parse_args(int argc, char** argv)
                     std::to_string(static_cast<unsigned long>(Visualization::SLOPE_BARS))),
             "Visualization (0-2)")
 
+        ("loop,l", "Repeatedly shuffle and sort")
+
         (",n",
             po::value<size_t>(&set_size)->default_value(100),
             "Number of items to sort")
@@ -253,6 +255,11 @@ ProgramArgs parse_args(int argc, char** argv)
         if (vm.count("help") > 0)
         {
             showHelp(*argv, options);
+        }
+
+        if (vm.count("loop") > 0)
+        {
+            result.loop = true;
         }
     }
     catch (const po::error& e)

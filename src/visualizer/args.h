@@ -7,6 +7,8 @@
 
 struct ProgramArgs
 {
+    bool loop = false;
+
     std::size_t steps_between_draws = 0;
 
     // Function that will produce data sets to sort

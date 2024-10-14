@@ -8,6 +8,7 @@
 
 #include <GL/freeglut.h>
 
+#include <chrono>
 #include <iostream>
 #include <random>
 #include <string>
@@ -17,7 +18,8 @@ using namespace std;
 enum class AppState
 {
     NOT_SORTING,
-    SORTING
+    SORTING,
+    DONE,
 };
 
 int main(int argc, char* argv[])
@@ -30,6 +32,8 @@ int main(int argc, char* argv[])
     glut::Window win("Visual Sort", glut::display_mode::double_buffered | glut::display_mode::rgba, {-1, -1}, screen_size);
 
     glClearColor(0.0, 0.0, 0.0, 0.0); // use black for glClear command
+
+    auto completion_time = chrono::steady_clock::now();
 
     AppState m_state = AppState::NOT_SORTING;
 
@@ -112,6 +116,22 @@ int main(int argc, char* argv[])
                                  });
 
                 m_state = AppState::SORTING;
+            }
+            else if (m_state == AppState::SORTING)
+            {
+                if (visualizer.sortCompleted())
+                {
+                    m_state         = AppState::DONE;
+                    completion_time = chrono::steady_clock::now();
+                }
+            }
+            else if (m_state == AppState::DONE)
+            {
+                if (args.loop && chrono::steady_clock::now() - completion_time > chrono::seconds(1))
+                {
+                    visualizer.cancel();
+                    m_state = AppState::NOT_SORTING;
+                }
             }
         });
 
