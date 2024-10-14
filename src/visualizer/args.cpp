@@ -3,6 +3,7 @@
 #include "algorithms/sorting/bogo_sort.hpp"
 #include "algorithms/sorting/bubble_sort.hpp"
 #include "algorithms/sorting/bucket_sort.hpp"
+#include "algorithms/sorting/heap_sort.hpp"
 #include "algorithms/sorting/merge_sort.hpp"
 #include "algorithms/sorting/quick_sort.hpp"
 #include "rendering/render_items.h"
@@ -56,7 +57,10 @@ const static std::initializer_list<std::tuple<string_list, sort_function>> ALGOR
      { algorithms::sorting::bucket_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); }},
 
     {string_list {"q", "quick", "quicksort"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled)
-     { algorithms::sorting::quick_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); }}
+     { algorithms::sorting::quick_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); }},
+
+    {string_list {"h", "heap", "heapsort"},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::heap_sort(items.begin(), items.end()); }}
 
 };
 
