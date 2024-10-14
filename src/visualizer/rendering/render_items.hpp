@@ -23,6 +23,12 @@ inline const std::array<float, 3>& getColor(SortVisualizer::Touch::type touches)
 {
     const bool moved    = (touches & SortVisualizer::Touch::MOVE) != 0;
     const bool compared = (touches & SortVisualizer::Touch::COMPARE) != 0;
+    const bool complete = (touches & SortVisualizer::Touch::COMPLETE) != 0;
+
+    if (complete)
+    {
+        return constants::colors::COMPLETE;
+    }
 
     if (moved)
     {

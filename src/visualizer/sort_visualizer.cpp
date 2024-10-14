@@ -40,7 +40,7 @@ bool Item::operator<(const Item& other) const
 SortVisualizer::Touch::type Item::getAndClearTouches() const
 {
     const auto result = m_touches;
-    m_touches         = Touch::NONE;
+    m_touches         = Touch::NONE | (Touch::COMPLETE & result); // Completed state is sticky
     return result;
 }
 
@@ -92,8 +92,16 @@ void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn
         {
             sort_fn(m_items, m_cancel_flag);
 
-            // Force two redraws, just get the screen all nice and clean
-            // for the result
+            // Paint the whole thing green
+            for (auto& x : m_items)
+            {
+                x.complete();
+            }
+
+            // Force a few redraws, just get the screen all nice and clean
+            // for the result. Experimentally determined that three is needed...
+            // really not sure why
+            waitForDraw();
             waitForDraw();
             waitForDraw();
 
@@ -121,6 +129,11 @@ bool SortVisualizer::readyToDraw()
     return !m_cancel_flag && m_ready_draw;
 }
 
+bool SortVisualizer::sortCompleted() const
+{
+    return !m_cancel_flag && m_complete_flag;
+}
+
 void SortVisualizer::draw(glut::Coordinate viewport_origin, glut::Size viewport_size)
 {
     // If the thread is waiting to draw, draw the screen and then
@@ -146,6 +159,12 @@ void SortVisualizer::onMove()
 {
     m_moves_since_draw++;
     m_total_moves++;
+    checkDraw();
+}
+
+void SortVisualizer::onComplete()
+{
+    m_moves_since_draw++;
     checkDraw();
 }
 
