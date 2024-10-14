@@ -22,9 +22,10 @@ class SortVisualizer
       public:
         using type = uint8_t;
 
-        constexpr static type NONE    = 0;
-        constexpr static type COMPARE = 1;
-        constexpr static type MOVE    = 1 << 1;
+        constexpr static type NONE     = 0;
+        constexpr static type COMPARE  = 1;
+        constexpr static type MOVE     = 1 << 1;
+        constexpr static type COMPLETE = 1 << 2;
     };
 
     // Item that's begin visualized during a sort. It encapsulates another
@@ -51,6 +52,12 @@ class SortVisualizer
         // Get the set of touches that have occurred since they were
         // last reset, then reset them.
         Touch::type getAndClearTouches() const;
+
+        void complete()
+        {
+            addTouch(Touch::COMPLETE);
+            m_visual.onComplete();
+        }
 
       private:
         void addTouch(Touch::type type) const { m_touches |= type; }
@@ -98,23 +105,27 @@ class SortVisualizer
     void cancel();
 
     // Return true if the thread is blocked waiting to draw
-    bool readyToDraw();
+    [[nodiscard]] bool readyToDraw() const;
+
+    // Return true after the sort operation has finished
+    [[nodiscard]] bool sortCompleted() const;
 
     // Draw the current sort on the OGL canvas. Returns immediately
     // if there's nothing to draw
     void draw(glut::Coordinate viewport_origin, glut::Size viewport_size);
 
     // Get total number of moves so far
-    std::size_t totalMoves() { return m_total_moves; }
+    [[nodiscard]] std::size_t totalMoves() const { return m_total_moves; }
 
     // Get total number of compares so far
-    std::size_t totalCompares() { return m_total_compares; }
+    [[nodiscard]] std::size_t totalCompares() const { return m_total_compares; }
 
   private:
     // Handlers for events to increment counters and potentially block
     // the sort thread
     void onCompare();
     void onMove();
+    void onComplete();
     void checkDraw();
     bool needDraw();
     void waitForDraw();
@@ -125,11 +136,11 @@ class SortVisualizer
     draw_function m_draw_fn;
 
     // Number of actions that have happened
-    std::atomic<std::size_t> m_compares_since_draw;
-    std::atomic<std::size_t> m_moves_since_draw;
+    std::atomic<std::size_t> m_compares_since_draw {0};
+    std::atomic<std::size_t> m_moves_since_draw {0};
 
-    std::atomic<std::size_t> m_total_compares;
-    std::atomic<std::size_t> m_total_moves;
+    std::atomic<std::size_t> m_total_compares {0};
+    std::atomic<std::size_t> m_total_moves {0};
 
     // Modified by the sort thread, drawn by the render thread; so be
     // careful about threadsafety
@@ -140,11 +151,11 @@ class SortVisualizer
 
     // The thread doing sorts and flags to communicate with it
     std::thread m_thread;
-    std::atomic_bool m_cancel_flag;
-    std::atomic_bool m_complete_flag;
+    std::atomic_bool m_cancel_flag {false};
+    std::atomic_bool m_complete_flag {false};
 
     // Used to block/unblock the sort thread when it's time to draw
     std::mutex m_ready_draw_mutex;
-    std::atomic_bool m_ready_draw;
+    std::atomic_bool m_ready_draw {false};
     std::condition_variable m_wait_draw;
 };
