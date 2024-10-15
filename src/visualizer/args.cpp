@@ -6,7 +6,8 @@
 #include "algorithms/sorting/heap_sort.hpp"
 #include "algorithms/sorting/merge_sort.hpp"
 #include "algorithms/sorting/quick_sort.hpp"
-#include "rendering/render_items.h"
+#include "rendering/draw_strategy.hpp"
+#include "rendering/render_items.hpp"
 
 #include <boost/program_options.hpp>
 

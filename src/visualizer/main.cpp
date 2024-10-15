@@ -1,8 +1,6 @@
-#include "algorithms/sorting/bubble_sort.hpp"
 #include "args.h"
 #include "constants.h"
 #include "glut/window.h"
-#include "rendering/render_items.h"
 #include "rendering/utils.h"
 #include "sort_visualizer.h"
 
@@ -10,7 +8,6 @@
 
 #include <chrono>
 #include <iostream>
-#include <random>
 #include <string>
 
 using namespace std;
