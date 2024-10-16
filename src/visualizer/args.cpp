@@ -14,6 +14,7 @@
 #include <boost/program_options.hpp>
 
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <numeric>
 #include <random>
@@ -64,9 +65,22 @@ const static std::initializer_list<algorithm_choice> ALGORITHMS {
 
     {string_list {"h", "heap", "heapsort"},
      [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::heap_sort(items.begin(), items.end()); },
-     rendering::ColorStrategyChoices::heap}
+     rendering::ColorStrategyChoices::heap},
 
+    // placeholder with special name that is used to pick the random algorithm
+    {string_list {"randomize"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled) {},
+     rendering::ColorStrategyChoices::touches},
 };
+
+bool is_random_algo(const algorithm_choice& choice)
+{
+    return !std::get<0>(choice).empty() && std::get<0>(choice)[0] == "randomize";
+}
+
+bool is_bogosort_algo(const algorithm_choice& choice)
+{
+    return !std::get<0>(choice).empty() && std::get<0>(choice)[0] == "bb";
+}
 
 void showHelp(const char* arg0, const po::options_description& options)
 {
@@ -81,6 +95,7 @@ void showHelp(const char* arg0, const po::options_description& options)
         names.pop_back();
         std::cout << "\t" << names << "\n";
     }
+
     std::cout << "\nExample:\n\t" << arg0 << " --algo=bubble --visual 2 --unique=no\n" << std::endl;
     exit(0);
 }
@@ -241,9 +256,34 @@ ProgramArgs parse_args(int argc, char** argv)
         showHelp(*argv, options);
     }
 
-    result.data_set_factory           = makeDatasetFactory(set_size, unique_values);
-    result.get_sort_and_draw_function = [visual_choice, algo_choice]
-    { return std::make_pair(std::get<1>(algo_choice), makeDrawFunction(visual_choice, std::get<2>(algo_choice))); };
+    result.data_set_factory = makeDatasetFactory(set_size, unique_values);
+
+    if (is_random_algo(algo_choice))
+    {
+        result.get_sort_and_draw_function = [visual_choice]
+        {
+            static thread_local std::mt19937_64 reng(std::chrono::system_clock::now().time_since_epoch().count());
+            std::uniform_int_distribution<std::size_t> algo_dist(0, ALGORITHMS.size() - 1);
+
+            std::size_t choice;
+            do
+            {
+                choice = algo_dist(reng);
+
+                // "random" isn't a real algo
+                // bogosort takes too long
+            } while (is_random_algo(*std::next(ALGORITHMS.begin(), choice)) || is_bogosort_algo(*std::next(ALGORITHMS.begin(), choice)));
+
+            auto algo_choice = *std::next(ALGORITHMS.begin(), choice);
+
+            return std::make_pair(std::get<1>(algo_choice), makeDrawFunction(visual_choice, std::get<2>(algo_choice)));
+        };
+    }
+    else
+    {
+        result.get_sort_and_draw_function = [visual_choice, algo_choice]
+        { return std::make_pair(std::get<1>(algo_choice), makeDrawFunction(visual_choice, std::get<2>(algo_choice))); };
+    }
 
     return result;
 }
