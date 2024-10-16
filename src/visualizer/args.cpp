@@ -6,8 +6,10 @@
 #include "algorithms/sorting/heap_sort.hpp"
 #include "algorithms/sorting/merge_sort.hpp"
 #include "algorithms/sorting/quick_sort.hpp"
+#include "rendering/color_strategy.hpp"
 #include "rendering/draw_strategy.hpp"
 #include "rendering/render_items.hpp"
+#include "sort_visualizer.h"
 
 #include <boost/program_options.hpp>
 
@@ -16,63 +18,55 @@
 #include <numeric>
 #include <random>
 
-enum class Visualization
-{
-    // Slope from bottom left to upper right
-    SLOPE_BARS,
-
-    // Slope, but it's shifted up and mirrored across
-    // the X axis
-    SLOPE_MIRRORED,
-
-    // Slope, but only the top of each bar is drawn
-    SLOPE_POINTS,
-
-    // Placeholder for max value
-    MAX_VALUE
-};
-
 namespace po = boost::program_options;
 
-using string_list   = std::vector<std::string>;
-using Item          = SortVisualizer::Item;
-using sort_function = SortVisualizer::sort_function;
+using string_list     = std::vector<std::string>;
+using Item            = SortVisualizer::Item;
+using sort_function   = SortVisualizer::sort_function;
+using render_function = SortVisualizer::draw_function;
 
-const static std::initializer_list<std::tuple<string_list, sort_function>> ALGORITHMS {
+using algorithm_choice = std::tuple<string_list, sort_function, rendering::ColorStrategyChoices>;
+
+SortVisualizer::draw_function makeDrawFunction(rendering::DrawStrategyChoices draw_strategy,
+                                               rendering::ColorStrategyChoices color_strategy);
+
+const static std::initializer_list<algorithm_choice> ALGORITHMS {
     {string_list {"b", "bubble", "bubblesort"},
-     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::bubble_sort(items.begin(), items.end()); }},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::bubble_sort(items.begin(), items.end()); },
+     rendering::ColorStrategyChoices::touches},
 
     {string_list {"m", "merge", "mergesort"},
-     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::merge_sort(items.begin(), items.end()); }},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::merge_sort(items.begin(), items.end()); },
+     rendering::ColorStrategyChoices::touches},
 
-    {string_list {"bb", "bogo", "bogosort"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled)
-     { algorithms::sorting::bogo_sort(items.begin(), items.end(), cancelled); }},
+    {string_list {"bb", "bogo", "bogosort"},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled)
+     { algorithms::sorting::bogo_sort(items.begin(), items.end(), cancelled); },
+     rendering::ColorStrategyChoices::touches},
 
     {string_list {"std", "stl", "std::sort"},
-     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::sort(items.begin(), items.end()); }},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::sort(items.begin(), items.end()); },
+     rendering::ColorStrategyChoices::touches},
 
     {string_list {"stable", "std::stable_sort"},
-     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::stable_sort(items.begin(), items.end()); }},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { std::stable_sort(items.begin(), items.end()); },
+     rendering::ColorStrategyChoices::touches},
 
-    {string_list {"r", "radix"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled)
-     { algorithms::sorting::bucket_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); }},
+    {string_list {"r", "radix"},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled)
+     { algorithms::sorting::bucket_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); },
+     rendering::ColorStrategyChoices::touches},
 
-    {string_list {"q", "quick", "quicksort"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled)
-     { algorithms::sorting::quick_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); }},
+    {string_list {"q", "quick", "quicksort"},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled)
+     { algorithms::sorting::quick_sort(items.begin(), items.end(), algorithms::sorting::bucket::traits<Item::underlying_type>()); },
+     rendering::ColorStrategyChoices::touches},
 
     {string_list {"h", "heap", "heapsort"},
-     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::heap_sort(items.begin(), items.end()); }}
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::heap_sort(items.begin(), items.end()); },
+     rendering::ColorStrategyChoices::heap}
 
 };
-
-// const std::array<std::tuple<string_list, std::unique_ptr<sorting::visual_sort>>, 6> ALGORITHMS {{
-//     {string_list {{"bb", "bogo", "bogosort"}}, std::make_unique<sorting::bogo_sort>()},
-//     {string_list {{"b", "bubble", "bubblesort"}}, std::make_unique<sorting::bubble_sort>()},
-//     {string_list {{"q", "quick", "quicksort"}}, std::make_unique<sorting::quick_sort>()},
-//     {string_list {{"h", "heap", "heapsort"}}, std::make_unique<sorting::heap_sort>()},
-//     {string_list {{"m", "merge", "mergesort"}}, std::make_unique<sorting::merge_sort>()},
-//     {string_list {{"r", "radix", "radixsort"}}, std::make_unique<sorting::radix_sort>()},
-// }};
 
 void showHelp(const char* arg0, const po::options_description& options)
 {
@@ -91,19 +85,22 @@ void showHelp(const char* arg0, const po::options_description& options)
     exit(0);
 }
 
-std::istream& operator>>(std::istream& in, Visualization& v)
+// ADL handling
+namespace rendering
+{
+std::istream& operator>>(std::istream& in, rendering::DrawStrategyChoices& v)
 {
     std::string token;
     in >> token;
     try
     {
         const auto token_value = std::stoul(token);
-        if (token_value >= static_cast<unsigned long>(Visualization::MAX_VALUE))
+        if (token_value >= static_cast<unsigned long>(rendering::DrawStrategyChoices::max_value))
         {
             throw std::exception();
         }
 
-        v = static_cast<Visualization>(token_value);
+        v = static_cast<rendering::DrawStrategyChoices>(token_value);
     }
     catch (const std::exception&)
     {
@@ -111,8 +108,9 @@ std::istream& operator>>(std::istream& in, Visualization& v)
     }
     return in;
 }
+}
 
-void validate(boost::any& v, const std::vector<std::string>& values, sort_function* dispatch_unused, int unused)
+void validate(boost::any& v, const std::vector<std::string>& values, algorithm_choice* dispatch_unused, int unused)
 {
     po::validators::check_first_occurrence(v);
     const std::string& s = po::validators::get_single_string(values);
@@ -121,39 +119,11 @@ void validate(boost::any& v, const std::vector<std::string>& values, sort_functi
     {
         if (std::find(std::get<0>(algo).begin(), std::get<0>(algo).end(), s) != std::get<0>(algo).end())
         {
-            v = std::get<1>(algo);
+            v = algo;
             return;
         }
     }
     throw po::invalid_option_value("Unknown algorithm option: " + s);
-}
-
-SortVisualizer::draw_function makeDrawFunction(Visualization which)
-{
-    switch (which)
-    {
-    case Visualization::SLOPE_MIRRORED:
-        return [](const std::vector<Item>& items, int max_item, glut::Coordinate viewport_origin, glut::Size viewport_size)
-        {
-            rendering::renderItems(items.begin(), items.end(),
-                                   rendering::LeftToRightMirrorStrategy(viewport_origin, viewport_size, max_item, items.size()));
-        };
-
-    case Visualization::SLOPE_POINTS:
-        return [](const std::vector<Item>& items, int max_item, glut::Coordinate viewport_origin, glut::Size viewport_size)
-        {
-            rendering::renderItems(items.begin(), items.end(),
-                                   rendering::LeftToRightDotStrategy(viewport_origin, viewport_size, max_item, items.size()));
-        };
-
-    case Visualization::SLOPE_BARS:
-    default:
-        return [](const std::vector<Item>& items, int max_item, glut::Coordinate viewport_origin, glut::Size viewport_size)
-        {
-            rendering::renderItems(items.begin(), items.end(),
-                                   rendering::LeftToRightSlopeStrategy(viewport_origin, viewport_size, max_item, items.size()));
-        };
-    }
 }
 
 std::vector<int> uniqueDataset(std::size_t count, std::mt19937& reng)
@@ -212,23 +182,25 @@ ProgramArgs parse_args(int argc, char** argv)
 
     std::size_t set_size;
     bool unique_values;
-    Visualization visual_choice;
+    rendering::DrawStrategyChoices visual_choice;
+
+    algorithm_choice algo_choice;
 
     // clang-format off
     options.add_options()
         ("help", "Show this help")
 
         ("algo,a,algorithm",
-            po::value<sort_function>(&result.sort_function)
+            po::value<algorithm_choice>(&algo_choice)
                 ->default_value(
-                    std::get<1>(*ALGORITHMS.begin()),
+                    *ALGORITHMS.begin(),
                     std::get<0>(*ALGORITHMS.begin())[0]),
             "Sort algorithm")
         ("visual,v",
-            po::value<Visualization>(&visual_choice)
+            po::value<rendering::DrawStrategyChoices>(&visual_choice)
                 ->default_value(
-                    Visualization::SLOPE_BARS,
-                    std::to_string(static_cast<unsigned long>(Visualization::SLOPE_BARS))),
+                    rendering::DrawStrategyChoices::slope_bars,
+                    std::to_string(static_cast<unsigned long>(rendering::DrawStrategyChoices::min_value))),
             "Visualization (0-2)")
 
         ("loop,l", "Repeatedly shuffle and sort")
@@ -269,8 +241,80 @@ ProgramArgs parse_args(int argc, char** argv)
         showHelp(*argv, options);
     }
 
+    result.sort_function    = std::get<1>(algo_choice);
     result.data_set_factory = makeDatasetFactory(set_size, unique_values);
-    result.draw_function    = makeDrawFunction(visual_choice);
+    result.draw_function    = makeDrawFunction(visual_choice, std::get<2>(algo_choice));
 
     return result;
+}
+
+template <rendering::DrawStrategyChoices min_value, rendering::DrawStrategyChoices max_value> struct select_draw_function;
+template <rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategyChoices min_value,
+          rendering::ColorStrategyChoices max_value>
+struct select_color_strategy;
+
+template <rendering::DrawStrategyChoices drawing_v, rendering::ColorStrategyChoices coloring_v> struct render_function_obj
+{
+    void operator()(const std::vector<Item>& items, int max_item, glut::Coordinate viewport_origin, glut::Size viewport_size)
+    {
+        rendering::renderItems(
+            items.begin(), items.end(),
+            typename rendering::draw_strategy_traits<drawing_v>::type(viewport_origin, viewport_size, max_item, items.size()),
+            typename rendering::color_strategy_traits<coloring_v>::type(items.size()));
+    }
+};
+
+template <rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategyChoices max_value>
+struct select_color_strategy<draw_strategy, max_value, max_value>
+{
+    auto operator()(rendering::ColorStrategyChoices target_color)
+    {
+        return render_function(render_function_obj<draw_strategy, rendering::ColorStrategyChoices::min_value>());
+    }
+};
+
+template <rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategyChoices min_value,
+          rendering::ColorStrategyChoices max_value>
+struct select_color_strategy
+{
+    auto operator()(rendering::ColorStrategyChoices target_color)
+    {
+        if (target_color == min_value)
+        {
+            return render_function(render_function_obj<draw_strategy, min_value>());
+        }
+
+        return select_color_strategy<draw_strategy, rendering::ColorStrategyChoices(static_cast<int>(min_value) + 1), max_value>()(
+            target_color);
+    }
+};
+
+template <rendering::DrawStrategyChoices max_value> struct select_draw_function<max_value, max_value>
+{
+    auto operator()(rendering::DrawStrategyChoices target_draw, rendering::ColorStrategyChoices target_color)
+    {
+        return select_color_strategy<rendering::DrawStrategyChoices::min_value, rendering::ColorStrategyChoices::min_value,
+                                     rendering::ColorStrategyChoices::max_value>()(target_color);
+    }
+};
+
+template <rendering::DrawStrategyChoices min_value, rendering::DrawStrategyChoices max_value> struct select_draw_function
+{
+    auto operator()(rendering::DrawStrategyChoices target_draw, rendering::ColorStrategyChoices target_color)
+    {
+        if (target_draw == min_value)
+        {
+            return select_color_strategy<min_value, rendering::ColorStrategyChoices::min_value,
+                                         rendering::ColorStrategyChoices::max_value>()(target_color);
+        }
+
+        return select_draw_function<rendering::DrawStrategyChoices(static_cast<int>(min_value) + 1), max_value>()(target_draw,
+                                                                                                                  target_color);
+    }
+};
+
+SortVisualizer::draw_function makeDrawFunction(rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategyChoices color_strategy)
+{
+    return select_draw_function<rendering::DrawStrategyChoices::min_value, rendering::DrawStrategyChoices::max_value>()(draw_strategy,
+                                                                                                                        color_strategy);
 }

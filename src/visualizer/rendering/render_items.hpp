@@ -4,11 +4,17 @@
 
 namespace rendering
 {
-template <class InputIt, class DrawStrategy> void renderItems(InputIt begin, InputIt end, DrawStrategy&& strategy)
+template <class InputIt, class DrawStrategy, class ColorStrategy>
+void renderItems(InputIt begin, InputIt end, DrawStrategy&& draw_item, ColorStrategy&& get_color)
 {
     for (std::size_t index = 0; begin != end; ++begin, ++index)
     {
-        strategy(index, *begin);
+        const auto item_state = begin->getAndClearTouches();
+
+        const auto item_color = get_color(index, static_cast<int>(*begin), item_state);
+        glColor3fv(item_color.data());
+
+        draw_item(index, static_cast<int>(*begin));
     }
     glFlush();
 }
