@@ -241,9 +241,9 @@ ProgramArgs parse_args(int argc, char** argv)
         showHelp(*argv, options);
     }
 
-    result.sort_function    = std::get<1>(algo_choice);
-    result.data_set_factory = makeDatasetFactory(set_size, unique_values);
-    result.draw_function    = makeDrawFunction(visual_choice, std::get<2>(algo_choice));
+    result.data_set_factory           = makeDatasetFactory(set_size, unique_values);
+    result.get_sort_and_draw_function = [visual_choice, algo_choice]
+    { return std::make_pair(std::get<1>(algo_choice), makeDrawFunction(visual_choice, std::get<2>(algo_choice))); };
 
     return result;
 }

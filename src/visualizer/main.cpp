@@ -104,11 +104,13 @@ int main(int argc, char* argv[])
             {
                 auto data_set = args.data_set_factory();
 
-                visualizer.start(data_set, args.sort_function,
-                                 [&](const std::vector<SortVisualizer::Item>& items, int max_value, glut::Coordinate viewport_origin,
-                                     glut::Size viewport_size)
+                auto [sort_function, draw_function] = args.get_sort_and_draw_function();
+
+                visualizer.start(data_set, sort_function,
+                                 [draw_function](const std::vector<SortVisualizer::Item>& items, int max_value,
+                                                 glut::Coordinate viewport_origin, glut::Size viewport_size)
                                  {
-                                     args.draw_function(items, max_value, viewport_origin, viewport_size);
+                                     draw_function(items, max_value, viewport_origin, viewport_size);
                                      std::this_thread::sleep_for(chrono::milliseconds(1));
                                  });
 
