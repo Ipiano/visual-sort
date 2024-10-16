@@ -10,6 +10,8 @@ endif()
 
 add_executable(visual_sort)
 
+target_compile_features(visual_sort PRIVATE cxx_std_17)
+
 target_include_directories(visual_sort PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 target_sources(
