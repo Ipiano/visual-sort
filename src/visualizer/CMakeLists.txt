@@ -3,11 +3,17 @@ find_package(Threads REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS program_options)
-find_package(SFML COMPONENTS audio)
+find_package(
+    SFML
+    COMPONENTS audio
+    QUIET
+)
 
 if(NOT OPENGL_FOUND OR NOT OPENGL_GLU_FOUND)
     message(FATAL_ERROR "OpenGL or GLU not found")
 endif()
+
+option(SORT_FEATURE_AUDIO "Build support for playing tones related to visual" ${SFML_AUDIO_FOUND})
 
 add_executable(visual_sort)
 
@@ -36,7 +42,13 @@ target_link_libraries(
             Boost::program_options
 )
 
-if(SFML_AUDIO_FOUND)
+if(SORT_FEATURE_AUDIO)
+    find_package(
+        SFML
+        COMPONENTS audio
+        REQUIRED
+    )
+
     target_link_libraries(visual_sort PRIVATE sfml-audio)
     target_compile_definitions(visual_sort PRIVATE WITH_SFML)
 endif()
