@@ -15,6 +15,9 @@ enum class ToneStrategyChoices
     max_value
 };
 
+// Provides 'type' typedef
+template <ToneStrategyChoices strategy> struct tone_strategy_traits;
+
 class SilentToneStrategy
 {
   public:
@@ -31,8 +34,9 @@ class ProportionalToneStrategy
     {
         const bool moved    = (touches & SortVisualizer::Touch::MOVE) != 0;
         const bool compared = (touches & SortVisualizer::Touch::COMPARE) != 0;
+        const bool complete = (touches & SortVisualizer::Touch::COMPLETE) != 0;
 
-        if (moved)
+        if (moved || complete)
         {
             audio::g_tone.set_pitch(static_cast<float>(item_value) / _max_item_value * 10);
         }
@@ -40,6 +44,16 @@ class ProportionalToneStrategy
 
   private:
     int _max_item_value;
+};
+
+template <> struct tone_strategy_traits<ToneStrategyChoices::silent>
+{
+    using type = SilentToneStrategy;
+};
+
+template <> struct tone_strategy_traits<ToneStrategyChoices::proportional>
+{
+    using type = ProportionalToneStrategy;
 };
 
 }

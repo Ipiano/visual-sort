@@ -29,8 +29,14 @@ using render_function = SortVisualizer::draw_function;
 
 using algorithm_choice = std::tuple<string_list, sort_function, rendering::ColorStrategyChoices>;
 
-SortVisualizer::draw_function makeDrawFunction(rendering::DrawStrategyChoices draw_strategy,
-                                               rendering::ColorStrategyChoices color_strategy);
+struct RenderOptions
+{
+    rendering::DrawStrategyChoices draw_strategy   = rendering::DrawStrategyChoices::min_value;
+    rendering::ColorStrategyChoices color_strategy = rendering::ColorStrategyChoices::min_value;
+    rendering::ToneStrategyChoices tone_strategy   = rendering::ToneStrategyChoices::min_value;
+};
+
+SortVisualizer::draw_function makeDrawFunction(RenderOptions options);
 
 const static std::initializer_list<algorithm_choice> ALGORITHMS {
     {string_list {"b", "bubble", "bubblesort"},
@@ -212,12 +218,17 @@ ProgramArgs parse_args(int argc, char** argv)
                     *ALGORITHMS.begin(),
                     std::get<0>(*ALGORITHMS.begin())[0]),
             "Sort algorithm")
+
         ("visual,v",
             po::value<rendering::DrawStrategyChoices>(&visual_choice)
                 ->default_value(
                     rendering::DrawStrategyChoices::slope_bars,
                     std::to_string(static_cast<unsigned long>(rendering::DrawStrategyChoices::min_value))),
             "Visualization (0-2)")
+
+#ifdef WITH_SFML
+        ("audio,a", "Play audio related to visual")
+#endif
 
         ("loop,l", "Repeatedly shuffle and sort")
 
@@ -235,6 +246,8 @@ ProgramArgs parse_args(int argc, char** argv)
     ;
     // clang-format on
 
+    rendering::ToneStrategyChoices audio_choice = rendering::ToneStrategyChoices::silent;
+
     po::variables_map vm;
     try
     {
@@ -250,6 +263,11 @@ ProgramArgs parse_args(int argc, char** argv)
         {
             result.loop = true;
         }
+
+        if (vm.count("audio") > 0)
+        {
+            audio_choice = rendering::ToneStrategyChoices::proportional;
+        }
     }
     catch (const po::error& e)
     {
@@ -261,7 +279,7 @@ ProgramArgs parse_args(int argc, char** argv)
 
     if (is_random_algo(algo_choice))
     {
-        result.get_sort_and_draw_function = [visual_choice]
+        result.get_sort_and_draw_function = [visual_choice, audio_choice]
         {
             static thread_local std::mt19937_64 reng(std::chrono::system_clock::now().time_since_epoch().count());
             std::uniform_int_distribution<std::size_t> algo_dist(0, ALGORITHMS.size() - 1);
@@ -277,40 +295,78 @@ ProgramArgs parse_args(int argc, char** argv)
 
             auto algo_choice = *std::next(ALGORITHMS.begin(), choice);
 
-            return std::make_pair(std::get<1>(algo_choice), makeDrawFunction(visual_choice, std::get<2>(algo_choice)));
+            return std::make_pair(std::get<1>(algo_choice),
+                                  makeDrawFunction(RenderOptions {visual_choice, std::get<2>(algo_choice), audio_choice}));
         };
     }
     else
     {
-        result.get_sort_and_draw_function = [visual_choice, algo_choice]
-        { return std::make_pair(std::get<1>(algo_choice), makeDrawFunction(visual_choice, std::get<2>(algo_choice))); };
+        result.get_sort_and_draw_function = [visual_choice, audio_choice, algo_choice]
+        {
+            return std::make_pair(std::get<1>(algo_choice),
+                                  makeDrawFunction(RenderOptions {visual_choice, std::get<2>(algo_choice), audio_choice}));
+        };
     }
 
     return result;
 }
 
 template <rendering::DrawStrategyChoices min_value, rendering::DrawStrategyChoices max_value> struct select_draw_function;
+
 template <rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategyChoices min_value,
           rendering::ColorStrategyChoices max_value>
 struct select_color_strategy;
 
-template <rendering::DrawStrategyChoices drawing_v, rendering::ColorStrategyChoices coloring_v> struct render_function_obj
+template <rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategyChoices color_strategy,
+          rendering::ToneStrategyChoices min_value, rendering::ToneStrategyChoices max_value>
+struct select_tone_strategy;
+
+template <rendering::DrawStrategyChoices drawing_v, rendering::ColorStrategyChoices coloring_v, rendering::ToneStrategyChoices tone_v>
+struct render_function_obj
 {
     void operator()(const std::vector<Item>& items, int max_item, glut::Coordinate viewport_origin, glut::Size viewport_size)
     {
         rendering::renderItems(
             items.begin(), items.end(),
             typename rendering::draw_strategy_traits<drawing_v>::type(viewport_origin, viewport_size, max_item, items.size()),
-            typename rendering::color_strategy_traits<coloring_v>::type(items.size()), rendering::ProportionalToneStrategy(max_item));
+            typename rendering::color_strategy_traits<coloring_v>::type(items.size()),
+            typename rendering::tone_strategy_traits<tone_v>::type(max_item));
+    }
+};
+
+template <rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategyChoices color_strategy>
+struct select_tone_strategy<draw_strategy, color_strategy, rendering::ToneStrategyChoices::max_value,
+                            rendering::ToneStrategyChoices::max_value>
+{
+    auto operator()(RenderOptions options)
+    {
+        return render_function(render_function_obj<draw_strategy, color_strategy, rendering::ToneStrategyChoices::min_value>());
+    }
+};
+
+template <rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategyChoices color_strategy,
+          rendering::ToneStrategyChoices min_value, rendering::ToneStrategyChoices max_value>
+struct select_tone_strategy
+{
+    auto operator()(RenderOptions options)
+    {
+        if (min_value == options.tone_strategy)
+        {
+            return render_function(render_function_obj<draw_strategy, color_strategy, min_value>());
+        }
+
+        return select_tone_strategy<draw_strategy, color_strategy, rendering::ToneStrategyChoices(static_cast<int>(min_value) + 1),
+                                    max_value>()(options);
     }
 };
 
 template <rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategyChoices max_value>
 struct select_color_strategy<draw_strategy, max_value, max_value>
 {
-    auto operator()(rendering::ColorStrategyChoices target_color)
+    auto operator()(RenderOptions options)
     {
-        return render_function(render_function_obj<draw_strategy, rendering::ColorStrategyChoices::min_value>());
+        return select_tone_strategy<draw_strategy, rendering::ColorStrategyChoices::min_value, rendering::ToneStrategyChoices::min_value,
+                                    rendering::ToneStrategyChoices::max_value>()(options);
     }
 };
 
@@ -318,44 +374,42 @@ template <rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategy
           rendering::ColorStrategyChoices max_value>
 struct select_color_strategy
 {
-    auto operator()(rendering::ColorStrategyChoices target_color)
+    auto operator()(RenderOptions options)
     {
-        if (target_color == min_value)
+        if (options.color_strategy == min_value)
         {
-            return render_function(render_function_obj<draw_strategy, min_value>());
+            return select_tone_strategy<draw_strategy, min_value, rendering::ToneStrategyChoices::min_value,
+                                        rendering::ToneStrategyChoices::max_value>()(options);
         }
 
-        return select_color_strategy<draw_strategy, rendering::ColorStrategyChoices(static_cast<int>(min_value) + 1), max_value>()(
-            target_color);
+        return select_color_strategy<draw_strategy, rendering::ColorStrategyChoices(static_cast<int>(min_value) + 1), max_value>()(options);
     }
 };
 
 template <rendering::DrawStrategyChoices max_value> struct select_draw_function<max_value, max_value>
 {
-    auto operator()(rendering::DrawStrategyChoices target_draw, rendering::ColorStrategyChoices target_color)
+    auto operator()(RenderOptions options)
     {
         return select_color_strategy<rendering::DrawStrategyChoices::min_value, rendering::ColorStrategyChoices::min_value,
-                                     rendering::ColorStrategyChoices::max_value>()(target_color);
+                                     rendering::ColorStrategyChoices::max_value>()(options);
     }
 };
 
 template <rendering::DrawStrategyChoices min_value, rendering::DrawStrategyChoices max_value> struct select_draw_function
 {
-    auto operator()(rendering::DrawStrategyChoices target_draw, rendering::ColorStrategyChoices target_color)
+    auto operator()(RenderOptions options)
     {
-        if (target_draw == min_value)
+        if (options.draw_strategy == min_value)
         {
             return select_color_strategy<min_value, rendering::ColorStrategyChoices::min_value,
-                                         rendering::ColorStrategyChoices::max_value>()(target_color);
+                                         rendering::ColorStrategyChoices::max_value>()(options);
         }
 
-        return select_draw_function<rendering::DrawStrategyChoices(static_cast<int>(min_value) + 1), max_value>()(target_draw,
-                                                                                                                  target_color);
+        return select_draw_function<rendering::DrawStrategyChoices(static_cast<int>(min_value) + 1), max_value>()(options);
     }
 };
 
-SortVisualizer::draw_function makeDrawFunction(rendering::DrawStrategyChoices draw_strategy, rendering::ColorStrategyChoices color_strategy)
+SortVisualizer::draw_function makeDrawFunction(RenderOptions options)
 {
-    return select_draw_function<rendering::DrawStrategyChoices::min_value, rendering::DrawStrategyChoices::max_value>()(draw_strategy,
-                                                                                                                        color_strategy);
+    return select_draw_function<rendering::DrawStrategyChoices::min_value, rendering::DrawStrategyChoices::max_value>()(options);
 }
