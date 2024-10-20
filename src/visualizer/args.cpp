@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cstddef>
 #include <iostream>
 #include <numeric>
 #include <random>
@@ -34,6 +35,14 @@ struct RenderOptions
     rendering::DrawStrategyChoices draw_strategy   = rendering::DrawStrategyChoices::min_value;
     rendering::ColorStrategyChoices color_strategy = rendering::ColorStrategyChoices::min_value;
     rendering::ToneStrategyChoices tone_strategy   = rendering::ToneStrategyChoices::min_value;
+};
+
+enum class Dataset
+{
+    unique,
+    uniform,
+    normal,
+    random
 };
 
 SortVisualizer::draw_function makeDrawFunction(RenderOptions options);
@@ -148,6 +157,33 @@ void validate(boost::any& v, const std::vector<std::string>& values, algorithm_c
     throw po::invalid_option_value("Unknown algorithm option: " + s);
 }
 
+void validate(boost::any& v, const std::vector<std::string>& values, Dataset* dispatch_unused, int unused)
+{
+    po::validators::check_first_occurrence(v);
+    const std::string& s = po::validators::get_single_string(values);
+
+    if (s == "unique")
+    {
+        v = Dataset::unique;
+    }
+    else if (s == "uniform")
+    {
+        v = Dataset::uniform;
+    }
+    else if (s == "normal")
+    {
+        v = Dataset::normal;
+    }
+    else if (s == "random")
+    {
+        v = Dataset::random;
+    }
+    else
+    {
+        throw po::invalid_option_value("Unknown dataset option: " + s);
+    }
+}
+
 std::vector<int> uniqueDataset(std::size_t count, std::mt19937& reng)
 {
     std::vector<int> items(count, 0);
@@ -160,7 +196,7 @@ std::vector<int> uniqueDataset(std::size_t count, std::mt19937& reng)
     return items;
 }
 
-std::vector<int> nonUniqueDataset(std::size_t count, std::mt19937& reng)
+std::vector<int> uniformDataset(std::size_t count, std::mt19937& reng)
 {
     std::uniform_int_distribution<int> dist(0, static_cast<int>(count));
 
@@ -170,7 +206,33 @@ std::vector<int> nonUniqueDataset(std::size_t count, std::mt19937& reng)
     return items;
 }
 
-std::function<std::vector<int>()> makeDatasetFactory(std::size_t number_of_items, bool unique)
+std::vector<int> normalDataset(std::size_t count, std::mt19937& reng)
+{
+    std::normal_distribution<double> dist(1000, 200);
+
+    std::vector<int> items(count, 0);
+    std::transform(items.begin(), items.end(), items.begin(), [&](int) { return static_cast<int>(dist(reng)); });
+
+    return items;
+}
+
+std::vector<int> randomDataset(std::size_t count, std::mt19937& reng)
+{
+    std::uniform_int_distribution<int> choice(0, 2);
+    switch (Dataset(choice(reng)))
+    {
+    case Dataset::unique:
+        return uniqueDataset(count, reng);
+    case Dataset::uniform:
+        return uniformDataset(count, reng);
+    case Dataset::normal:
+        return normalDataset(count, reng);
+    default:
+        return {};
+    }
+}
+
+std::function<std::vector<int>()> makeDatasetFactory(std::size_t number_of_items, Dataset data_choice)
 {
     struct factory
     {
@@ -185,13 +247,19 @@ std::function<std::vector<int>()> makeDatasetFactory(std::size_t number_of_items
     factory result;
     result.m_count = number_of_items;
 
-    if (unique)
+    switch (data_choice)
     {
+    case Dataset::unique:
         result.m_factory = &uniqueDataset;
-    }
-    else
-    {
-        result.m_factory = &nonUniqueDataset;
+        break;
+    case Dataset::uniform:
+        result.m_factory = &uniformDataset;
+        break;
+    case Dataset::normal:
+        result.m_factory = &normalDataset;
+        break;
+    case Dataset::random:
+        result.m_factory = &randomDataset;
     }
     return result;
 }
@@ -203,10 +271,10 @@ ProgramArgs parse_args(int argc, char** argv)
     po::options_description options("Options");
 
     std::size_t set_size;
-    bool unique_values;
     rendering::DrawStrategyChoices visual_choice;
 
     algorithm_choice algo_choice;
+    Dataset data_choice;
 
     // clang-format off
     options.add_options()
@@ -232,6 +300,8 @@ ProgramArgs parse_args(int argc, char** argv)
 
         ("loop,l", "Repeatedly shuffle and sort")
 
+        ("data,d", po::value<Dataset>(&data_choice)->default_value(Dataset::unique, "unique"), "Choose the distribution of data to sort [unique, uniform, normal, random]")
+
         (",n",
             po::value<size_t>(&set_size)->default_value(100),
             "Number of items to sort")
@@ -239,10 +309,6 @@ ProgramArgs parse_args(int argc, char** argv)
         ("steps,s",
             po::value<size_t>(&result.steps_between_draws)->default_value(10),
             "Number of steps to execute between screen updates")
-
-        ("unique,u",
-            po::value<bool>(&unique_values)->default_value(true),
-            "Prohibit duplicate values in the dataset")
     ;
     // clang-format on
 
@@ -275,7 +341,7 @@ ProgramArgs parse_args(int argc, char** argv)
         showHelp(*argv, options);
     }
 
-    result.data_set_factory = makeDatasetFactory(set_size, unique_values);
+    result.data_set_factory = makeDatasetFactory(set_size, data_choice);
 
     if (is_random_algo(algo_choice))
     {
