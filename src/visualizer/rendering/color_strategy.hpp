@@ -110,7 +110,7 @@ struct DefaultColorStrategy : public ColorStrategy<DefaultColorStrategy>
 struct HeapColorStrategy : public ColorStrategy<HeapColorStrategy>
 {
   public:
-    explicit HeapColorStrategy(std::size_t total_items) : _heap_depth(log(total_items) + 1) { }
+    explicit HeapColorStrategy(std::size_t total_items) : _heap_depth(log2(total_items) + 1) { }
 
     rgb_t operator()(std::size_t item_index, int item_value, SortVisualizer::Touch::type touches) const
     {
@@ -119,7 +119,7 @@ struct HeapColorStrategy : public ColorStrategy<HeapColorStrategy>
             return color_strategy::get_color_from_touches(touches);
         }
 
-        const int item_depth = std::log(item_index);
+        const int item_depth = std::log2(item_index);
 
         return color_strategy::rainbow_hue(double(item_depth) / _heap_depth * 360.0);
     }
