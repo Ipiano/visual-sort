@@ -65,22 +65,22 @@ static rgb_t rainbow_hue(double hue)
 
     if (hue >= RED_MIN && hue <= 360)
     {
-        result[0] = std::sin(PI * (hue - RED_MIN) / CHANNEL_WIDTH) * 255;
+        result[0] = std::sin(PI * (hue - RED_MIN) / CHANNEL_WIDTH);
     }
 
     if (hue >= 0 && hue <= RED_MAX)
     {
-        result[0] = std::sin(PI * (hue + CHANNEL_WIDTH / 2) / CHANNEL_WIDTH) * 255;
+        result[0] = std::sin(PI * (hue + CHANNEL_WIDTH / 2) / CHANNEL_WIDTH);
     }
 
     if (hue >= GREEN_MIN && hue <= GREEN_MIN + CHANNEL_WIDTH)
     {
-        result[1] = std::sin(PI * (hue - GREEN_MIN) / CHANNEL_WIDTH) * 255;
+        result[1] = std::sin(PI * (hue - GREEN_MIN) / CHANNEL_WIDTH);
     }
 
     if (hue >= BLUE_MIN && hue <= BLUE_MIN + CHANNEL_WIDTH)
     {
-        result[2] = std::sin(PI * (hue - BLUE_MIN) / CHANNEL_WIDTH) * 255;
+        result[2] = std::sin(PI * (hue - BLUE_MIN) / CHANNEL_WIDTH);
     }
 
     return result;
