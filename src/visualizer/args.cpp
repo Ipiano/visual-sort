@@ -1,11 +1,17 @@
 #include "args.h"
 
+#include "algorithms/sorting/bitonic_sort.hpp"
 #include "algorithms/sorting/bogo_sort.hpp"
 #include "algorithms/sorting/bubble_sort.hpp"
 #include "algorithms/sorting/bucket_sort.hpp"
 #include "algorithms/sorting/heap_sort.hpp"
 #include "algorithms/sorting/merge_sort.hpp"
 #include "algorithms/sorting/quick_sort.hpp"
+
+using namespace algorithms::sorting;
+
+using namespace algorithms;
+
 #include "rendering/color_strategy.hpp"
 #include "rendering/draw_strategy.hpp"
 #include "rendering/render_items.hpp"
@@ -82,6 +88,10 @@ const static std::initializer_list<algorithm_choice> ALGORITHMS {
     {string_list {"h", "heap", "heapsort"},
      [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::heap_sort(items.begin(), items.end()); },
      rendering::ColorStrategyChoices::heap},
+
+    {string_list {"bt", "bitonic", "bitonicsort"},
+     [](std::vector<Item>& items, const std::atomic_bool& cancelled) { algorithms::sorting::bitonic_sort(items.begin(), items.end()); },
+     rendering::ColorStrategyChoices::touches},
 
     // placeholder with special name that is used to pick the random algorithm
     {string_list {"randomize"}, [](std::vector<Item>& items, const std::atomic_bool& cancelled) {},

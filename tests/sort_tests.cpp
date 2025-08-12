@@ -1,3 +1,4 @@
+#include "algorithms/sorting/bitonic_sort.hpp"
 #include "algorithms/sorting/bubble_sort.hpp"
 #include "algorithms/sorting/bucket_sort.hpp"
 #include "algorithms/sorting/heap_sort.hpp"
@@ -150,11 +151,12 @@ TEST_P(SortIntegers, LargeSets)
 }
 
 INSTANTIATE_TEST_SUITE_P(AllSorts, SortIntegers,
-                         testing::Values([](std::vector<int>& x) { bubble_sort(x.begin(), x.end()); },
-                                         [](std::vector<int>& x) { merge_sort(x.begin(), x.end()); },
-                                         [](std::vector<int>& x) { bucket_sort(x.begin(), x.end()); },
-                                         [](std::vector<int>& x) { heap_sort(x.begin(), x.end()); },
-                                         [](std::vector<int>& x) { quick_sort(x.begin(), x.end()); }));
+                         ::testing::Values([](std::vector<int>& v) { bubble_sort(v.begin(), v.end()); },
+                                           [](std::vector<int>& v) { bucket_sort(v.begin(), v.end()); },
+                                           [](std::vector<int>& v) { heap_sort(v.begin(), v.end()); },
+                                           [](std::vector<int>& v) { merge_sort(v.begin(), v.end()); },
+                                           [](std::vector<int>& v) { quick_sort(v.begin(), v.end()); },
+                                           [](std::vector<int>& v) { bitonic_sort(v.begin(), v.end()); }));
 
 TEST(BucketSortStrings, Simple)
 {
