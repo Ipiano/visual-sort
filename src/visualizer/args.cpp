@@ -342,6 +342,7 @@ ProgramArgs parse_args(int argc, char** argv)
     }
 
     result.data_set_factory = makeDatasetFactory(set_size, data_choice);
+    result.audio_enabled    = (audio_choice != rendering::ToneStrategyChoices::silent);
 
     if (is_random_algo(algo_choice))
     {

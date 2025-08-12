@@ -85,7 +85,7 @@ class SortVisualizer
     using draw_function =
         std::function<void(const std::vector<Item>& items, int max_item, glut::Coordinate viewport_origin, glut::Size viewport_size)>;
 
-    SortVisualizer(std::size_t moves_per_draw);
+    SortVisualizer(std::size_t moves_per_draw, bool audio_enabled = false);
 
     // Cancels any ongoing sort
     ~SortVisualizer();
@@ -158,4 +158,6 @@ class SortVisualizer
     std::mutex m_ready_draw_mutex;
     std::atomic_bool m_ready_draw {false};
     std::condition_variable m_wait_draw;
+
+    bool m_audio_enabled = false;
 };

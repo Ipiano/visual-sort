@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 
     AppState m_state = AppState::NOT_SORTING;
 
-    SortVisualizer visualizer(args.steps_between_draws);
+    SortVisualizer visualizer(args.steps_between_draws, args.audio_enabled);
     win.setDisplayCallback(
         [&]
         {

@@ -7,7 +7,8 @@
 
 struct ProgramArgs
 {
-    bool loop = false;
+    bool loop          = false;
+    bool audio_enabled = false;
 
     std::size_t steps_between_draws = 0;
 

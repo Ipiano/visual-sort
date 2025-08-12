@@ -46,7 +46,8 @@ SortVisualizer::Touch::type Item::getAndClearTouches() const
     return result;
 }
 
-SortVisualizer::SortVisualizer(std::size_t moves_per_draw) : m_moves_per_draw(moves_per_draw)
+SortVisualizer::SortVisualizer(std::size_t moves_per_draw, bool audio_enabled)
+    : m_moves_per_draw(moves_per_draw), m_audio_enabled(audio_enabled)
 {
 }
 
@@ -81,33 +82,35 @@ void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn
     m_complete_flag = false;
     m_ready_draw    = false;
 
-    rendering::audio::g_tone.start();
     m_thread = std::thread(
         [this, sort_fn = std::move(sort_fn)]()
         {
+            if (m_audio_enabled)
+            {
+                rendering::audio::g_tone.start();
+            }
             sort_fn(m_items, m_cancel_flag);
-
-            // Paint the whole thing green
             for (auto& x : m_items)
             {
                 x.complete();
             }
-
-            // Force a few redraws, just get the screen all nice and clean
-            // for the result. Experimentally determined that three is needed...
-            // really not sure why
             waitForDraw();
             waitForDraw();
             waitForDraw();
-
             m_complete_flag = true;
-            rendering::audio::g_tone.stop();
+            if (m_audio_enabled)
+            {
+                rendering::audio::g_tone.stop();
+            }
         });
 }
 
 void SortVisualizer::cancel()
 {
-    rendering::audio::g_tone.stop();
+    if (m_audio_enabled)
+    {
+        rendering::audio::g_tone.stop();
+    }
     if (m_thread.joinable())
     {
         // Cancel the sort, wake up the sort thread if it happens to be
