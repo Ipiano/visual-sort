@@ -12,7 +12,7 @@
 
 using namespace std;
 
-enum class AppState
+enum class AppState : std::uint8_t
 {
     NOT_SORTING,
     SORTING,
@@ -54,9 +54,9 @@ int main(int argc, char* argv[])
                 const auto writes = visualizer.totalMoves();
 
                 //drawText("Cycles: " + to_string(_cycles), text_left, text_top - text_height);
-                rendering::renderText("Array Reads: " + to_string(reads), text_left, text_top - text_height * 2);
-                rendering::renderText("Array Writes: " + to_string(writes), text_left, text_top - text_height * 3);
-                rendering::renderText("Total Array Operations: " + to_string(reads + writes), text_left, text_top - text_height * 4);
+                rendering::renderText("Array Reads: " + to_string(reads), text_left, text_top - (text_height * 2));
+                rendering::renderText("Array Writes: " + to_string(writes), text_left, text_top - (text_height * 3));
+                rendering::renderText("Total Array Operations: " + to_string(reads + writes), text_left, text_top - (text_height * 4));
             }
 
             //Swap buffers using double buffering to avoid flickering
@@ -82,13 +82,17 @@ int main(int argc, char* argv[])
     win.setKeyPressCallback(
         [&](unsigned char key, glut::Coordinate coord)
         {
-            std::cout << "Key " << key << " @ " << coord.x << ", " << coord.y << std::endl;
+            std::cout << "Key " << key << " @ " << coord.x << ", " << coord.y << '\n';
 
             switch (key)
             {
             case constants::keys::RESET:
                 visualizer.cancel();
                 m_state = AppState::NOT_SORTING;
+                break;
+            default:
+                // Ignore other keys
+                break;
             }
         });
 
@@ -104,7 +108,9 @@ int main(int argc, char* argv[])
             {
                 auto data_set = args.data_set_factory();
 
-                auto [sort_function, draw_function] = args.get_sort_and_draw_function();
+                auto sort_and_draw = args.get_sort_and_draw_function();
+                auto sort_function = sort_and_draw.first;
+                auto draw_function = sort_and_draw.second;
 
                 visualizer.start(data_set, sort_function,
                                  [draw_function = draw_function](const std::vector<SortVisualizer::Item>& items, int max_value,

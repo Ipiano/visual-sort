@@ -104,7 +104,7 @@ class Window
         const auto win_it = s_windows.find(win);
         assert(win_it != s_windows.end());
 
-        f(win_it->second);
+        std::forward<F>(f)(win_it->second);
     }
 
     int m_window_id;

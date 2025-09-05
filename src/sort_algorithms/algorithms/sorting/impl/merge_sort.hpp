@@ -10,16 +10,16 @@
 
 namespace algorithms::sorting::_impl
 {
-using std::distance;
-using std::iterator_traits;
-using std::move;
-using std::swap;
 
 template <class Iterator> using value_type_t = typename iterator_traits<Iterator>::value_type;
 
 template <class RandomIt, class Compare>
 void merge_sort(const RandomIt begin, const RandomIt end, Compare compare, scratch_space<value_type_t<RandomIt>>& scratch)
 {
+    using std::distance;
+    using std::iterator_traits;
+    using std::swap;
+
     const auto dist = distance(begin, end);
 
     if (dist < 2)
@@ -39,30 +39,30 @@ void merge_sort(const RandomIt begin, const RandomIt end, Compare compare, scrat
     {
         if (compare(*left, *right))
         {
-            scratch.add(move(*left));
+            scratch.add(std::move(*left));
             ++left;
         }
         else
         {
-            scratch.add(move(*right));
+            scratch.add(std::move(*right));
             ++right;
         }
     }
 
     while (left < pivot)
     {
-        scratch.add(move(*left));
+        scratch.add(std::move(*left));
         ++left;
     }
 
     while (right < end)
     {
-        scratch.add(move(*right));
+        scratch.add(std::move(*right));
         ++right;
     }
 
     assert(scratch.size() == dist);
-    move(scratch.begin(), scratch.end(), begin);
+    std::move(scratch.begin(), scratch.end(), begin);
 }
 
 template <class RandomIt, class Compare> void merge_sort(RandomIt begin, RandomIt end, Compare compare)

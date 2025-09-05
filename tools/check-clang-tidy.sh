@@ -5,9 +5,10 @@ set -o errexit
 set -o nounset
 set -o noclobber
 
+BUILD_DIR="${1:-build}"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
 git ls-files |
     grep --file="$REPO_ROOT/.clang-tidy.include" --extended-regexp |
     grep --file="$REPO_ROOT/.clang-tidy.exclude" --extended-regexp --invert-match |
-    xargs --no-run-if-empty run-clang-tidy -header-filter=.* -p "$REPO_ROOT/build/" -extra-arg="--std=c++17"
+    xargs --no-run-if-empty run-clang-tidy -header-filter=.* -p "${REPO_ROOT}/${BUILD_DIR}/" -extra-arg="--std=c++17"

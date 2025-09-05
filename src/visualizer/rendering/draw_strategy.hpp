@@ -11,23 +11,23 @@
 namespace rendering
 {
 
-enum class DrawStrategyChoices
+enum class DrawStrategyChoices : std::uint8_t
 {
     // Placeholder for the min value; equivalent to the first valid value
-    min_value,
+    min_value = 0,
 
     // Slope from bottom left to upper right
     slope_bars = min_value,
 
     // Slope, but it's shifted up and mirrored across
     // the X axis
-    slope_mirrored,
+    slope_mirrored = 1,
 
     // Slope, but only the top of each bar is drawn
-    slope_points,
+    slope_points = 2,
 
     // Placeholder for max value
-    max_value
+    max_value = 3
 };
 
 // Provides 'type' typedef
@@ -41,7 +41,6 @@ template <class CrtpType> struct LeftToRightStrategyBase
   public:
     // Invoke to draw an item
     void operator()(std::size_t index, int item_value) const;
-    LeftToRightStrategyBase(glut::Coordinate viewport_origin, glut::Size viewport_size, int max_value, std::size_t item_count);
 
   protected:
     [[nodiscard]] glut::Coordinate viewportOrigin() const noexcept { return m_viewport_origin; }
@@ -52,12 +51,15 @@ template <class CrtpType> struct LeftToRightStrategyBase
     [[nodiscard]] double itemWidth() const noexcept { return m_item_width; };
 
   private:
-    const glut::Coordinate m_viewport_origin;
-    const glut::Size m_viewport_size;
+    friend CrtpType;
+    LeftToRightStrategyBase(glut::Coordinate viewport_origin, glut::Size viewport_size, int max_value, std::size_t item_count);
 
-    const int m_max_value;
-    const std::size_t m_item_count;
-    const double m_item_width;
+    glut::Coordinate m_viewport_origin;
+    glut::Size m_viewport_size;
+
+    int m_max_value;
+    std::size_t m_item_count;
+    double m_item_width;
 
     // Returns the bottom and top edges (respectively)
     [[nodiscard]] std::pair<int, int> getVerticalBounds(std::size_t index, int item_value) const;
@@ -69,7 +71,11 @@ template <class CrtpType> struct LeftToRightStrategyBase
 // item.
 struct LeftToRightSlopeStrategy : public LeftToRightStrategyBase<LeftToRightSlopeStrategy>
 {
-    using LeftToRightStrategyBase::LeftToRightStrategyBase;
+    LeftToRightSlopeStrategy(glut::Coordinate viewport_origin, glut::Size viewport_size, int max_value, std::size_t item_count)
+        : LeftToRightStrategyBase(viewport_origin, viewport_size, max_value, item_count)
+    {
+    }
+
     [[nodiscard]] std::pair<int, int> getVerticalBounds(std::size_t index, int item_value) const;
 };
 
@@ -79,7 +85,11 @@ struct LeftToRightSlopeStrategy : public LeftToRightStrategyBase<LeftToRightSlop
 // in the viewport.
 struct LeftToRightMirrorStrategy : public LeftToRightStrategyBase<LeftToRightMirrorStrategy>
 {
-    using LeftToRightStrategyBase::LeftToRightStrategyBase;
+    LeftToRightMirrorStrategy(glut::Coordinate viewport_origin, glut::Size viewport_size, int max_value, std::size_t item_count)
+        : LeftToRightStrategyBase(viewport_origin, viewport_size, max_value, item_count)
+    {
+    }
+
     [[nodiscard]] std::pair<int, int> getVerticalBounds(std::size_t index, int item_value) const;
 };
 
@@ -88,7 +98,11 @@ struct LeftToRightMirrorStrategy : public LeftToRightStrategyBase<LeftToRightMir
 // the dot is drawn at
 struct LeftToRightDotStrategy : public LeftToRightStrategyBase<LeftToRightDotStrategy>
 {
-    using LeftToRightStrategyBase::LeftToRightStrategyBase;
+    LeftToRightDotStrategy(glut::Coordinate viewport_origin, glut::Size viewport_size, int max_value, std::size_t item_count)
+        : LeftToRightStrategyBase(viewport_origin, viewport_size, max_value, item_count)
+    {
+    }
+
     [[nodiscard]] std::pair<int, int> getVerticalBounds(std::size_t index, int item_value) const;
 };
 
@@ -107,7 +121,7 @@ LeftToRightStrategyBase<CrtpType>::LeftToRightStrategyBase(glut::Coordinate view
 
 template <class CrtpType> void LeftToRightStrategyBase<CrtpType>::operator()(const std::size_t index, int item_value) const
 {
-    float left  = m_viewport_origin.x + m_item_width * static_cast<float>(index);
+    float left  = m_viewport_origin.x + (m_item_width * static_cast<float>(index));
     float right = left + m_item_width;
     float bottom, top;
     std::tie(bottom, top) = getVerticalBounds(index, item_value);
@@ -130,20 +144,20 @@ std::pair<int, int> LeftToRightStrategyBase<CrtpType>::getVerticalBounds(const s
 
 inline std::pair<int, int> LeftToRightSlopeStrategy::getVerticalBounds(const std::size_t index, int item_value) const
 {
-    return {0, viewportSize().height / static_cast<double>(maxValue()) * item_value + viewportOrigin().y};
+    return {0, ((viewportSize().height / static_cast<double>(maxValue())) * item_value) + viewportOrigin().y};
 }
 
 inline std::pair<int, int> LeftToRightMirrorStrategy::getVerticalBounds(const std::size_t index, int item_value) const
 {
     const auto magnitude = (viewportSize().height / static_cast<double>(maxValue()) * item_value) / 2.0;
-    const auto center    = viewportOrigin().y + viewportSize().height / 2.0;
+    const auto center    = viewportOrigin().y + (viewportSize().height / 2.0);
     return {center - magnitude, center + magnitude};
 }
 
 inline std::pair<int, int> LeftToRightDotStrategy::getVerticalBounds(const std::size_t index, int item_value) const
 {
     const auto magnitude = itemWidth() / 2.0;
-    const auto center    = viewportSize().height / static_cast<double>(maxValue()) * item_value + viewportOrigin().y;
+    const auto center    = ((viewportSize().height / static_cast<double>(maxValue())) * item_value) + viewportOrigin().y;
     return {center - magnitude, center + magnitude};
 }
 

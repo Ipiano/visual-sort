@@ -15,7 +15,7 @@ class ToneGenerator
   public:
     ToneGenerator();
     void start();
-    void set_pitch(float);
+    void set_pitch(float pitch);
     void stop();
 
 #ifdef WITH_SFML
@@ -35,5 +35,6 @@ class ToneGenerator
     sf::Sound m_sound;
 #endif
 };
-extern ToneGenerator g_tone;
+
+ToneGenerator& get_tone_generator();
 }

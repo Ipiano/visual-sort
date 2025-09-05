@@ -5,14 +5,14 @@
 
 namespace rendering
 {
-enum class ToneStrategyChoices
+enum class ToneStrategyChoices : std::uint8_t
 {
-    min_value,
+    min_value = 0,
 
-    silent = min_value,
-    proportional,
+    silent       = min_value,
+    proportional = 1,
 
-    max_value
+    max_value = 2
 };
 
 // Provides 'type' typedef
@@ -33,12 +33,11 @@ class ProportionalToneStrategy
     void operator()(int item_value, SortVisualizer::Touch::type touches) const
     {
         const bool moved    = (touches & SortVisualizer::Touch::MOVE) != 0;
-        const bool compared = (touches & SortVisualizer::Touch::COMPARE) != 0;
         const bool complete = (touches & SortVisualizer::Touch::COMPLETE) != 0;
 
         if (moved || complete)
         {
-            audio::g_tone.set_pitch(static_cast<float>(item_value) / _max_item_value * 10);
+            audio::get_tone_generator().set_pitch(static_cast<float>(item_value) / static_cast<float>(_max_item_value) * 10.0F);
         }
     };
 

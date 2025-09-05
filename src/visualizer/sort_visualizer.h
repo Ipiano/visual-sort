@@ -36,7 +36,7 @@ class SortVisualizer
       public:
         using underlying_type = int;
 
-        Item(SortVisualizer& visualizer, underlying_type value) : m_value(value), m_visual(visualizer), m_touches(Touch::NONE) { }
+        Item(SortVisualizer& visualizer, underlying_type value) : m_value(value), m_visual(visualizer) { }
         ~Item() = default;
 
         Item(const Item&)            = delete;
@@ -74,8 +74,8 @@ class SortVisualizer
 
         underlying_type m_value;
 
-        SortVisualizer& m_visual;
-        mutable Touch::type m_touches;
+        SortVisualizer& m_visual; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members) - legitimate observer pattern
+        mutable Touch::type m_touches {Touch::NONE};
     };
 
     // Typedef for a sort algorithm. If possible, it should check the

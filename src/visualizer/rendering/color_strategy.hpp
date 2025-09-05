@@ -7,16 +7,16 @@
 
 namespace rendering
 {
-enum class ColorStrategyChoices
+enum class ColorStrategyChoices : std::uint8_t
 {
     // Placeholder for the first valid value
-    min_value,
+    min_value = 0,
 
     touches = min_value,
-    heap,
+    heap    = 1,
 
     // Place holder for one-past-the end of valid values
-    max_value
+    max_value = 2
 };
 
 // Provides 'type' typedef
@@ -65,22 +65,22 @@ static rgb_t rainbow_hue(double hue)
 
     if (hue >= RED_MIN && hue <= 360)
     {
-        result[0] = std::sin(PI * (hue - RED_MIN) / CHANNEL_WIDTH);
+        result[0] = static_cast<float>(std::sin(PI * (hue - RED_MIN) / CHANNEL_WIDTH));
     }
 
     if (hue >= 0 && hue <= RED_MAX)
     {
-        result[0] = std::sin(PI * (hue + CHANNEL_WIDTH / 2) / CHANNEL_WIDTH);
+        result[0] = static_cast<float>(std::sin(PI * (hue + CHANNEL_WIDTH / 2) / CHANNEL_WIDTH));
     }
 
     if (hue >= GREEN_MIN && hue <= GREEN_MIN + CHANNEL_WIDTH)
     {
-        result[1] = std::sin(PI * (hue - GREEN_MIN) / CHANNEL_WIDTH);
+        result[1] = static_cast<float>(std::sin(PI * (hue - GREEN_MIN) / CHANNEL_WIDTH));
     }
 
     if (hue >= BLUE_MIN && hue <= BLUE_MIN + CHANNEL_WIDTH)
     {
-        result[2] = std::sin(PI * (hue - BLUE_MIN) / CHANNEL_WIDTH);
+        result[2] = static_cast<float>(std::sin(PI * (hue - BLUE_MIN) / CHANNEL_WIDTH));
     }
 
     return result;
@@ -88,7 +88,7 @@ static rgb_t rainbow_hue(double hue)
 
 }
 
-template <class CrtpType> struct ColorStrategy
+template <class CrtpType> struct ColorStrategy // NOLINT(bugprone-crtp-constructor-accessibility) - legitimate CRTP pattern
 {
   public:
     rgb_t operator()(std::size_t item_index, int item_value, SortVisualizer::Touch::type touches) const
@@ -101,7 +101,7 @@ struct DefaultColorStrategy : public ColorStrategy<DefaultColorStrategy>
 {
   public:
     explicit DefaultColorStrategy(std::size_t total_items) { }
-    rgb_t operator()(std::size_t item_index, int item_value, SortVisualizer::Touch::type touches) const
+    rgb_t operator()(std::size_t /*item_index*/, int /*item_value*/, SortVisualizer::Touch::type touches) const
     {
         return color_strategy::get_color_from_touches(touches);
     }
@@ -110,18 +110,20 @@ struct DefaultColorStrategy : public ColorStrategy<DefaultColorStrategy>
 struct HeapColorStrategy : public ColorStrategy<HeapColorStrategy>
 {
   public:
-    explicit HeapColorStrategy(std::size_t total_items) : _heap_depth(log2(total_items) + 1) { }
-
-    rgb_t operator()(std::size_t item_index, int item_value, SortVisualizer::Touch::type touches) const
+    explicit HeapColorStrategy(std::size_t total_items) : _heap_depth(static_cast<int>(std::log2(static_cast<double>(total_items)) + 1.0))
     {
-        if (touches)
+    }
+
+    rgb_t operator()(std::size_t item_index, int /*item_value*/, SortVisualizer::Touch::type touches) const
+    {
+        if (touches != 0U)
         {
             return color_strategy::get_color_from_touches(touches);
         }
 
-        const int item_depth = std::log2(item_index);
+        const int item_depth = static_cast<int>(std::log2(static_cast<double>(item_index)));
 
-        return color_strategy::rainbow_hue(double(item_depth) / _heap_depth * 360.0);
+        return color_strategy::rainbow_hue(static_cast<double>(item_depth) / static_cast<double>(_heap_depth) * 360.0);
     }
 
   private:

@@ -87,7 +87,7 @@ void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn
         {
             if (m_audio_enabled)
             {
-                rendering::audio::g_tone.start();
+                rendering::audio::get_tone_generator().start();
             }
             sort_fn(m_items, m_cancel_flag);
             for (auto& x : m_items)
@@ -100,7 +100,7 @@ void SortVisualizer::start(const std::vector<int>& values, sort_function sort_fn
             m_complete_flag = true;
             if (m_audio_enabled)
             {
-                rendering::audio::g_tone.stop();
+                rendering::audio::get_tone_generator().stop();
             }
         });
 }
@@ -109,7 +109,7 @@ void SortVisualizer::cancel()
 {
     if (m_audio_enabled)
     {
-        rendering::audio::g_tone.stop();
+        rendering::audio::get_tone_generator().stop();
     }
     if (m_thread.joinable())
     {

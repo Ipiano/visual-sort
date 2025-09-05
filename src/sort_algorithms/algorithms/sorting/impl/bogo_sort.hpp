@@ -4,21 +4,22 @@
 #include <chrono>
 #include <iterator>
 #include <random>
-#include <utility>
 
 namespace algorithms::sorting::_impl
 {
 template <class RandomIt, class Compare, class CancelPredicate>
-void bogo_sort(RandomIt begin, RandomIt end, Compare compare, CancelPredicate&& cancelled)
+void bogo_sort(RandomIt begin, RandomIt end, Compare compare, CancelPredicate cancelled)
 {
-    if (begin == end)
+    using std::distance;
+
+    if (distance(begin, end) <= 1)
     {
         return;
     }
 
     std::mt19937 reng(static_cast<std::mt19937::result_type>(std::chrono::system_clock::now().time_since_epoch().count()));
     bool sorted = false;
-    do
+    while (!sorted && !cancelled())
     {
         std::shuffle(begin, end, reng);
 
@@ -27,6 +28,6 @@ void bogo_sort(RandomIt begin, RandomIt end, Compare compare, CancelPredicate&& 
         {
             sorted = compare(*left, *right);
         }
-    } while (!sorted && !cancelled());
+    }
 }
 }

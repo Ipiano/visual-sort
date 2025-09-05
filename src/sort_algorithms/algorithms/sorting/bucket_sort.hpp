@@ -2,6 +2,7 @@
 
 #include "algorithms/sorting/impl/bucket_sort.hpp"
 
+#include <cstdint>
 #include <functional>
 #include <iterator>
 #include <limits>
@@ -30,14 +31,15 @@ template <class ValueT> struct traits<ValueT, std::enable_if_t<std::is_integral_
     static std::size_t bucket_index(ValueT v, std::size_t iteration /*iteration is 0-based*/, std::size_t max_iterations) noexcept
     {
         static_cast<void>(max_iterations);
-        return ((static_cast<uint64_t>(v) & (1U << iteration)) != 0) ? 1 : 0;
+        return ((static_cast<std::uint64_t>(v) & (1U << iteration)) != 0) ? 1 : 0;
     }
 
     // Always just check all bits - could maybe go through and figure out what the most
     // significant bit in use is and just sort to that point.
     template <class IteratorT> static std::size_t max_iterations(IteratorT begin, IteratorT end) noexcept
     {
-        return std::accumulate(begin, end, 0, [](std::size_t curr, ValueT n) { return std::max(curr, most_significant_bit(n)); }) + 1;
+        using std::max;
+        return std::accumulate(begin, end, 0, [](std::size_t curr, ValueT n) { return max(curr, most_significant_bit(n)); }) + 1;
     }
 
   private:
@@ -74,7 +76,8 @@ template <> struct traits<std::string>
     // Need to iterate once per character in the longest string
     template <class IteratorT> static std::size_t max_iterations(IteratorT begin, IteratorT end) noexcept
     {
-        return std::accumulate(begin, end, 0, [](std::size_t curr, const std::string& s) { return std::max(curr, s.size()); });
+        using std::max;
+        return std::accumulate(begin, end, 0, [](std::size_t curr, const std::string& s) { return max(curr, s.size()); });
     }
 };
 }

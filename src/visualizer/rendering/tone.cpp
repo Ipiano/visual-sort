@@ -15,7 +15,7 @@ ToneGenerator::ToneGenerator()
         double t = 0;
         for (auto& s : m_samples)
         {
-            s = 1000 * std::sin(t);
+            s = static_cast<std::int16_t>(1000 * std::sin(t));
             t += delta_per_sample;
         }
     }
@@ -48,7 +48,7 @@ void ToneGenerator::start()
 {
 }
 
-void ToneGenerator::set_pitch(float)
+void ToneGenerator::set_pitch(float /*pitch*/)
 {
 }
 
@@ -56,5 +56,10 @@ void ToneGenerator::stop()
 {
 }
 #endif
-ToneGenerator g_tone;
+
+ToneGenerator& get_tone_generator()
+{
+    static ToneGenerator instance;
+    return instance;
+}
 }

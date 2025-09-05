@@ -25,13 +25,15 @@ template <class T> class scratch_space
 
     void add(T&& value)
     {
+        using std::swap;
+
         if (m_next == m_buffer.end())
         {
             // Emplace should never result in a resize because we always
             // reserve enough space for the final merge of the sort
             assert(m_buffer.size() < m_buffer.capacity());
 
-            m_buffer.emplace_back(move(value));
+            m_buffer.emplace_back(std::move(value));
         }
         else
         {

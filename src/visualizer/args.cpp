@@ -7,11 +7,6 @@
 #include "algorithms/sorting/heap_sort.hpp"
 #include "algorithms/sorting/merge_sort.hpp"
 #include "algorithms/sorting/quick_sort.hpp"
-
-using namespace algorithms::sorting;
-
-using namespace algorithms;
-
 #include "rendering/color_strategy.hpp"
 #include "rendering/draw_strategy.hpp"
 #include "rendering/render_items.hpp"
@@ -26,6 +21,9 @@ using namespace algorithms;
 #include <iostream>
 #include <numeric>
 #include <random>
+
+using namespace algorithms::sorting;
+using namespace algorithms;
 
 namespace po = boost::program_options;
 
@@ -43,7 +41,7 @@ struct RenderOptions
     rendering::ToneStrategyChoices tone_strategy   = rendering::ToneStrategyChoices::min_value;
 };
 
-enum class Dataset
+enum class Dataset : std::uint8_t
 {
     unique,
     uniform,
@@ -122,7 +120,7 @@ void showHelp(const char* arg0, const po::options_description& options)
         std::cout << "\t" << names << "\n";
     }
 
-    std::cout << "\nExample:\n\t" << arg0 << " --algo=bubble --visual 2 --unique=no\n" << std::endl;
+    std::cout << "\nExample:\n\t" << arg0 << " --algo=bubble --visual 2 --unique=no\n";
     exit(0);
 }
 
@@ -361,16 +359,14 @@ ProgramArgs parse_args(int argc, char** argv)
             static thread_local std::mt19937_64 reng(std::chrono::system_clock::now().time_since_epoch().count());
             std::uniform_int_distribution<std::size_t> algo_dist(0, ALGORITHMS.size() - 1);
 
-            std::size_t choice;
-            do
+            std::size_t choice = algo_dist(reng);
+            while (is_random_algo(*std::next(ALGORITHMS.begin(), static_cast<std::ptrdiff_t>(choice))) ||
+                   is_bogosort_algo(*std::next(ALGORITHMS.begin(), static_cast<std::ptrdiff_t>(choice))))
             {
                 choice = algo_dist(reng);
+            }
 
-                // "random" isn't a real algo
-                // bogosort takes too long
-            } while (is_random_algo(*std::next(ALGORITHMS.begin(), choice)) || is_bogosort_algo(*std::next(ALGORITHMS.begin(), choice)));
-
-            auto algo_choice = *std::next(ALGORITHMS.begin(), choice);
+            auto algo_choice = *std::next(ALGORITHMS.begin(), static_cast<std::ptrdiff_t>(choice));
 
             return std::make_pair(std::get<1>(algo_choice),
                                   makeDrawFunction(RenderOptions {visual_choice, std::get<2>(algo_choice), audio_choice}));

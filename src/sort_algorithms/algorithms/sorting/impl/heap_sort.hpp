@@ -22,9 +22,9 @@ template <class RandomIt, class Compare> void sift_item(RandomIt begin, RandomIt
     RandomIt root  = sift_item;
     auto root_dist = distance(begin, root);
 
-    while (root_dist * 2 + 1 < end_dist)
+    while ((root_dist * 2) + 1 < end_dist)
     {
-        const auto child_1_dist = root_dist * 2 + 1;
+        const auto child_1_dist = (root_dist * 2) + 1;
         const auto child_2_dist = child_1_dist + 1;
 
         const auto child_1 = next(begin, child_1_dist);

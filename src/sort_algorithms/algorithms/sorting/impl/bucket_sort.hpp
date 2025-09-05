@@ -9,7 +9,7 @@
 
 namespace algorithms::sorting::_impl
 {
-template <class RandomIt, class Traits> void bucket_sort(RandomIt begin, RandomIt end, Traits)
+template <class RandomIt, class Traits> void bucket_sort(RandomIt begin, RandomIt end, Traits /*traits*/)
 {
     using std::distance;
     using std::swap;
@@ -29,7 +29,8 @@ template <class RandomIt, class Traits> void bucket_sort(RandomIt begin, RandomI
         // Sort into buckets
         for (auto it = begin; it != end; ++it)
         {
-            buckets[Traits::bucket_index(*it, iteration, max_iterations)].add(std::move(*it));
+            const auto bucket_idx = Traits::bucket_index(*it, iteration, max_iterations);
+            buckets.at(bucket_idx).add(std::move(*it));
         }
 
         // Move back to original list and clears the buckets for the next round
