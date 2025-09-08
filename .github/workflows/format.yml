@@ -3,7 +3,7 @@ on: [push, workflow_dispatch]
 
 jobs:
   clang-format:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
       - uses: DoozyX/clang-format-lint-action@v0.14
@@ -11,7 +11,7 @@ jobs:
           clangFormatVersion: 14
 
   cmake-format:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
       - uses: PuneetMatharu/cmake-format-lint-action@v1.0.0
