@@ -16,7 +16,7 @@ jobs:
             python3 pipx python-is-python3 \
             freeglut3-dev libboost-dev libboost-program-options-dev
 
-          pipx install gcovr
+          pipx install gcovr==8.4
 
       - name: Build Project
         run: |
@@ -49,7 +49,7 @@ jobs:
 
       - name: Extract Coverage Percentage
         run: |
-          RATE=$(grep -o -m 1 -P '(?<=line-rate=").*?(?=")' ./build/reports/sort-coverage.xml | head -1)
+          RATE=$(grep -o -m 1 -P '(?<=branch-rate=").*?(?=")' ./build/reports/sort-coverage.xml | head -1)
           PERCENT="$(echo "($RATE * 100)/1" | bc)"
 
           echo "$RATE -> $PERCENT"
@@ -63,7 +63,7 @@ jobs:
           auth: ${{ secrets.COVERAGE_GIST_TOKEN }}
           gistID: bd681dd7ad9d0d4bd031cbf22e9866d4
           filename: sort-coverage-badge.json
-          label: Coverage
+          label: Branch Coverage (Sort Algorithms)
           message: ${{ env.COVERAGE_PERCENT }}
           valColorRange: ${{ env.COVERAGE_PERCENT }}
           minColorRange: 50
