@@ -51,19 +51,12 @@ jobs:
           RATE=$(grep -o -m 1 -P '(?<=line-rate=").*?(?=")' ./build/reports/sort-coverage.xml | head -1)
           PERCENT="$(echo "($RATE * 100)/1" | bc)"
 
-          BADGE_COLOR=red
-          if [ $PERCENT -ge 60 ]; then BADGE_COLOR=orange; fi
-          if [ $PERCENT -ge 80 ]; then BADGE_COLOR=yellow; fi
-          if [ $PERCENT -ge 95 ]; then BADGE_COLOR=brightgreen; fi
-
-          echo "$RATE -> $PERCENT : $BADGE_COLOR"
-
+          echo "$RATE -> $PERCENT"
           echo "COVERAGE_PERCENT=$PERCENT" >> $GITHUB_ENV
-          echo "COVERAGE_COLOR=$BADGE_COLOR" >> $GITHUB_ENV
 
 
       - name: Create Coverage Badge
-        uses: schneegans/dynamic-badges-action@v1.1.0
+        uses: schneegans/dynamic-badges-action@v1.7.0
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           auth: ${{ secrets.COVERAGE_GIST_TOKEN }}
@@ -71,7 +64,9 @@ jobs:
           filename: sort-coverage-badge.json
           label: Coverage
           message: ${{ env.COVERAGE_PERCENT }}
-          color: ${{ env.COVERAGE_COLOR }}
+          valColorRange: ${{ env.COVERAGE_PERCENT }}
+          minColorRange: 50
+          maxColorRange: 100
 
       - name: Coverage Summary
         uses: 5monkeys/cobertura-action@master
