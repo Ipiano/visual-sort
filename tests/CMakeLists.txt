@@ -24,7 +24,7 @@ if(VISUAL_SORT_IS_ROOT_PROJECT)
 endif()
 
 if(VISUAL_SORT_INSTRUMENT_COVERAGE)
-    find_package(gcovr 4.2 REQUIRED)
+    find_package(gcovr 8.4 REQUIRED)
 
     target_instrument_for_coverage(sort_tests PRIVATE)
 
@@ -33,10 +33,11 @@ if(VISUAL_SORT_INSTRUMENT_COVERAGE)
     add_custom_target(
         sort-coverage
         COMMAND
-            "${GCOVR_PATH}" --xml "${VISUAL_SORT_REPORTS_DIR}/sort-coverage.xml" --html-details
+            "${GCOVR_PATH}"--xml "${VISUAL_SORT_REPORTS_DIR}/sort-coverage.xml" --html-details
             "${VISUAL_SORT_REPORTS_DIR}/sort-coverage/sort-coverage.html" --gcov-executable
-            "${GCOV_COMMAND}" --branches --exclude-unreachable-branches --exclude-throw-branches -s
-            --filter "${PROJECT_SOURCE_DIR}/src/sort_algorithms"
+            "${GCOV_COMMAND}" --txt-metric branch --exclude-noncode-lines --exclude-function-lines
+            --exclude-unreachable-branches --exclude-throw-branches -s --filter
+            "${PROJECT_SOURCE_DIR}/src/sort_algorithms"
         BYPRODUCTS "${VISUAL_SORT_REPORTS_DIR}/sort-coverage.xml"
         WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     )
