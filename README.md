@@ -1,7 +1,7 @@
 # Visual Sort
 
 ![build](https://github.com/Ipiano/visual-sort/actions/workflows/build.yml/badge.svg?branch=master)
-![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ipiano/bd681dd7ad9d0d4bd031cbf22e9866d4/raw/0ff78ede8b71620c84ed05d1bf7ef581a1ff39e5/sort-coverage-badge.json)
+![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ipiano/bd681dd7ad9d0d4bd031cbf22e9866d4/raw/168aab21111c302ed706c9c9b092197387af5a2b/sort-coverage-badge.json)
 ![lint](https://github.com/Ipiano/visual-sort/actions/workflows/lint.yml/badge.svg?branch=master)
 ![format](https://github.com/Ipiano/visual-sort/actions/workflows/format.yml/badge.svg?branch=master)
 
